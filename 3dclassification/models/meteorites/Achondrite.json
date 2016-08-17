@@ -1,0 +1,13 @@
+{
+	"entries": [
+		{"Name": "Vesta", "URL": "Vesta.json"},
+		{"Name": "Angrite", "URL": "Angrite.json"},
+		{"Name": "Lunar", "URL": "Lunar.json"},
+		{"Name": "Martian", "URL": "Martian.json"},
+		{"Name": "Aubrite", "URL": "Achondrite.json"},
+		{"Name": "Mesosiderite", "URL": "Achondrite.json"},
+		{"Name": "Pallasite", "URL": "Pallasite.json"},
+		{"Name": "Iron", "URL": "Achondrite Iron.json"},
+		{"Name": "Ungrouped", "URL": "Achondrite Ungrouped.json"}
+	]
+}

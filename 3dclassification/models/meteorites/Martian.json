@@ -1,0 +1,9 @@
+{
+	"entries": [
+		{"Name": "Shergottite", "URL": "Shergottite.json"},
+		{"Name": "Nakhlite", "URL": "Nakhlite.json"},
+		{"Name": "Chassignite", "URL": "Martian.json"},
+		{"Name": "OPX Martian", "URL": "Martian.json"},
+		{"Name": "Basaltic Breccia", "URL": "Martian Basaltic Breccia.json"}
+	]
+}

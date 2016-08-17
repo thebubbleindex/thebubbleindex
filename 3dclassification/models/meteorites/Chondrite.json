@@ -1,0 +1,10 @@
+{
+	"entries": [
+		{"Name": "Carbonaceous", "URL": "Carbonaceous.json"},
+		{"Name": "Ordinary", "URL": "Ordinary.json"},
+		{"Name": "Rumuruti", "URL": "Rumuruti.json"},
+		{"Name": "Enstatite", "URL": "Enstatite.json"},
+		{"Name": "Kakangari", "URL": "Chondrite.json"},
+		{"Name": "Ungrouped", "URL": "Chondrite Ungrouped.json"}
+	]
+}

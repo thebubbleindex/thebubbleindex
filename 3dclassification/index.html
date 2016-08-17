@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Meteorite Classification - Solar Anamnesis</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				color: #aaa;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+				background-color: #000;
+				background: url(files/geminid20091209-full.jpg);
+				background-repeat: no-repeat;
+				background-size: 100% 100%;
+				margin: 0px;
+				overflow: hidden;
+			}
+
+			<!--#info {
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+				z-index:100;
+			}-->
+
+			.lbl { color:#fff; font-size:16px; font-weight:bold; position: absolute; bottom:0px; z-index:100; text-shadow:#000 1px 1px 1px; background-color:rgba(0,0,0,0.85); padding:1em }
+			#lbl_left { text-align:left; left:0px }
+			#lbl_right { text-align:left; right:0px }
+
+			.g { color:#aaa }
+			.c { color:#fa0 }
+
+			a { color:red }
+			
+			a {
+				color: #ffffff;
+			}
+
+			#info {
+				position: absolute;
+				top: 0px;
+				width: 100%;
+				color: #ffffff;
+				padding: 5px;
+				font-family: Monospace;
+				font-size: 13px;
+				font-weight: bold;
+				text-align: left;
+				z-index: 1;
+			}
+
+			#menu {
+				position: absolute;
+				bottom: 20px;
+				width: 100%;
+				text-align: center;
+				padding: 0;
+				margin: 0;
+			}
+
+			#topmenu {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				width: 100%;
+				text-align: right;
+				padding: 0;
+				margin: 0;
+				z-index: 1;
+			}
+
+			button {
+				color: rgb(255,255,255);
+				background: transparent;
+				border: 0px;
+				padding: 5px 10px;
+				cursor: pointer;
+			}
+			button:hover {
+				background-color: rgba(0,255,255,0.5);
+			}
+			button:active {
+				color: #000000;
+				background-color: rgba(0,255,255,1);
+			}
+
+			.bond {
+				width: 5px;
+				height: 10px;
+				background: #eee;
+				display: block;
+			}
+
+			#siteDetailLoader {
+				display: inline;
+				position: fixed;
+				top: 50%;
+				left: 50%;
+			}
+
+		</style>
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	</head>
+
+	<body>
+		<!--<div id="info">
+			<a href="http://threejs.org" target="_blank">three.js</a> - texture manual mipmapping example
+			- painting by <a href="http://en.wikipedia.org/wiki/Basket_of_Fruit_%28Caravaggio%29">Caravaggio</a>
+		</div>-->
+		<div id="container"></div>
+		<div id="info"><a href="http://threejs.org" target="_blank">three.js</a> - <a href="https://solaranamnesis.com" target="_blank">Solar Anamnesis</a></div>
+		<div id="topmenu">
+			<button id="b_a">Chondrite</button>
+			<button id="b_b">Achondrite</button>
+			<button id="b_ab">Primitive Achondrite</button>
+		</div>
+		<div id="menu"></div>
+		<div id="siteDetailLoader">Loading... Please Wait</div>
+		<script src="build/three.min.js"></script>
+
+		<script src="js/Detector.js"></script>
+		<script>
+
+			if ( !Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var SCREEN_WIDTH = window.innerWidth;
+			var SCREEN_HEIGHT = window.innerHeight;
+
+			var container;
+			var fileUrl = "files/composed_icon2.png";
+			
+			var camera, scene1, scene2, renderer;
+
+			var mouseX = 0, mouseY = 0;
+
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+
+			var METEORITES = {
+				"Chondrite": "Chondrite.json",
+				"Achondrite": "Achondrite.json",
+				"Primitive Achondrite": "Primitive Achondrite.json"
+			};			
+			
+			var currentImages = {};
+			var baseSprite = document.createElement( 'img' );
+			var menu = document.getElementById( "menu" );
+
+			init();
+			animate();
+			init_info();
+
+			function init() {
+
+				container = document.createElement( 'portrait' );
+				document.body.appendChild( container );
+
+				var b_a = document.getElementById( "b_a" );
+				var b_b = document.getElementById( "b_b" );
+				var b_ab = document.getElementById( "b_ab" );
+
+				b_a.addEventListener( 'click', function() { loadMeteorites( "models/meteorites/Chondrite.json" ) } );
+				b_b.addEventListener( 'click', function() { loadMeteorites( "models/meteorites/Achondrite.json" ) } );
+				b_ab.addEventListener( 'click', function() { loadMeteorites( "models/meteorites/Primitive Achondrite.json" ) } );
+				
+				camera = new THREE.PerspectiveCamera( 90, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 5000 );
+				camera.position.z = 1500;
+
+				scene1 = new THREE.Scene();
+				//scene1.fog = new THREE.Fog( 0x000000, 1500, 4000 );
+
+				scene2 = new THREE.Scene();
+				//scene2.fog = scene1.fog;
+
+				// GROUND
+
+				function mipmap( size, color ) {
+
+					var imageCanvas = document.createElement( "canvas" ),
+						context = imageCanvas.getContext( "2d" );
+
+					imageCanvas.width = imageCanvas.height = size;
+
+					context.fillStyle = "#444";
+					context.fillRect( 0, 0, size, size );
+
+					context.fillStyle = color;
+					context.fillRect( 0, 0, size / 2, size / 2 );
+					context.fillRect( size / 2, size / 2, size / 2, size / 2 );
+					return imageCanvas;
+
+				}
+
+				var canvas = mipmap( 128, '#f00' );
+				var textureCanvas1 = new THREE.CanvasTexture( canvas );
+				textureCanvas1.mipmaps[ 0 ] = canvas;
+				textureCanvas1.mipmaps[ 1 ] = mipmap( 64, '#0f0' );
+				textureCanvas1.mipmaps[ 2 ] = mipmap( 32, '#00f' );
+				textureCanvas1.mipmaps[ 3 ] = mipmap( 16, '#400' );
+				textureCanvas1.mipmaps[ 4 ] = mipmap( 8,  '#040' );
+				textureCanvas1.mipmaps[ 5 ] = mipmap( 4,  '#004' );
+				textureCanvas1.mipmaps[ 6 ] = mipmap( 2,  '#044' );
+				textureCanvas1.mipmaps[ 7 ] = mipmap( 1,  '#404' );
+				textureCanvas1.repeat.set( 1000, 1000 );
+				textureCanvas1.wrapS = THREE.RepeatWrapping;
+				textureCanvas1.wrapT = THREE.RepeatWrapping;
+
+				var textureCanvas2 = textureCanvas1.clone();
+				//textureCanvas2.magFilter = THREE.NearestFilter;
+				//textureCanvas2.minFilter = THREE.NearestMipMapNearestFilter;
+
+				materialCanvas1 = new THREE.MeshBasicMaterial( { map: textureCanvas1, opacity: 0.66, transparent: true } );
+				materialCanvas2 = new THREE.MeshBasicMaterial( { color: 0xffffff, map: textureCanvas2, opacity: 0.66, transparent: true } );
+
+				var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
+
+				var meshCanvas1 = new THREE.Mesh( geometry, materialCanvas1 );
+				meshCanvas1.rotation.x = -Math.PI / 2;
+				meshCanvas1.scale.set(1000, 1000, 1000);
+				meshCanvas1.isUpdate = false;
+				meshCanvas1.isMeshCanvas = true;
+				
+				var meshCanvas2 = new THREE.Mesh( geometry, materialCanvas2 );
+				meshCanvas2.rotation.x = -Math.PI / 2;
+				meshCanvas2.scale.set( 1000, 1000, 1000 );
+				meshCanvas2.isUpdate = false;
+				meshCanvas2.isMeshCanvas = true;
+
+				// PAINTING
+
+				var callbackPainting = function () {
+
+					document.getElementById('siteDetailLoader').style.display = 'none';
+
+					var image = texturePainting1.image;
+
+					texturePainting2.image = image;
+					texturePainting2.needsUpdate = true;
+
+					scene1.add( meshCanvas1 );
+					scene2.add( meshCanvas2 );
+
+					var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
+					var mesh1 = new THREE.Mesh( geometry, materialPainting1 );
+					var mesh2 = new THREE.Mesh( geometry, materialPainting2 );
+
+					addPainting( scene1, mesh1 );
+					addPainting( scene2, mesh2 );
+					
+					mesh1.geometry.dispose();
+					mesh2.geometry.dispose();
+					mesh1.material.dispose();
+					mesh2.material.dispose();
+					materialPainting1.dispose();
+					materialPainting2.dispose();
+					texturePainting1.dispose();
+					texturePainting2.dispose();
+					geometry.dispose();
+					
+					delete(mesh1);
+					delete(mesh2);
+					delete(materialPainting1);
+					delete(materialPainting2);
+					delete(texturePainting1);
+					delete(texturePainting2);
+					delete(geometry);
+					delete(image);
+
+					function addPainting( zscene, zmesh ) {
+
+						zmesh.scale.x = 1.0 * image.width / 100;
+						zmesh.scale.y = 1.0 * image.height / 100;
+						zmesh.isUpdate = true;
+						zmesh.isMeshCanvas = false;
+						zscene.add( zmesh );
+
+						var meshFrame = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0x000000, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 5 } ) );
+						meshFrame.scale.x = 1.0 * image.width / 100;
+						meshFrame.scale.y = 1.0 * image.height / 100;
+						meshFrame.isUpdate = true;
+						meshFrame.isMeshCanvas = false;
+						zscene.add( meshFrame );
+						meshFrame.geometry.dispose();
+						meshFrame.material.dispose();
+						delete(meshFrame);
+						
+						var meshShadow = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.75, transparent: true } ) );
+						meshShadow.position.y = -1.0 * image.height / 2;
+						meshShadow.position.z = -1.0 * image.height / 2;
+						meshShadow.rotation.x = -Math.PI / 2;
+						meshShadow.scale.x = 1.0 * image.width / 100;
+						meshShadow.scale.y = 1.0 * image.height / 100;
+						meshShadow.isUpdate = true;
+						meshShadow.isMeshCanvas = false;
+						zscene.add( meshShadow );
+						meshShadow.geometry.dispose();
+						meshShadow.material.dispose();
+						delete(meshShadow);
+
+						var floorHeight = -1.117 * image.height / 2;
+						meshCanvas1.position.y = meshCanvas2.position.y = floorHeight;
+
+					}
+				};
+
+				var texturePainting1 = new THREE.TextureLoader().load( fileUrl, callbackPainting );
+				var texturePainting2 = new THREE.Texture();
+				var materialPainting1 = new THREE.MeshBasicMaterial( { color: 0xffffff, map: texturePainting1 } );
+				var materialPainting2 = new THREE.MeshBasicMaterial( { color: 0xffffff, map: texturePainting2 } );
+
+				texturePainting2.minFilter = texturePainting2.magFilter = THREE.NearestFilter;
+				texturePainting1.minFilter = texturePainting1.magFilter = THREE.LinearFilter;
+				texturePainting1.mapping = THREE.UVMapping;
+
+				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+				renderer.setClearColor( 0xffffff, 0 );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+				renderer.autoClear = false;
+
+				//renderer.domElement.style.position = "relative";
+				container.appendChild( renderer.domElement );
+
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+			}
+
+
+			function onDocumentMouseMove( event ) {
+				mouseX = ( event.clientX - windowHalfX );
+				mouseY = ( event.clientY - windowHalfY );
+			}
+
+
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+
+			function render() {
+
+				camera.position.x += ( mouseX - camera.position.x ) * .05;
+				camera.position.y += ( -( mouseY - 200 ) - camera.position.y ) * .05;
+
+				camera.lookAt( scene1.position );
+
+				renderer.clear();
+				renderer.setScissorTest( true );
+
+				renderer.setScissor( 0, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT );
+				renderer.render( scene1, camera );
+
+				renderer.setScissor( SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT );
+				renderer.render( scene2, camera );
+
+				renderer.setScissorTest( false );
+
+			}
+			
+			function init_info() {
+					createMenu( METEORITES );
+			}
+			
+			function generateButtonCallback( url ) {
+				return function ( event ) {
+					loadMeteorites( url );
+				}
+			}
+			
+			function generateButtonCallbackNew( url ) {
+				return function ( event ) {
+					loadNewMeteorite( url );
+				}
+			}
+			
+			function createMenu( categories ) {
+
+				while (menu.firstChild) {
+					menu.removeChild(menu.firstChild);
+				}
+
+				for ( var m in categories ) {
+
+					var button = document.createElement( 'button' );
+					button.innerHTML = m;
+					menu.appendChild( button );
+
+					if (categories[ m ]) {
+						var url = "models/meteorites/" +  categories[ m ];
+						button.addEventListener( 'click', generateButtonCallback( url ), false );
+					}
+					else {
+						button.addEventListener( 'click', generateButtonCallbackNew( currentImages[ m ] ), false );
+					}
+				}
+
+			}
+			
+			function loadNewMeteorite( url ) {
+				//while (container.firstChild) {
+				//	container.removeChild(container.firstChild);
+				//}
+				fileUrl = url;
+				console.log(fileUrl);
+				//init();
+				document.getElementById('siteDetailLoader').style.display = 'inline';
+				updateInit();
+				animate();
+			}
+			
+			
+			function loadMeteorites( url ) {			
+
+				loadJSON(url, function(response) {
+					var actual_JSON = JSON.parse(response);
+					var entriesLength = actual_JSON.entries.length;
+					if (entriesLength < 1) {
+						console.log("Error: entries length < 1");
+					}
+					var entry = {};
+					currentImages = {};
+					entry[actual_JSON.entries[0].Name] = actual_JSON.entries[0].URL;
+					currentImages[actual_JSON.entries[0].Name] = actual_JSON.entries[0].Image;
+					for ( var i = 1; i < entriesLength; i ++ ) {
+						entry[actual_JSON.entries[i].Name] = actual_JSON.entries[i].URL;
+						currentImages[actual_JSON.entries[i].Name] = actual_JSON.entries[i].Image;
+					}
+					createMenu( entry );
+				});
+			}
+
+			 function loadJSON(url, callback) {   
+				var xobj = new XMLHttpRequest();
+					xobj.overrideMimeType("application/json");
+				xobj.open('GET', url, true); // Replace 'my_data' with the path to your file
+				xobj.onreadystatechange = function () {
+					  if (xobj.readyState == 4 && xobj.status == "200") {
+						// Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+						callback(xobj.responseText);
+					  }
+				};
+				xobj.send(null);  
+			 }		
+
+			function updateInit() {
+			
+				for ( var i = scene1.children.length - 1; i >= 0 ; i -- ) {
+					var obj = scene1.children[ i ];
+					if ( obj.isUpdate ) {
+						scene1.remove(obj);
+						obj.geometry.dispose();
+						obj.material.dispose();
+						delete(obj);
+					}
+				}
+				for ( var i = scene2.children.length - 1; i >= 0 ; i -- ) {
+					var obj = scene2.children[ i ];
+					if ( obj.isUpdate ) {
+						scene2.remove(obj);
+						obj.geometry.dispose();
+						obj.material.dispose();
+						delete(obj);
+					}
+				}				
+			
+				var callbackPaintingUpdate = function () {
+				
+					document.getElementById('siteDetailLoader').style.display = 'none';
+
+					var imageUpdate = texturePaintingUpdate1.image;
+
+					texturePaintingUpdate2.image = imageUpdate;
+					texturePaintingUpdate2.needsUpdate = true;
+
+					var geometryUpdate = new THREE.PlaneBufferGeometry( 100, 100 );
+					var meshUpdate1 = new THREE.Mesh( geometryUpdate, materialPaintingUpdate1 );
+					var meshUpdate2 = new THREE.Mesh( geometryUpdate, materialPaintingUpdate2 );
+
+					var floorHeightUpdate = -1.117 * imageUpdate.height / 2;
+					for ( var i = scene1.children.length - 1; i >= 0 ; i -- ) {
+						var obj = scene1.children[ i ];
+						if ( obj.isMeshCanvas ) {
+							scene1.remove(obj);
+							obj.position.y = floorHeightUpdate;
+							scene1.add(obj);
+						}
+					}
+					for ( var i = scene2.children.length - 1; i >= 0 ; i -- ) {
+						var obj = scene2.children[ i ];
+						if ( obj.isMeshCanvas ) {
+							scene2.remove(obj);
+							obj.position.y = floorHeightUpdate;
+							scene2.add(obj);
+						}
+					}					
+					
+					updatePainting( scene1, meshUpdate1 );
+					updatePainting( scene2, meshUpdate2 );
+					
+					meshUpdate1.geometry.dispose();
+					meshUpdate2.geometry.dispose();
+					meshUpdate1.material.dispose();
+					meshUpdate2.material.dispose();
+					materialPaintingUpdate1.dispose();
+					materialPaintingUpdate2.dispose();
+					texturePaintingUpdate1.dispose();
+					texturePaintingUpdate2.dispose();
+					geometryUpdate.dispose();
+					
+					delete(meshUpdate1);
+					delete(meshUpdate2);
+					delete(materialPaintingUpdate1);
+					delete(materialPaintingUpdate2);
+					delete(texturePaintingUpdate1);
+					delete(texturePaintingUpdate2);
+					delete(geometryUpdate);
+					delete(imageUpdate);
+					
+					function updatePainting( zsceneUpdate, zmeshUpdate ) {
+						
+						zmeshUpdate.scale.x = 1.0 * imageUpdate.width / 100;
+						zmeshUpdate.scale.y = 1.0 * imageUpdate.height / 100;
+						zmeshUpdate.isUpdate = true;
+						zmeshUpdate.isMeshCanvas = false;
+						zsceneUpdate.add( zmeshUpdate );
+
+						var meshFrameUpdate = new THREE.Mesh( geometryUpdate, new THREE.MeshBasicMaterial( { color: 0x000000, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 5 } ) );
+						meshFrameUpdate.scale.x = 1.0 * imageUpdate.width / 100;
+						meshFrameUpdate.scale.y = 1.0 * imageUpdate.height / 100;
+						meshFrameUpdate.isUpdate = true;
+						meshFrameUpdate.isMeshCanvas = false;
+						zsceneUpdate.add( meshFrameUpdate );
+						meshFrameUpdate.geometry.dispose();
+						meshFrameUpdate.material.dispose();
+						delete(meshFrameUpdate);
+						
+						var meshShadowUpdate = new THREE.Mesh( geometryUpdate, new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.75, transparent: true } ) );
+						meshShadowUpdate.position.y = -1.0 * imageUpdate.height / 2;
+						meshShadowUpdate.position.z = -1.0 * imageUpdate.height / 2;
+						meshShadowUpdate.rotation.x = -Math.PI / 2;
+						meshShadowUpdate.scale.x = 1.0 * imageUpdate.width / 100;
+						meshShadowUpdate.scale.y = 1.0 * imageUpdate.height / 100;
+						meshShadowUpdate.isUpdate = true;
+						meshShadowUpdate.isMeshCanvas = false;
+						zsceneUpdate.add( meshShadowUpdate );
+						meshShadowUpdate.geometry.dispose();
+						meshShadowUpdate.material.dispose();
+						delete(meshShadowUpdate);
+					
+					}
+				
+				};
+
+			
+				var texturePaintingUpdate1 = new THREE.TextureLoader().load( fileUrl, callbackPaintingUpdate );
+				var texturePaintingUpdate2 = new THREE.Texture();
+				var materialPaintingUpdate1 = new THREE.MeshBasicMaterial( { color: 0xffffff, map: texturePaintingUpdate1 } );
+				var materialPaintingUpdate2 = new THREE.MeshBasicMaterial( { color: 0xffffff, map: texturePaintingUpdate2 } );
+
+				texturePaintingUpdate2.minFilter = texturePaintingUpdate2.magFilter = THREE.NearestFilter;
+				texturePaintingUpdate1.minFilter = texturePaintingUpdate1.magFilter = THREE.LinearFilter;
+				texturePaintingUpdate1.mapping = THREE.UVMapping;
+			
+			 }
+			 
+			 function disposeNode (node)
+				{
+					if (node instanceof THREE.Mesh)
+					{
+						if (node.geometry)
+						{
+							node.geometry.dispose ();
+						}
+
+						if (node.material)
+						{
+							if (node.material instanceof THREE.MeshFaceMaterial)
+							{
+								$.each (node.material.materials, function (idx, mtrl)
+								{
+									if (mtrl.map)           mtrl.map.dispose ();
+									if (mtrl.lightMap)      mtrl.lightMap.dispose ();
+									if (mtrl.bumpMap)       mtrl.bumpMap.dispose ();
+									if (mtrl.normalMap)     mtrl.normalMap.dispose ();
+									if (mtrl.specularMap)   mtrl.specularMap.dispose ();
+									if (mtrl.envMap)        mtrl.envMap.dispose ();
+
+									mtrl.dispose ();    // disposes any programs associated with the material
+								});
+							}
+							else
+							{
+								if (node.material.map)          node.material.map.dispose ();
+								if (node.material.lightMap)     node.material.lightMap.dispose ();
+								if (node.material.bumpMap)      node.material.bumpMap.dispose ();
+								if (node.material.normalMap)    node.material.normalMap.dispose ();
+								if (node.material.specularMap)  node.material.specularMap.dispose ();
+								if (node.material.envMap)       node.material.envMap.dispose ();
+
+								node.material.dispose ();   // disposes any programs associated with the material
+							}
+						}
+					}
+				}   // disposeNode
+
+				function disposeHierarchy (node, callback)
+				{
+					for (var i = node.children.length - 1; i >= 0; i--)
+					{
+						var child = node.children[i];
+						disposeHierarchy (child, callback);
+						callback (child);
+					}
+				}
+
+		</script>
+
+	</body>
+</html>
