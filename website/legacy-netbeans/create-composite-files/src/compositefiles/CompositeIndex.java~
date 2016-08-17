@@ -1,0 +1,267 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package compositefiles;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author windows
+ */
+public class CompositeIndex {
+    private String countryName;
+    private int[] dayWindow;
+    private double[] quantileValues;
+    private HashMap<String, ArrayList<Double>> rawValueMap;
+    private String[] stockNames;
+    
+    CompositeIndex(String countryName, int[] dayWindow, double[] quantileValues) {
+        this.countryName = countryName;
+        this.dayWindow = dayWindow;
+        this.quantileValues = quantileValues;
+    }
+    
+    public void run() {
+        getStockNames();
+        for (int i = 0; i < dayWindow.length; i++) {
+            for (int j = 0; j < stockNames.length; j++) {
+                String PreviousFilePath = Indices.CurrentPath + "ProgramData" + 
+                            Indices.filePathSymbol + countryName + Indices.filePathSymbol + 
+                            stockNames[j] + Indices.filePathSymbol + stockNames[j] + 
+                            Integer.toString(dayWindow[i]) + "days.csv";
+                
+                List<String> dataValues = null;
+                List<String> dateValues = null;
+                
+                InputData.ReadValues(PreviousFilePath, dataValues, 
+                            dateValues, true, true);
+                
+                putRawValues(dataValues, dateValues);
+                
+                String savePath = Indices.CurrentPath + "Composite" + Indices.filePathSymbol +
+                        countryName;
+                calculateQuantileValues(savePath);
+            }
+            rawValueMap.clear();
+        }
+    }
+    
+    private void putRawValues(List<String> dataValues, List<String> dateValues) {
+        Iterator<String> dataIterator = dataValues.iterator();
+        Iterator<String> dateIterator = dateValues.iterator();
+        
+        if (dataValues.size() != dateValues.size()) {
+            System.out.println("Length of lists do not match!");
+        }
+        else {
+            while(dataIterator.hasNext()) {
+                String date = dateIterator.next();
+                double data = Double.parseDouble(dataIterator.next());
+                
+                if (rawValueMap.containsKey(date)){
+                    ArrayList<Double> tempList = rawValueMap.get(date);
+                    tempList.add(data);
+                    rawValueMap.put(date, tempList);
+                }
+                else {
+                    ArrayList<Double> tempList = new ArrayList<>();
+                    tempList.add(data);
+                    rawValueMap.put(date, tempList);
+                }
+            }
+        }
+    }
+    
+    private void getStockNames() {
+        switch (countryName) {
+            case "Indices":
+                stockNames = Indices.IndicesNamesArray;
+                break;
+            case "Stocks":
+                stockNames = Indices.StocksNamesArray;
+                break;
+            case "Currencies":
+                stockNames = Indices.CurrenciesNamesArray;
+                break;
+            case "HongKong":
+                stockNames = Indices.HongKongNamesArray;
+                break;                
+            case "Germany":
+                stockNames = Indices.GermanyNamesArray;
+                break;        
+            case "UnitedKingdom":
+                stockNames = Indices.UnitedKingdomNamesArray;
+                break; 
+            case "India":
+                stockNames = Indices.IndiaNamesArray;
+                break;                 
+            case "Brazil":
+                stockNames = Indices.BrazilNamesArray;
+                break;  
+            case "China":
+                stockNames = Indices.ChinaNamesArray;
+                break; 
+            case "Japan":
+                stockNames = Indices.JapanNamesArray;
+                break; 
+            case "Australia":
+                stockNames = Indices.AustraliaNamesArray;
+                break; 
+            case "Argentina":
+                stockNames = Indices.ArgentinaNamesArray;
+                break; 
+            case "SouthKorea":
+                stockNames = Indices.SouthKoreaNamesArray;
+                break; 
+            case "Israel":
+                stockNames = Indices.IsraelNamesArray;
+                break;                  
+            case "Singapore":
+                stockNames = Indices.SingaporeNamesArray;
+                break;                
+            case "Italy":
+                stockNames = Indices.ItalyNamesArray;
+                break;                            
+            case "Mexico":
+                stockNames = Indices.MexicoNamesArray;
+                break;                                       
+            case "Indonesia":
+                stockNames = Indices.IndonesiaNamesArray;
+                break;                       
+            case "France":
+                stockNames = Indices.FranceNamesArray;
+                break;
+            case "Canada":
+                stockNames = Indices.CanadaNamesArray;
+                break;                             
+            case "Taiwan":
+                stockNames = Indices.TaiwanNamesArray;
+                break;             
+            case "Austria":
+                stockNames = Indices.AustriaNamesArray;
+                break;  
+            case "Denmark":
+                stockNames = Indices.DenmarkNamesArray;
+                break;                  
+            case "Netherlands":
+                stockNames = Indices.NetherlandsNamesArray;
+                break;              
+            case "NewZealand":
+                stockNames = Indices.NewZealandNamesArray;
+                break;              
+            case "Norway":
+                stockNames = Indices.NorwayNamesArray;
+                break;              
+            case "Spain":
+                stockNames = Indices.SpainNamesArray;
+                break;              
+            case "Sweden":
+                stockNames = Indices.SwedenNamesArray;
+                break;              
+            case "Switzerland":
+                stockNames = Indices.SwitzerlandNamesArray;
+                break;              
+            case "Russia":
+                stockNames = Indices.RussiaNamesArray;
+                break;              
+            case "Dubai":
+                stockNames = Indices.DubaiNamesArray;
+                break;              
+            case "Greece":
+                stockNames = Indices.GreeceNamesArray;
+                break;              
+            case "Baltic":
+                stockNames = Indices.BalticNamesArray;
+                break;              
+            case "Peru":
+                stockNames = Indices.PeruNamesArray;
+                break;              
+            case "Venezuela":
+                stockNames = Indices.VenezuelaNamesArray;
+                break;   
+            case "Chile":
+                stockNames = Indices.ChileNamesArray;
+                break;  
+            case "ETF":
+                stockNames = Indices.ETFNamesArray;
+                break;  
+            case "Other":
+                stockNames = Indices.OtherNamesArray;
+                break;                  
+            default:
+                stockNames = Indices.CommoditiesNamesArray;                
+                break;
+        }
+    }
+   
+    
+    void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+    
+    void setDayWindow(int[] dayWindow) {
+        this.dayWindow = dayWindow;
+    }
+    
+    void setQuantileValues(double[] quantileValues) {
+        this.quantileValues = quantileValues;
+    }
+
+    private void calculateQuantileValues(String savePath) {
+
+        for (int i = 0; i < quantileValues.length; i++) {
+            HashMap<String, Double> quantileIndex = new HashMap();
+            //iterate over hashmap
+            for (Map.Entry<String, ArrayList<Double>> entry : rawValueMap.entrySet()) {
+                String key = entry.getKey();
+                ArrayList<Double> tempList = entry.getValue();
+                double quantileValue = calculateQuantile(quantileValues[i], tempList);
+                quantileIndex.put(key, quantileValue);
+            }
+
+            try {
+                InputData.writetoFile(quantileIndex, savePath + String.valueOf(quantileValues[i]) + "quantile.csv");
+            } catch (IOException ex) {
+                System.out.println("Error writing the file");
+            }
+        }
+        
+    }
+
+    private double calculateQuantile(double quantileValue, ArrayList<Double> tempList) {
+        
+        //remove all zeros
+        int i = 0;
+        final double EPSILON = 0.01;
+        final int SIZE = 30;
+        while (i < tempList.size()) {
+            if (tempList.get(i) < EPSILON) {
+                tempList.remove(i);
+            }
+            else {
+                i++;
+            }
+        }
+        
+        
+        if (tempList.size() < SIZE)
+            return 0.0;
+        else {
+            int indexValue = (int) Math.round(tempList.size() * quantileValue);
+            Collections.sort(tempList);
+            return tempList.get(indexValue);
+        }
+    }
+    
+}
