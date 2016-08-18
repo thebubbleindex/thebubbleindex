@@ -1,0 +1,24 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                       Application.index
+
+# Ignore favicon requests
+GET     /favicon.ico                            Application.getFavicon
+
+# Robots.txt
+GET     /robots.txt                             Application.getrobots
+
+# Sitemap
+GET     /sitemap.xml                            Application.getSiteMap
+
+# Verification Google Web Dev
+GET     /googlec.html            Application.verification
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+
+# Catch all
+*       /{controller}/{action}                  {controller}.{action}

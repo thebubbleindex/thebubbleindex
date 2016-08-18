@@ -1,0 +1,51 @@
+#baseurl = "http://localhost:1313"
+baseurl = "https://gateway.ipfs.io/ipns/QmPC1xcsMTDKFTWHLrGEaNTCEdceUf4wWRJhM5P4kDeUsv"
+
+languageCode = "en-us"
+title = "LPPL Market Watch"
+
+[author]
+name = "admin"
+# email will use for gravatar
+email = ""
+
+[taxonomies]
+category = "categories"
+
+[params]
+# site description, will show under navigation
+description = "Blog of The Bubble Index"
+
+# RSS / Email (optional) subscription links (change if using something like Feedburner)
+subscribe_rss = ""
+subscribe_email = ""
+
+# social links
+facebook_user = ""
+googleplus_user = ""
+twitter_user = ""
+github_user = ""
+coderwall_user = ""
+stackoverflow_user = ""
+stackoverflow_user_id = ""
+linkedin_user = ""
+pinterest_user = ""
+delicious_user = ""
+pinboard_user = ""
+quora_user = ""
+instagram_user = ""
+behance_user = ""
+douban_user = ""
+
+# share links
+facebook_like = true
+twitter_tweet_button = true
+google_plus_one = "true"
+addthis_profile_id = ""
+
+# Disqus Comments
+disqus_short_name = ""
+disqus_show_comment_count = false
+
+# google analytics
+google_analytics_tracking_id = ""

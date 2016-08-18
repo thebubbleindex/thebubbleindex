@@ -1,0 +1,312 @@
+/*  Table of Contents 
+
+HEADER ELEMENTS STYLES:
+	USER LINKS STYLE
+	SOCIAL LINKS STYLE
+	LANGUAGE SELECTOR
+	LOGO STYLE
+	ADVERTISEMENT BANNER STYLE
+	MAIN MENU STYLE
+
+*/
+
+/*********************
+HEADER ELEMENTS STYLES
+*********************/
+
+.header-top-wrapper {
+	background-color: #ffffff;
+	border-bottom: 1px solid #e6e6e6;
+}
+
+.header-top-right {
+	text-align: right;
+}
+
+.header-wrapper {
+	background: url(../images/background.png);
+	border-bottom: 1px solid #e6e6e6;
+}
+
+.main-menu-wrapper {
+	background-color: #ffffff;
+}
+
+/* USER LINKS STYLE */
+
+.user-links {
+	font-family: "Titillium Web";
+}
+
+	.user-links .login {
+		position: relative;
+		display: inline-block;
+	}
+
+		.user-links .login a.login-link {
+			display: block;
+			background: url(../images/link-arrow.png) no-repeat 20px center;
+			padding: 8px 15px 8px 30px;
+			border-left: 1px solid #e6e6e6;
+		}
+
+		.user-links .login .login-form {
+			position: absolute;
+			display: none;
+			background: url(../images/login-form-background.png) no-repeat left top #ffffff;
+			width: 180px;
+			padding: 25px 20px 20px;
+			border: 1px solid #e6e6e6;
+			box-shadow: 0 0 3px #bababa;
+			z-index: 50;
+		}
+
+			.user-links .login .login-form input.text-input-grey {
+				height: 30px;
+				margin-bottom: 20px;
+			}
+
+			.user-links .login .login-form .password-restore {
+				display: inline-block;
+				width: 30%;
+				line-height: 15px;
+				background: url(../images/link-arrow.png) no-repeat 5px 5px;
+				padding-left: 15px;
+			}
+
+			.user-links .login .login-form .button-2-colorful {
+				float: right;
+				width: 45%;
+			}
+
+	.user-links .register {
+		position: relative;
+		display: inline-block;
+	}
+
+		.user-links a.register-link {
+			display: block;
+			background: url(../images/link-arrow.png) no-repeat 20px center;
+			padding: 8px 17px 8px 30px;
+			border-left: 1px solid #e6e6e6;
+			border-right: 1px solid #e6e6e6;
+		}
+
+		.user-links .register .register-form {
+			position: absolute;
+			display: none;
+			background: url(../images/register-form-background.png) no-repeat left top #ffffff;
+			width: 180px;
+			padding: 25px 20px 20px;
+			border: 1px solid #e6e6e6;
+			box-shadow: 0 0 3px #bababa;
+			z-index: 50;
+		}
+
+			.user-links .register .register-form input.text-input-grey {
+				height: 30px;
+				margin-bottom: 20px;
+			}
+
+			.user-links .register .register-form .fields-required {
+				display: inline-block;
+				width: 45%;
+				line-height: 15px;
+			}
+
+			.user-links .register .register-form .button-2-colorful {
+				float: right;
+				width: 45%;
+			}
+
+/* SOCIAL LINKS STYLE */
+
+.social-links {
+	display: inline-block;
+	line-height: 25px;
+	padding: 0 15px;
+	border-left: 1px solid #e6e6e6;
+	border-right: 1px solid #e6e6e6;
+}
+
+	.social-links a {
+		display: inline-block;
+		margin: 6px 3px 0;
+	}
+
+/* LANGUAGE SELECTOR STYLE */
+
+.languages {
+	display: inline-block;
+	float: right;
+	vertical-align: top;
+	font-family: "Titillium Web";
+	line-height: 38px;
+}
+
+	.languages a {
+		display: inline-block;
+		width: 40px;
+		text-align: center;
+		border-right: 1px solid #E6E6E6;
+	}
+
+/* LOGO STYLE */
+
+.logo img {
+	display: block;
+	margin: 30px 0;
+}
+
+/* ADVERTISEMENT BANNER STYLE */
+
+.adverisement a {
+	display: block;
+}
+
+	.adverisement a img {
+		display: block;
+		max-width: 100%;
+		height: auto;
+		margin: 20px auto;
+	}
+
+/* MAIN MENU STYLE */
+
+/* First level links */
+.main-menu ul {
+	display: table;
+	padding: 0;
+	margin: 0;
+	text-align: center;
+}
+
+	.main-menu ul li {
+		display: inline-block;
+		float: left;
+		position: relative;
+		list-style: none;
+		border-right: 1px solid #e6e6e6;
+	}
+
+		.main-menu ul li a {
+			display: block;
+			line-height: 18px;
+			font-family: "Patua One";
+			background-color: #ffffff;
+			padding: 25px 27px 25px;
+		}
+
+		.main-menu ul li a:hover {
+			background-color: #fff;
+		}
+
+	.main-menu ul li.first {
+		border-left: 1px solid #e6e6e6;
+	}
+
+	.main-menu ul li.active {
+		position: relative;
+		top: -3px;
+		background-color: #98B709;
+		border-left: none;
+		border-right: none;
+		border-top-left-radius: 3px;
+		border-top-right-radius: 3px;
+	}
+
+		.main-menu ul li.active a {
+			color: #ffffff;
+			padding: 25px 28px 22px;
+		}
+
+		.main-menu ul li.active a:hover {
+			background-image: none;
+		}
+
+	.main-menu ul li.neighbour-left {
+		border-right: none;
+	}
+
+		.main-menu ul li.neighbour-left a,
+		.main-menu ul li.neighbour-left div {
+			background-color: #ffffff;
+			border-bottom-right-radius: 3px;
+		}
+
+		.main-menu ul li.neighbour-right a,
+		.main-menu ul li.neighbour-right div {
+			background-color: #ffffff;
+			border-bottom-left-radius: 3px;
+		}
+
+	.main-menu ul li.empty {
+		border: none;
+	}
+
+		.main-menu ul li.empty div {
+			display: block;
+			height: 62px;
+			background-color: #ffffff;
+			padding: 3px;
+		}
+
+		/* Second level links */
+		.main-menu ul li ul {
+			position: absolute;
+			width: 200px;
+			top: 73px;
+			z-index: 20;
+		}
+
+			.main-menu ul li ul li {
+				width: 100%;
+				background-color: #343434;
+				border-right: none;
+			}
+
+			.main-menu ul li ul li.first {
+				border-left: none;
+			}
+
+				.main-menu ul li.active ul li a:hover {
+					background-color: #343434;
+				}
+
+				.main-menu ul li ul li a,
+				.main-menu ul li.active ul li a,
+				.main-menu ul li.neighbour-left ul li a,
+				.main-menu ul li.neighbour-right ul li a {
+					width: 100%;
+					font-family: "Titillium Web";
+					background-color: #343434;
+					text-align: left;
+					padding: 19px 20px;
+					border-top: 1px solid #434343;
+					border-bottom: 1px solid #272727;
+				}
+
+				.main-menu ul li ul li.first a {
+					border-top: none;
+				}
+
+				.main-menu ul li ul li.last a {
+					border-bottom: none;
+				}
+
+				.main-menu ul li ul li a:hover {
+					background-image: none;
+					background-color: #343434;
+					color: #ffffff;
+				}
+
+/* MOBILE MAIN MENU */
+.main-menu {
+	text-align: center;
+}
+
+	.main-menu select.mnav {
+		width: 100%;
+		padding: 10px;
+		margin: 10px 0;
+	}

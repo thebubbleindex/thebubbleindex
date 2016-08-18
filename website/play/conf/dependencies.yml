@@ -1,0 +1,6 @@
+# Application dependencies
+
+require:
+- play
+- commons-net 3.3
+

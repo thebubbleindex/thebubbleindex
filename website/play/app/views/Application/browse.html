@@ -1,0 +1,120 @@
+<!doctype html>
+<html class="" lang="en">
+
+	<head>
+
+		<meta charset="utf-8">
+		<title>The Bubble Index - Browse</title>
+#{header /}
+
+			<div class="main-menu-wrapper">
+				<div class="zone-main-menu zone clearfix">
+
+					<div class="main-menu-container container-24">
+
+						<div class="main-menu block">
+							<ul id="sf-menu">
+								<li class="empty">
+									<div></div>
+								</li>
+																<li class="first">
+									<a href="@{Application.index()}">HOME</a>
+									<!--<ul>
+										<li class="first">
+											<a href="#">Home (Street View)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Slideshow)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 2)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 3)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 4)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 5)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 6)</a>
+										</li>
+										<li class="last">
+											<a href="#">Home (Header 7)</a>
+										</li>
+									</ul>-->
+								</li>
+								<li class="">
+									<a href="@{Pages.method()}">ABOUT</a>
+								</li>
+								<li class="">
+									<a href="@{Pages.examples()}">EXAMPLES</a>
+								</li>
+								<li class="">
+									<a href="@{Pages.links()}">LINKS</a>
+								</li>
+
+								<li class="neighbour-left">
+									<a href="@{Pages.contact()}">CONTACT</a>
+								</li>
+								<li class="active">
+									<a href="@{Application.browse()}">BROWSE</a>
+								</li>
+								<li class="last neighbour-right">
+									<a href="@{Pages.search()}">SEARCH</a>
+								</li>
+								<li class="empty">
+									<div></div>
+								</li>
+							</ul>
+						</div>
+
+					</div>
+
+				</div><!-- end of .zone-main-menu -->
+			</div><!-- end of .main-menu-wrapper -->
+
+		</header>
+
+		<section class="section content">
+			<div class="content-wrapper">
+				<div class="zone-content zone clearfix">
+					<div class="project-header-container container-24">
+						<div class="project-header block">
+							<div class="block-title">
+								<h1>Browse</h1>
+							</div>
+							<div class="zone-search clearfix">
+			
+							</div>
+						</div>
+
+					<div class="project-body-container container-24">
+									<div class="welcome block">
+							<div class="welcome-globe clearfix">
+								<img class="globe" src="@{'/public/images/globe.png'}" alt="" height="244" width="244"/>
+								<img class="globe-background" src="@{'/public/images/globe-background.png'}" alt="" height="201" width="620"/>
+																<a href="@{Application.browselist('Indices')}" class="left edge top">MARKETS</a>
+								<a href="@{Application.browselist('Currencies')}" class="right edge top">CURRENCIES</a>
+								<a href="@{Application.browselist('Commodities')}" class="left middle top">COMMODITIES</a>
+								<a href="@{Application.browseAmericas()}" class="right middle top">AMERICAS</a>
+								<a href="@{Application.browseAsia()}" class="left middle bottom">ASIA</a>
+								<a href="@{Application.browseEurope()}" class="right middle bottom">EUROPE</a>
+								<a href="@{Application.browsePacific()}" class="left edge bottom">PACIFIC</a>
+								<a href="@{Application.browseComposite()}" class="right edge bottom">COMPOSITE</a>
+							</div>
+						</div>
+					</div>
+					</div>
+				</div><!-- end of .zone-content -->
+			</div><!-- end of .content-wrapper -->
+		</section>
+#{footer /}
+
+#{scripts /}
+
+	</body>
+
+</html>

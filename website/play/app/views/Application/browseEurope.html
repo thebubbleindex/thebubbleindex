@@ -1,0 +1,102 @@
+<!doctype html>
+<html class="" lang="en">
+
+	<head>
+
+		<meta charset="utf-8">
+		<title>The Bubble Index - Browse Europe</title>
+#{header /}
+
+			<div class="main-menu-wrapper">
+				<div class="zone-main-menu zone clearfix">
+
+					<div class="main-menu-container container-24">
+
+						<div class="main-menu block">
+							<ul id="sf-menu">
+								<li class="empty">
+									<div></div>
+								</li>
+																<li class="first">
+									<a href="@{Application.index()}">HOME</a>
+								</li>
+								<li class="">
+									<a href="@{Pages.method()}">ABOUT</a>
+								</li>
+								<li class="">
+									<a href="@{Pages.examples()}">EXAMPLES</a>
+								</li>
+								<li class="">
+									<a href="@{Pages.links()}">LINKS</a>
+								</li>
+
+								<li class="neighbour-left">
+									<a href="@{Pages.contact()}">CONTACT</a>
+								</li>
+								<li class="active">
+									<a href="@{Application.browse()}">BROWSE</a>
+								</li>
+								<li class="last neighbour-right">
+									<a href="@{Pages.search()}">SEARCH</a>
+								</li>
+								<li class="empty">
+									<div></div>
+								</li>
+							</ul>
+						</div>
+
+					</div>
+
+				</div><!-- end of .zone-main-menu -->
+			</div><!-- end of .main-menu-wrapper -->
+
+		</header>
+
+		<section class="section content">
+
+			<div class="content-wrapper">
+				<div class="zone-content zone clearfix">
+
+					<div class="project-header-container container-24">
+
+						<div class="project-header block">
+							<div class="block-title">
+								<h1>Browse Europe</h1>
+							</div>
+						</div>
+
+					</div>
+
+	
+							<div class="content-wrapper">
+				<div class="zone-content equalize zone clearfix">
+
+					<div class="content-container container-24">
+						<div class="welcome block">
+							<div class="welcome-globe clearfix">
+								<img class="globe" src="@{'/public/images/globe.png'}" alt="" height="244" width="244"/>
+								<img class="globe-background" src="@{'/public/images/globe-background.png'}" alt="" height="201" width="620"/>
+								<a href="@{Application.browselist('Germany')}" class="left edge top">GERMANY</a>
+								<a href="@{Application.browselist('UnitedKingdom')}" class="right edge top">UNITED KINGDOM</a>
+								<a href="@{Application.browselist('France')}" class="left middle top">FRANCE</a>
+								<a href="@{Application.browselist('Sweden')}" class="right middle top">SWEDEN</a>
+								<a href="@{Application.browselist('Italy')}" class="left middle bottom">ITALY</a>
+								<a href="@{Application.browselist('Greece')}" class="right middle bottom">GREECE</a>
+								<a href="@{Application.browselist('Switzerland')}" class="left edge bottom">SWITZERLAND</a>
+								<a href="@{Application.browseMoreEurope()}" class="right edge bottom">MORE</a>
+							</div>
+						</div>
+
+					</div><!-- end of .content-container -->
+				</div><!-- end of .zone-content -->
+			</div><!-- end of .content-wrapper -->
+
+		</section>
+
+#{footer /}
+
+#{scripts /}
+
+	</body>
+
+</html>

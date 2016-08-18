@@ -1,0 +1,253 @@
+<!doctype html>
+<html class="" lang="en">
+
+	<head>
+
+		<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+	background: #FFFFFF !important
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+</style>
+		<title>The Bubble Index - Plot</title>
+
+#{header /}
+			<div class="main-menu-wrapper">
+				<div class="zone-main-menu zone clearfix">
+
+					<div class="main-menu-container container-24">
+
+						<div class="main-menu block">
+							<ul id="sf-menu">
+								<li class="empty">
+									<div></div>
+								</li>
+																<li class="first">
+									<a href="@{Application.index()}">HOME</a>
+									<!--<ul>
+										<li class="first">
+											<a href="#">Home (Street View)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Slideshow)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 2)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 3)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 4)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 5)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 6)</a>
+										</li>
+										<li class="last">
+											<a href="#">Home (Header 7)</a>
+										</li>
+									</ul>-->
+								</li>
+								<li class="">
+									<a href="@{Pages.method()}">METHOD</a>
+								</li>
+								<li class="">
+									<a href="@{Pages.examples()}">EXAMPLES</a>
+								</li>
+								<li class="">
+									<a href="@{Pages.links()}">LINKS</a>
+								</li>
+
+								<li class="">
+									<a href="@{Pages.contact()}">CONTACT</a>
+								</li>
+								<li class="">
+									<a href="@{Application.browse()}">BROWSE</a>
+								</li>
+								<li class="neighbour-left">
+									<a href="@{Pages.search()}">SEARCH</a>
+								</li>
+								<li class="active last">
+									<a href="#">PLOT</a>
+								</li>
+								<li class="empty">
+									<div></div>
+								</li>
+							</ul>
+						</div>
+
+					</div>
+
+				</div><!-- end of .zone-main-menu -->
+			</div><!-- end of .main-menu-wrapper -->
+
+		</header>
+
+		<section class="section content">
+			<div class="plot-wrapper">
+
+		<script src="@{'/public/scripts/d3.min.js'}" charset="utf-8"></script>
+<script>
+
+
+
+var margin = {top: 20, right: 80, bottom: 30, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var parseDate = d3.time.format("%Y-%m-%d").parse;
+
+var x = d3.time.scale()
+    .range([0, width]);
+
+var y0 = d3.scale.linear()
+    .range([height, 0]);
+
+var y1 = d3.scale.linear()
+    .range([height, 0]);
+
+var color = d3.scale.category10();
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxisLeft = d3.svg.axis()
+    .scale(y0)
+    .orient("left");
+
+var yAxisRight = d3.svg.axis()
+    .scale(y1)
+    .orient("right");
+
+var line1 = d3.svg.line()
+    .interpolate("basis")
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y0(d.Price); });
+
+var line2 = d3.svg.line()
+    .interpolate("basis")
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y1(d['153 Days']); });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.tsv("@{'/public/ProgramData/d3data.tsv'}", function(error, data) {
+  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
+
+  data.forEach(function(d) {
+    d.date = parseDate(d.date);
+  });
+
+  var indices = color.domain().map(function(name) {
+    return {
+      name: name,
+      values: data.map(function(d) {
+        return {date: d.date, yvalue: +d[name]};
+      })
+    };
+  });
+
+  x.domain(d3.extent(data, function(d) { return d.date; }));
+
+  y0.domain([
+    d3.min(data, function(d) { return Math.min(d.Price); }),
+    d3.max(data, function(d) { return Math.max(d.Price); })
+  ]);
+
+  y1.domain([
+    d3.min(data, function(d) { return Math.min(d['153 Days']); }),
+    d3.max(data, function(d) { return Math.max(d['153 Days']); })
+  ]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxisLeft)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Price");
+
+  svg.append("g")
+      .attr("class", "y axis")
+			.attr("transform", "translate(" + width + " ,0)") 
+      .call(yAxisRight)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", "-.71em")
+      .style("text-anchor", "end")
+      .text("RelativePower");
+
+  
+  svg.append("path")
+      .attr("class", "line")
+      .attr("d", line1(data))
+      .style("stroke", "Price");
+
+  svg.append("path")
+      .attr("class", "line")
+      .attr("d", line2(data))
+      .style("stroke", "153 Days");
+
+  svg.append("text")
+      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y0(d.value.Price) + ")"; })
+      .attr("x", 3)
+      .attr("dy", ".35em")
+      .text(function(d) { return d.name; });
+
+  svg.append("text")
+      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y1(d.value['153 Days']) + ")"; })
+      .attr("x", 3)
+      .attr("dy", ".35em")
+      .text(function(d) { return d.name; });
+});
+
+</script>
+</div>
+		</section>
+
+		#{footer /}
+
+		<div id="boxed-switch" class="boxed-switch">SWITCH TO BOXED VERSION</div>
+
+		#{scripts /}
+	</body>
+
+</html>
