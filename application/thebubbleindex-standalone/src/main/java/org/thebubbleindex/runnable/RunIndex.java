@@ -8,6 +8,8 @@ import com.nativelibs4java.opencl.CLPlatform;
 import com.nativelibs4java.opencl.CLProgram;
 import com.nativelibs4java.opencl.CLQueue;
 import com.nativelibs4java.opencl.JavaCL;
+
+import java.io.File;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,7 +109,7 @@ public class RunIndex {
 
 		final int START_INDEX;
 
-		if (Utilities.checkForFile(previousFilePath)) {
+		if (new File(previousFilePath).exists()) {
 
 			Utilities.ReadValues(previousFilePath, DataList, DateList, true, true);
 
@@ -239,7 +241,7 @@ public class RunIndex {
 		}
 
 		final int START_INDEX;
-		if (Utilities.checkForFile(previousFilePath)) {
+		if (new File(previousFilePath).exists()) {
 
 			Utilities.ReadValues(previousFilePath, DataList, DateList, true, true);
 

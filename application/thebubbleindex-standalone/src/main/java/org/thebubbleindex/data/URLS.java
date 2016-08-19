@@ -446,6 +446,8 @@ public class URLS {
 						+ this.dataType + Indices.filePathSymbol + this.dataName + Indices.filePathSymbol
 						+ this.dataName + "dailydata.csv");
 
+				new File(Indices.getFilePath() + "ProgramData" + Indices.filePathSymbol
+						+ this.dataType + Indices.filePathSymbol + this.dataName + Indices.filePathSymbol).mkdirs();
 				dailydata.createNewFile();
 				try (final FileWriter writer = new FileWriter(dailydata)) {
 					for (int i = 0; i < dateData.size(); i++) {

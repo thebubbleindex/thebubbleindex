@@ -1,5 +1,6 @@
 package org.thebubbleindex.driver;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -207,7 +208,7 @@ public class BubbleIndex {
 					Logs.myLogger.info("Writing output file: {}", previousFilePath);
 
 					ExportData.WriteCSV(savePath, results, getDataSize() - window, Name, dailyPriceDate,
-							Utilities.checkForFile(previousFilePath));
+							new File(previousFilePath).exists());
 				} catch (final IOException ex) {
 					Logs.myLogger.error("Failed to write csv output. Save path = {}. {}", savePath, ex);
 				}

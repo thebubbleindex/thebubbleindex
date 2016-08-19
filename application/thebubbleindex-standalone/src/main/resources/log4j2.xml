@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="INFO">
 	<Properties>
-		<Property name="log-path">logs</Property>
+		<Property name="log-path">logs-thebubbleindex</Property>
+		<Property name="user-name">$${env:USERNAME}</Property>
+		<Property name="user-dir">$${sys:java.io.tmpdir}</Property>
 	</Properties>
 	<Appenders>
 		<Console name="console-log" target="SYSTEM_OUT">
@@ -9,20 +11,19 @@
 				pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
 		</Console>
 		<RollingFile name="infoLogger"
-			fileName="${log-path}/${env:USER}-thebubbleindex-info-${ctx:StartTime}.log"
+			fileName="${user-dir}${log-path}/${user-name}-thebubbleindex-info-${date:yyyy-MM-dd}.log"
 			immediateFlush="true" append="false"
-			filePattern="${log-path}/${env:USER}-thebubbleindex-info-%d{yyyy-MM-dd}-%i.log">
+			filePattern="${user-dir}${log-path}/${user-name}-thebubbleindex-info-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level - %msg%n" />
 			<Policies>
 				<SizeBasedTriggeringPolicy size="5MB" />
 			</Policies>
 			<DefaultRolloverStrategy max="10" />
 		</RollingFile>
-
 		<RollingFile name="errorLogger"
-			fileName="${log-path}/${env:USER}-thebubbleindex-errors-${ctx:StartTime}.log"
+			fileName="${user-dir}${log-path}/${user-name}-thebubbleindex-errors-${date:yyyy-MM-dd}.log"
 			immediateFlush="true" append="false"
-			filePattern="${log-path}/${env:USER}-thebubbleindex-errors-%d{yyyy-MM-dd}-%i.log">
+			filePattern="${user-dir}${log-path}/${user-name}-thebubbleindex-errors-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout
 				pattern="%d{yyy-MM-dd HH:mm:ss.SSS} %class{36} %L %M %-5level - %msg%n" />
 			<Policies>
@@ -30,14 +31,13 @@
 			</Policies>
 			<DefaultRolloverStrategy max="10" />
 		</RollingFile>
-
 	</Appenders>
 	<Loggers>
-		<Logger name="mylogger" level="ALL" additivity="false">
+		<Logger name="mylogger" level="ALL" additivity="true">
 			<AppenderRef ref="infoLogger" level="info" />
 			<AppenderRef ref="errorLogger" level="error" />
 		</Logger>
-		<Root level="OFF" additivity="false">
+		<Root level="INFO" additivity="false">
 			<AppenderRef ref="console-log" />
 		</Root>
 	</Loggers>

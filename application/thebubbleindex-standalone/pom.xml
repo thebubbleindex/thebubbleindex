@@ -5,6 +5,12 @@
 	<artifactId>standalone</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.nativelibs4java/javacl -->
 		<dependency>
 			<groupId>com.nativelibs4java</groupId>

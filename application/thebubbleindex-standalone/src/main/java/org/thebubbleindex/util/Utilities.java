@@ -4,12 +4,10 @@ import Jama.Matrix;
 import static info.yeppp.Core.Multiply_V64fV64f_V64f;
 import static info.yeppp.Core.Subtract_V64fV64f_V64f;
 import static info.yeppp.Math.Log_V64f_V64f;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 import javax.swing.SwingUtilities;
 
@@ -53,19 +51,18 @@ public class Utilities {
 	 * DataReverse method takes an array and reverses the linear order of the
 	 * array.
 	 * 
-	 * @param Data
+	 * @param data
 	 *            The array to be reversed
-	 * @param SIZE
+	 * @param size
 	 *            The size of the array
 	 */
-	public static void DataReverse(final double[] Data, final int SIZE) {
-
-		final double[] Temp = new double[SIZE];
-		for (int i = 0; i < SIZE; i++) {
-			Temp[i] = Data[SIZE - 1 - i];
+	public static void DataReverse(final double[] data, final int size) {
+		final int halfSize = size / 2;
+		for (int i = 0; i < halfSize; i++) {
+			final double tempDouble = data[i];
+			data[i] = data[size - 1 - i];
+			data[size - 1 - i] = tempDouble;
 		}
-
-		System.arraycopy(Temp, 0, Data, 0, SIZE);
 	}
 
 	/**
@@ -151,33 +148,24 @@ public class Utilities {
 	 * ReadValues reads an external file containing two columns separated by
 	 * either a tab or comma, storing each column into its own string list.
 	 * 
-	 * @param CSVLocation
+	 * @param locationPath
 	 * @param ColumnOne
 	 * @param ColumnTwo
 	 * @param firstLine
 	 * @param update
 	 * @throws FailedToRunIndex
 	 */
-	public static void ReadValues(final String CSVLocation, final List<String> ColumnOne, final List<String> ColumnTwo,
+	public static void ReadValues(final String locationPath, final List<String> ColumnOne, final List<String> ColumnTwo,
 			final boolean firstLine, final boolean update) throws FailedToRunIndex {
-
-		FileReader fileReader = null;
-		BufferedReader bufferedReader = null;
-		Scanner s = null;
-
 		try {
-			fileReader = new FileReader(CSVLocation);
-			bufferedReader = new BufferedReader(fileReader);
-			s = new Scanner(bufferedReader);
-			String line;
-
-			// check for header
-			if (firstLine) {
-				s.nextLine();
-			}
-
-			while (s.hasNext()) {
-				line = s.nextLine();
+			final List<String> lines = Files.readAllLines(Paths.get(locationPath), Charset.defaultCharset());
+			int index = 0;
+			for (final String line : lines) {
+				// check for header
+				if (index == 0 && firstLine) {
+					index++;
+					continue;
+				}
 				final Scanner lineScan = new Scanner(line);
 				lineScan.useDelimiter(",|\t");
 				/*
@@ -195,40 +183,12 @@ public class Utilities {
 					ColumnTwo.add(lineScan.next());
 				}
 				lineScan.close();
+				index++;
 			}
 
-		} catch (final IOException | NoSuchElementException ex) {
-			Logs.myLogger.error("CSVLocation = {}. {}", CSVLocation, ex);
-
+		} catch (final Exception ex) {
+			Logs.myLogger.error("Error while reading file = {}. {}", locationPath, ex);
 			throw new FailedToRunIndex(ex);
 		}
-
-		finally {
-			if (s != null) {
-				s.close();
-			}
-			try {
-				if (fileReader != null) {
-					fileReader.close();
-				}
-				if (bufferedReader != null) {
-					bufferedReader.close();
-				}
-			} catch (final IOException ex) {
-				Logs.myLogger.error("CSVLocation = {}. {}", CSVLocation, ex);
-				throw new FailedToRunIndex(ex);
-			}
-		}
-	}
-
-	/**
-	 * checkForFile checks to see if a file exists
-	 * 
-	 * @param filePathString
-	 * @return boolean true if file exists
-	 */
-	public static boolean checkForFile(final String filePathString) {
-		final File f = new File(filePathString);
-		return f.exists();
 	}
 }

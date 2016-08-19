@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.io.IOException;
 import static java.lang.Math.exp;
 import static java.lang.Math.pow;
@@ -312,7 +313,7 @@ public class BubbleIndexPlot {
 					+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName
 					+ Integer.toString(backtestDayLengths[i]) + "days.csv";
 
-			if (Utilities.checkForFile(previousFilePath)) {
+			if (new File(previousFilePath).exists()) {
 
 				Logs.myLogger.info("Found previous file = {}", previousFilePath);
 
@@ -546,7 +547,7 @@ public class BubbleIndexPlot {
 					+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName
 					+ Integer.toString(backtestDayLengths[i]) + "days.csv";
 
-			if (!Utilities.checkForFile(filePath)) {
+			if (!new File(filePath).exists()) {
 				Logs.myLogger.error("Could not find file. file path = {}", filePath);
 				throw new IOException();
 			}

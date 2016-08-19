@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -300,7 +301,7 @@ public class DerivativePlot {
 					+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName
 					+ Integer.toString(backtestDayLengths[i]) + "days.csv";
 
-			if (Utilities.checkForFile(previousFilePath)) {
+			if (new File(previousFilePath).exists()) {
 				Logs.myLogger.info("Found previous file = {}", previousFilePath);
 
 				Utilities.ReadValues(previousFilePath, DataListString, DateList, true, true);
