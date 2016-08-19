@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.thebubbleindex.swing;
 
 import java.util.List;
@@ -31,7 +25,7 @@ public class UpdateWorker extends SwingWorker<Boolean, String> {
 	protected Boolean doInBackground() {
 		Logs.myLogger.info("Update button clicked");
 
-		final UpdateData updateData = new UpdateData(this, quandlKey);
+		new UpdateData(this, quandlKey);
 		return true;
 	}
 

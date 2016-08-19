@@ -173,19 +173,19 @@ public class Utilities {
 
 			// check for header
 			if (firstLine) {
-				String waste = s.nextLine();
+				s.nextLine();
 			}
 
 			while (s.hasNext()) {
 				line = s.nextLine();
-				Scanner lineScan = new Scanner(line);
+				final Scanner lineScan = new Scanner(line);
 				lineScan.useDelimiter(",|\t");
 				/*
 				 * When updating... The Bubble Index files contain three
 				 * columns. The first column is not needed.
 				 */
 				if (update) {
-					final String waste = lineScan.next();
+					lineScan.next();
 					ColumnOne.add(lineScan.next());
 					ColumnTwo.add(lineScan.next());
 				}
@@ -194,6 +194,7 @@ public class Utilities {
 					ColumnOne.add(lineScan.next());
 					ColumnTwo.add(lineScan.next());
 				}
+				lineScan.close();
 			}
 
 		} catch (final IOException | NoSuchElementException ex) {

@@ -2,21 +2,10 @@ package org.thebubbleindex.driver;
 
 import com.nativelibs4java.util.IOUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
 import org.apache.logging.log4j.ThreadContext;
 import org.thebubbleindex.data.UpdateData;
 import org.thebubbleindex.exception.FailedToRunIndex;
@@ -207,7 +196,7 @@ public class noGUI {
 					} catch (final Exception ex) {
 						quandlKey = "";
 					}
-					final UpdateData updateData = new UpdateData(null, quandlKey);
+					new UpdateData(null, quandlKey);
 				}
 
 				else {

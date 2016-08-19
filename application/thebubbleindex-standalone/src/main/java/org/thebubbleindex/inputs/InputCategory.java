@@ -19,29 +19,30 @@ public class InputCategory {
 	private String location;
 	private final ArrayList<String> components;
 
-	InputCategory(String name) {
-		components = new ArrayList<>();
+	InputCategory(final String name) {
+		components = new ArrayList<String>();
 		this.name = name;
 		this.location = Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + this.name + ".csv";
 	}
 
-	InputCategory(String name, String location) {
-		components = new ArrayList<>();
+	InputCategory(final String name, final String location) {
+		components = new ArrayList<String>();
 		this.name = name;
 		this.location = location;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-	public void setLocation(String location) {
+	public void setLocation(final String location) {
 		this.location = location;
 	}
 
 	public void setComponents() {
+		CSVReader reader = null;
 		try {
-			final CSVReader reader = new CSVReader(new FileReader(this.location));
+			reader = new CSVReader(new FileReader(this.location));
 			final List<String[]> myEntries = reader.readAll();
 			for (final String[] myEntry : myEntries) {
 				components.add(myEntry[0]);
@@ -50,6 +51,14 @@ public class InputCategory {
 			Logs.myLogger.error("location = {}. {}", this.location, ex);
 		} catch (final IOException ex) {
 			Logs.myLogger.error("location = {}. {}", this.location, ex);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (final IOException e) {
+					Logs.myLogger.error("Failed to close reader.");
+				}
+			}
 		}
 	}
 

@@ -375,6 +375,7 @@ public class BubbleIndexPlot {
 	/*
 	 * WZW override Draw a dynamic crosshair(trace line-both axis)
 	 */
+	@SuppressWarnings("unused")
 	private void drawRTCrosshair() {
 		final Rectangle2D screenDataArea = chartPanel.getScreenDataArea(m_iX, m_iY);
 		if (screenDataArea == null)
@@ -420,6 +421,7 @@ public class BubbleIndexPlot {
 		final RectangleEdge rangeAxisEdge = plot.getRangeAxisEdge();
 
 		final double dXX = dateAxis.java2DToValue(this.m_dX, screenDataArea, domainAxisEdge);
+		@SuppressWarnings("unused")
 		final double dYY = rangeAxis.java2DToValue(this.m_dY, screenDataArea, rangeAxisEdge);
 		this.m_dXX = dXX;
 		// ^Get title and data

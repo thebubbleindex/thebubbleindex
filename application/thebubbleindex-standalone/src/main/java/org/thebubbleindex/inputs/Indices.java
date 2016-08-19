@@ -59,14 +59,13 @@ public class Indices {
 				Logs.myLogger.error("Unable to create category list file.");
 			}
 		}
-
+		CSVReader reader = null;
 		try {
 
 			Logs.myLogger.info("Reading category list: {}",
 					userDir + programDataFolder + filePathSymbol + categoryList);
 
-			final CSVReader reader = new CSVReader(
-					new FileReader(userDir + programDataFolder + filePathSymbol + categoryList));
+			reader = new CSVReader(new FileReader(userDir + programDataFolder + filePathSymbol + categoryList));
 			final List<String[]> myEntries = reader.readAll();
 
 			for (final String[] myEntry : myEntries) {
@@ -80,6 +79,14 @@ public class Indices {
 			Logs.myLogger.error("File = {}. {}", userDir + programDataFolder + filePathSymbol + categoryList, ex);
 		} catch (final IOException ex) {
 			Logs.myLogger.error("File = {}. {}", userDir + programDataFolder + filePathSymbol + categoryList, ex);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (final IOException e) {
+					Logs.myLogger.error("Failed to close reader.");
+				}
+			}
 		}
 
 	}

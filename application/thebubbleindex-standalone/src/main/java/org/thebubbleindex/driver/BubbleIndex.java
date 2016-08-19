@@ -231,9 +231,9 @@ public class BubbleIndex {
 		Logs.myLogger.info(
 				"Plotting. Category Name = {}, Selection Name = {}, Windows = {}," + "BegDate = {}, EndDate = {}",
 				categoryName, selectionName, windowsString, begDate.toString(), endDate.toString());
-		final BubbleIndexPlot bubbleIndexPlot = new BubbleIndexPlot(categoryName, selectionName, windowsString, begDate,
+		new BubbleIndexPlot(categoryName, selectionName, windowsString, begDate,
 				endDate, isCustomRange, dailyPriceData, dailyPriceDate);
-		final DerivativePlot derivativePlot = new DerivativePlot(categoryName, selectionName, windowsString, begDate,
+		new DerivativePlot(categoryName, selectionName, windowsString, begDate,
 				endDate, isCustomRange, dailyPriceData, dailyPriceDate);
 
 	}

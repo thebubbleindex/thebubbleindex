@@ -64,6 +64,8 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 		case All:
 			runAllTypes();
 			break;
+		default:
+			break;
 		}
 
 		return true;

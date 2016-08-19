@@ -374,6 +374,7 @@ public class DerivativePlot {
 	/*
 	 * WZW override Draw a dynamic crosshair(trace line-both axis)
 	 */
+	@SuppressWarnings("unused")
 	private void drawRTCrosshair() {
 		final Rectangle2D screenDataArea = chartPanel.getScreenDataArea(m_iX, m_iY);
 		if (screenDataArea == null)

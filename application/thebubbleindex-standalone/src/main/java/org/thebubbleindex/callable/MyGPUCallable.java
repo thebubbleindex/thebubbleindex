@@ -46,6 +46,8 @@ public class MyGPUCallable implements Callable<Float> {
 	private final int qSize;
 	private final int hSize;
 	private final double[] testFrequencies;
+	
+	@SuppressWarnings("unused")
 	private final double[] Q;
 	private final double[] H;
 
@@ -54,6 +56,7 @@ public class MyGPUCallable implements Callable<Float> {
 	private final double[] cTwo;
 	private final double[][] powTempVar;
 
+	@SuppressWarnings("unused")
 	private final float omegaFloat;
 	private final double omegaDouble;
 	private final float mCoeffFloat;
@@ -277,7 +280,7 @@ public class MyGPUCallable implements Callable<Float> {
 					}
 				}
 
-			} catch (Throwable th) {
+			} catch (final Throwable th) {
 				Temp = 0.0f;
 				Logs.myLogger.error("GPU Kernel exception. Selection Name = {}. {}", selectionName, th);
 			}

@@ -11,7 +11,6 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -228,7 +227,7 @@ public class URLS {
 			System.out.println("Connection to " + url1.toString() + " ...");
 		}
 
-		final URLConnection urlConn = url1.openConnection();
+		url1.openConnection();
 
 		if (RunContext.isGUI) {
 			updateWorker.publishText("Downloading the CSV: " + this.dataName + "...");
