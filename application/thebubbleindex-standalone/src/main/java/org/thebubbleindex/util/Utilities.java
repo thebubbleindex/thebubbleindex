@@ -1,6 +1,5 @@
 package org.thebubbleindex.util;
 
-import Jama.Matrix;
 import static info.yeppp.Core.Multiply_V64fV64f_V64f;
 import static info.yeppp.Core.Subtract_V64fV64f_V64f;
 import java.nio.charset.Charset;
@@ -15,6 +14,11 @@ import org.thebubbleindex.exception.FailedToRunIndex;
 import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.runnable.RunContext;
 import org.thebubbleindex.swing.GUI;
+
+import no.uib.cipr.matrix.DenseMatrix;
+import no.uib.cipr.matrix.DenseVector;
+import no.uib.cipr.matrix.Matrix;
+import no.uib.cipr.matrix.Vector;
 
 /**
  *
@@ -118,20 +122,19 @@ public class Utilities {
 	public static void LinearFit(final double[] Data, final double[] TimeValues_M_Power,
 			final double[] LogCosTimeValues, final double[] Coef, final int SIZE) {
 
-		final double[][] Array = new double[SIZE][3];
+		final double[][] array = new double[SIZE][3];
 
 		for (int i = 0; i < SIZE; i++) {
-			Array[i][0] = 1.0;
-			Array[i][1] = TimeValues_M_Power[i];
-			Array[i][2] = LogCosTimeValues[i];
+			array[i][0] = 1.0;
+			array[i][1] = TimeValues_M_Power[i];
+			array[i][2] = LogCosTimeValues[i];
 		}
-
-		final Matrix A = new Matrix(Array);
-		final Matrix b = new Matrix(Data, SIZE);
-		final Matrix x = A.solve(b);
-
+		final Matrix A = new DenseMatrix(array);
+		final Vector b = new DenseVector(Data);
+		Vector x = new DenseVector(3);
+		x = A.solve(b, x);
 		for (int i = 0; i < 3; i++) {
-			Coef[i] = x.get(i, 0);
+			Coef[i] = x.get(i);
 		}
 	}
 
