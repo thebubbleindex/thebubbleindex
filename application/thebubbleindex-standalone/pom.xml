@@ -124,7 +124,7 @@
 								<outputDirectory>${basedir}/target/thebubbleindex</outputDirectory>
 								<resources>
 									<resource>
-										<directory>${basedir}/src/test/resources</directory>
+										<directory>${basedir}/src/main/resources/dist/</directory>
 										<filtering>true</filtering>
 									</resource>
 								</resources>

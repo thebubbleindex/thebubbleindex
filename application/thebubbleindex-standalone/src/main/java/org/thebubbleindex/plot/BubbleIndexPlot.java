@@ -13,7 +13,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import static java.lang.Math.exp;
-import static java.lang.Math.pow;
+import static java.lang.Math.log;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -534,7 +534,7 @@ public class BubbleIndexPlot {
 	 * @return
 	 */
 	private double setMax(final int dayLength) {
-		return pow((double) dayLength, 3.353178) * exp(-8.949354) * 2.0 + 350;
+		return exp(-9.746393 + 3.613444 * log((double) dayLength)) * 2.0 + 550;
 	}
 
 	/**
