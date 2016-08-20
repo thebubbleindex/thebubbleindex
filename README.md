@@ -28,14 +28,19 @@ To run the program with a desired index, stock, currency, or commodity the user 
 Now create folders within the ProgramData directory. These must match the name of respective .csv files which contain a list of all selections contained in the category:
 
 *Indices - Indices.csv*
+
 *Currencies - Currencies.csv*
+
 *Stocks - Stocks.csv*
+
 *Commodities - Commodities.csv*
 
 Within each of these folders, create a folder named after the desired index. For example, within the Stocks folder have the following folders:
 
 *TSLA*
+
 *JCP*
+
 *AAPL*
 
 ###### Create the "List" .csv files.
@@ -43,8 +48,11 @@ Within each of these folders, create a folder named after the desired index. For
 In the ProgramData folder, the .csv files listed below must contain the list of desired selection names which are displayed in the GUI. These should contain a list of all the folders in each sub-directory. The contents of these files must be in the correct format, with each item separated by a "\n" character, i.e. each item is on a separate line:
 
 *Indices.csv*
+
 *Currencies.csv*
+
 *Stocks.csv*
+
 *Commodities.csv*
 
 ###### Create the "CategoryList" .csv file.
@@ -56,8 +64,11 @@ In the ProgramData folder, the CategoryList.csv file which contains all the cate
 To update the data, there must be an UpdateCategories.csv file in the ProgramData directory and an UpdateSelection.csv file in each of the sub-directories. The contents and format of the UpdateCatagories.csv should be like this:
 
 *Indices*
+
 *Currencies*
+
 *Stocks*
+
 *Commodities*
 
 And the contents and format of the UpdateSelection.csv should be like this:
@@ -70,7 +81,9 @@ The **Name** value must be the string corresponding to the individual folder for
 The **DataSource** value must be one of three values:
 
 *Yahoo*
+
 *FED*
+
 *QUANDL*
 
 The **QuandlDataset** value must be the string of the dataset in the Quandl url, or NA.
