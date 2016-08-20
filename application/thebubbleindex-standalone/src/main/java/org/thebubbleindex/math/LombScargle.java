@@ -80,9 +80,9 @@ public class LombScargle {
 			this.hSize = Integer.parseInt(lsProperties.getProperty("hsize").trim());
 
 		} catch (final FileNotFoundException ex) {
-			Logs.myLogger.error("Could not find lombscargle.properties file. {}", ex);
+			Logs.myLogger.error("Using constructor values. Could not find lombscargle.properties file. {}", ex);
 		} catch (final IOException ex) {
-			Logs.myLogger.error("Error while reading lombscargle.properties file. {}", ex);
+			Logs.myLogger.error("Using constructor values. Error while reading lombscargle.properties file. {}", ex);
 		}
 
 		testFrequencies = new double[this.freqSize];
@@ -95,7 +95,7 @@ public class LombScargle {
 		cTwo = new double[this.qSize];
 		powTempVar = new double[this.qSize][this.hSize];
 
-		double StartingPoint = omegaDouble / (2 * 3.14159) - 0.2;
+		double StartingPoint = omegaDouble / (2.0 * 3.14159) - 0.2;
 		double Increments = 0.01;
 
 		for (int i = 0; i < freqSize; i++) {

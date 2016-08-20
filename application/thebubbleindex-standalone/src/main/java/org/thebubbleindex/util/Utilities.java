@@ -3,7 +3,6 @@ package org.thebubbleindex.util;
 import Jama.Matrix;
 import static info.yeppp.Core.Multiply_V64fV64f_V64f;
 import static info.yeppp.Core.Subtract_V64fV64f_V64f;
-import static info.yeppp.Math.Log_V64f_V64f;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,6 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.math3.util.FastMath;
 import org.thebubbleindex.exception.FailedToRunIndex;
 import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.runnable.RunContext;
@@ -67,15 +67,13 @@ public class Utilities {
 
 	/**
 	 * Normalize takes the data, calculates the returns. Then normalizes the
-	 * price data series to begin at a value of 100.0
+	 * price data series to begin at a value of 100.0 and takes the log
 	 * 
 	 * @param SelectedData
 	 * @param NumberOfDays
 	 */
 	public static void Normalize(final double[] SelectedData, final int NumberOfDays) {
 
-		final double[] ReturnsData = new double[NumberOfDays];
-		ReturnsData[0] = 0.0;
 		final double[] tempOne = new double[NumberOfDays];
 		final double[] tempTwo = new double[NumberOfDays];
 		final double[] tempThree = new double[NumberOfDays];
@@ -92,19 +90,12 @@ public class Utilities {
 
 		Multiply_V64fV64f_V64f(tempFour, 0, tempThree, 0, tempFive, 0, NumberOfDays);
 
-		System.arraycopy(tempFive, 1, ReturnsData, 1, NumberOfDays - 1);
-
-		// Declare and initialize array of normalized price values
-		SelectedData[0] = 100.0;
-
+		SelectedData[0] = FastMath.log(100.0);
+		double tempVar = 100.0;
 		for (int i = 1; i < NumberOfDays; i++) {
-			SelectedData[i] = SelectedData[i - 1] * ReturnsData[i] + SelectedData[i - 1];
+			tempVar = tempVar * tempFive[i] + tempVar;
+			SelectedData[i] = FastMath.log(tempVar);
 		}
-
-		Log_V64f_V64f(SelectedData, 0, tempFive, 0, NumberOfDays);
-
-		System.arraycopy(tempFive, 0, SelectedData, 0, NumberOfDays);
-
 	}
 
 	/**

@@ -1,0 +1,2 @@
+Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex
+TSLA,Yahoo,NA,NA,0,0

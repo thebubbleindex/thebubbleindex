@@ -12,8 +12,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
-import static java.lang.Math.exp;
-import static java.lang.Math.log;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +21,8 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import org.apache.commons.math3.util.FastMath;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -534,7 +534,7 @@ public class BubbleIndexPlot {
 	 * @return
 	 */
 	private double setMax(final int dayLength) {
-		return exp(-9.746393 + 3.613444 * log((double) dayLength)) * 2.0 + 550;
+		return FastMath.exp(-9.746393 + 3.613444 * FastMath.log((double) dayLength)) * 2.0 + 550;
 	}
 
 	/**

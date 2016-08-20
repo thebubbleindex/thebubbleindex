@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Scanner;
 import static org.junit.Assert.assertEquals;
 
-public class MyGPUCallableTest {
+public class MyCPUCallableTest {
 
 	final double epsilon = 0.01;
 	final String fileSep = File.separator;
 
-	@Test
+	//@Test
 	public void resultsShouldMatchBITSTAMPUSD() throws IOException, URISyntaxException {
 		final String selectionName = "BITSTAMPUSD";
 		final String folder = "ProgramData";
@@ -48,10 +48,9 @@ public class MyGPUCallableTest {
 			dailyPriceValues[i] = priceValues.get(i);
 		}
 
-		RunIndex.src = IOUtils.readText(RunIndex.class.getResource("/GPUKernel.cl"));
 		RunContext.threadNumber = 4;
 		RunContext.isGUI = false;
-		RunContext.forceCPU = false;
+		RunContext.forceCPU = true;
 		
 		final List<Integer> testWindows = new ArrayList<Integer>(5);
 		testWindows.add(52);
@@ -67,7 +66,7 @@ public class MyGPUCallableTest {
 
 	}
 
-	@Test
+	//@Test
 	public void resultsShouldMatchTSLA() throws IOException, URISyntaxException {
 		final String selectionName = "TSLA";
 		final String folder = "ProgramData";
@@ -93,56 +92,10 @@ public class MyGPUCallableTest {
 			dailyPriceValues[i] = priceValues.get(i);
 		}
 
-		RunIndex.src = IOUtils.readText(RunIndex.class.getResource("/GPUKernel.cl"));
 		RunContext.threadNumber = 4;
 		RunContext.isGUI = false;
-		RunContext.forceCPU = false;
-
-		final List<Integer> testWindows = new ArrayList<Integer>(5);
-		testWindows.add(52);
-		testWindows.add(104);
-		testWindows.add(153);
-		testWindows.add(256);
-		testWindows.add(512);
-
-		for (final Integer window : testWindows) {
-			testWindow(pathRoot, dailyPriceValues, dataSize, window, results, dailyPriceDate, selectionName,
-					omegaDouble, mCoeffDouble, tCritDouble);
-		}
-
-	}
-	
-	@Test
-	public void resultsShouldMatchDTWEXM() throws IOException, URISyntaxException {
-		final String selectionName = "DTWEXM";
-		final String folder = "ProgramData";
-		final String folderType = "Currencies";
-		final double omegaDouble = 6.28;
-		final double mCoeffDouble = 0.38;
-		final double tCritDouble = 21.0;
-		final String pathRoot = folder + fileSep + folderType + fileSep + selectionName + fileSep + selectionName;
-
-		final URL dailyDataUrl = getClass().getClassLoader().getResource(pathRoot + "dailydata.csv");
-		final Path dailyDataPath = new File(dailyDataUrl.toURI()).toPath();
-
-		final List<String> lines = Files.readAllLines(dailyDataPath, Charset.defaultCharset());
-		final List<String> dailyPriceDate = new ArrayList<String>();
-		final List<Double> priceValues = new ArrayList<Double>();
-		final List<Double> results = new ArrayList<Double>();
-
-		parseDailyData(lines, priceValues, dailyPriceDate);
-
-		final int dataSize = dailyPriceDate.size();
-		final double[] dailyPriceValues = new double[dataSize];
-		for (int i = 0; i < dataSize; i++) {
-			dailyPriceValues[i] = priceValues.get(i);
-		}
-
-		RunIndex.src = IOUtils.readText(RunIndex.class.getResource("/GPUKernel.cl"));
-		RunContext.threadNumber = 4;
-		RunContext.isGUI = false;
-		RunContext.forceCPU = false;
-
+		RunContext.forceCPU = true;
+		
 		final List<Integer> testWindows = new ArrayList<Integer>(5);
 		testWindows.add(52);
 		testWindows.add(104);
@@ -164,7 +117,7 @@ public class MyGPUCallableTest {
 		final String previousFilePath = pathRoot + String.valueOf(window) + "days.csv";
 		RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
 				previousFilePath, selectionName, omegaDouble, mCoeffDouble, tCritDouble);
-		runIndex.execIndexWithGPU();
+		runIndex.execIndexWithCPU();
 		compareResults(selectionName, window, results);
 		results.clear();
 	}

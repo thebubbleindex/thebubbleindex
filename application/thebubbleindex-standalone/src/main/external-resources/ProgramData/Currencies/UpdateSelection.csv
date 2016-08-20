@@ -1,0 +1,4 @@
+Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex
+BITSTAMPUSD,QUANDL,BTCE,USDBTC,5,0
+DTWEXM,FED,NA,NA,0,0
+EURJPY,QUANDL,ECB,EURJPY,2,0
