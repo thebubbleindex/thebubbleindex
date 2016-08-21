@@ -11,7 +11,7 @@ import org.thebubbleindex.logging.Logs;
 
 /**
  *
- * @author windows
+ * @author bigttrott
  */
 public class InputCategory {
 
@@ -19,14 +19,14 @@ public class InputCategory {
 	private String location;
 	private final ArrayList<String> components;
 
-	InputCategory(final String name) {
-		components = new ArrayList<String>();
+	public InputCategory(final String name) {
+		components = new ArrayList<String>(100);
 		this.name = name;
 		this.location = Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + this.name + ".csv";
 	}
 
-	InputCategory(final String name, final String location) {
-		components = new ArrayList<String>();
+	public InputCategory(final String name, final String location) {
+		components = new ArrayList<String>(100);
 		this.name = name;
 		this.location = location;
 	}
@@ -39,34 +39,36 @@ public class InputCategory {
 		this.location = location;
 	}
 
-	public void setComponents() {
+	public void setComponents() throws IOException {
 		try {
 			final List<String> lines = Files.readAllLines(new File(location).toPath());
 			for (final String line : lines) {
 				components.add(line);
 			}
 		} catch (final FileNotFoundException ex) {
-			Logs.myLogger.error("location = {}. {}", location, ex);
+			Logs.myLogger.error("Category List not found, creating it at location = {}", location);
+			new File(location).createNewFile();
 		} catch (final IOException ex) {
-			Logs.myLogger.error("location = {}. {}", location, ex);
+			Logs.myLogger.error("Category List not found, creating it at location = {}", location);
+			new File(location).createNewFile();
 		}
 	}
 
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	public String getLocation() {
-		return this.location;
+		return location;
 	}
 
 	public ArrayList<String> getComponents() {
-		return this.components;
+		return components;
 	}
 
 	public String[] getComponentsAsArray() {
-		String[] stringArray = new String[this.components.size()];
-		stringArray = this.components.toArray(stringArray);
+		String[] stringArray = new String[components.size()];
+		stringArray = components.toArray(stringArray);
 		return stringArray;
 	}
 }

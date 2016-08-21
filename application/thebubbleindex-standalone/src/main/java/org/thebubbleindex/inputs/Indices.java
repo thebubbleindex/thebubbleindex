@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.thebubbleindex.data.URLS;
 import org.thebubbleindex.logging.Logs;
-import org.thebubbleindex.util.OSValidator;
 
 /**
  *
@@ -89,28 +87,12 @@ public class Indices {
 	 * getFilePath returns the string containing the system address location of
 	 * Bubble_Index.jar
 	 * 
-	 * @return decodedPath the address string without the "Bubble_Index.jar"
-	 *         attached
+	 * @return path the jar
 	 * @throws java.io.UnsupportedEncodingException
 	 */
 	public static String getFilePath() throws UnsupportedEncodingException {
-		String path1, decodedPath, Name;
-		if (OSValidator.isWindows()) {
-			final String rawPath = URLS.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-			final String newPath = rawPath.substring(1);
-			path1 = newPath.replace("/", "\\");
-			decodedPath = URLDecoder.decode(path1, "UTF-8");
-			Name = "Bubble_Index.jar";
-			final int Size = Name.length();
-			decodedPath = decodedPath.substring(0, decodedPath.length() - Size);
-		} else {
-			path1 = URLS.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-			decodedPath = URLDecoder.decode(path1, "UTF-8");
-			Name = "Bubble_Index.jar";
-			final int Size = Name.length();
-			decodedPath = decodedPath.substring(0, decodedPath.length() - Size);
-		}
-
-		return decodedPath;
+		final String rawPath = Indices.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		final File jarFile = new File(URLDecoder.decode(rawPath, "UTF-8"));
+		return jarFile.getParent() + filePathSymbol;
 	}
 }
