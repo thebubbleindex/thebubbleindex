@@ -46,7 +46,7 @@ public class MyGPUCallable implements Callable<Float> {
 	private final int qSize;
 	private final int hSize;
 	private final double[] testFrequencies;
-	
+
 	@SuppressWarnings("unused")
 	private final double[] Q;
 	private final double[] H;
@@ -288,11 +288,11 @@ public class MyGPUCallable implements Callable<Float> {
 			final float output = Temp;
 
 			if (RunContext.isGUI) {
-				bubbleIndexWorker.publishText("Name: " + selectionName + " Date: " + displayPeriodString + " Value: "
-						+ output + " Length: " + numberOfDays);
+				bubbleIndexWorker.publishText(String.format("Name: %s    Date: %s    Value: %15.2f    Window: %d",
+						selectionName, displayPeriodString, output, numberOfDays));
 			} else {
-				System.out.println("Name: " + selectionName + " Date: " + displayPeriodString + " Value: " + output
-						+ " Length: " + numberOfDays);
+				System.out.println(String.format("Name: %s    Date: %s    Value: %15.2f    Window: %d", selectionName,
+						displayPeriodString, output, numberOfDays));
 			}
 			Values.release();
 			MeanArray.release();

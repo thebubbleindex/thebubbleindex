@@ -1,13 +1,11 @@
 package org.thebubbleindex.inputs;
 
-import com.opencsv.CSVReader;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -23,18 +21,13 @@ import org.thebubbleindex.util.OSValidator;
  */
 public class Indices {
 
-	static String programDataFolder;
-	static String categoryList;
+	public final static String programDataFolder = "ProgramData";
+	public final static String categoryList = "CategoryList.csv";
 	public static String userDir;
-	public static String filePathSymbol;
-	public static Map<String, InputCategory> categoriesAndComponents;
+	public final static String filePathSymbol = File.separator;
+	public final static Map<String, InputCategory> categoriesAndComponents = new TreeMap<>();
 
 	public static void initialize() {
-
-		programDataFolder = "ProgramData";
-		categoryList = "CategoryList.csv";
-		filePathSymbol = setOperatingSystem();
-		categoriesAndComponents = new TreeMap<>();
 
 		Logs.myLogger.info("Initializing categories and selections.");
 
@@ -42,7 +35,7 @@ public class Indices {
 			userDir = getFilePath();
 			Logs.myLogger.info("File path: {}", userDir);
 
-		} catch (UnsupportedEncodingException ex) {
+		} catch (final UnsupportedEncodingException ex) {
 			Logs.myLogger.error("userDir = {}. {}", userDir, ex);
 		}
 
@@ -59,17 +52,17 @@ public class Indices {
 				Logs.myLogger.error("Unable to create category list file.");
 			}
 		}
-		CSVReader reader = null;
+
 		try {
 
 			Logs.myLogger.info("Reading category list: {}",
 					userDir + programDataFolder + filePathSymbol + categoryList);
 
-			reader = new CSVReader(new FileReader(userDir + programDataFolder + filePathSymbol + categoryList));
-			final List<String[]> myEntries = reader.readAll();
+			final List<String> lines = Files
+					.readAllLines(new File(userDir + programDataFolder + filePathSymbol + categoryList).toPath());
 
-			for (final String[] myEntry : myEntries) {
-				final String categoryName = myEntry[0];
+			for (final String line : lines) {
+				final String categoryName = line;
 				final InputCategory tempInputCategory = new InputCategory(categoryName);
 				tempInputCategory.setComponents();
 				categoriesAndComponents.put(categoryName, tempInputCategory);
@@ -79,16 +72,7 @@ public class Indices {
 			Logs.myLogger.error("File = {}. {}", userDir + programDataFolder + filePathSymbol + categoryList, ex);
 		} catch (final IOException ex) {
 			Logs.myLogger.error("File = {}. {}", userDir + programDataFolder + filePathSymbol + categoryList, ex);
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (final IOException e) {
-					Logs.myLogger.error("Failed to close reader.");
-				}
-			}
 		}
-
 	}
 
 	public static String[] getCategoriesAsArray() {
@@ -99,24 +83,6 @@ public class Indices {
 			index++;
 		}
 		return categories;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static String setOperatingSystem() {
-		if (OSValidator.isWindows()) {
-			return "\\";
-		}
-
-		else if (OSValidator.isUnix()) {
-			return "/";
-		}
-
-		else {
-			return "/";
-		}
 	}
 
 	/**

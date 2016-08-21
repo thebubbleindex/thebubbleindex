@@ -2,7 +2,6 @@ package org.thebubbleindex.driver;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -79,18 +78,18 @@ public class BubbleIndex {
 
 			dailyPriceDoubleValues = DailyDataCache.dailyPriceDoubleValues;
 
-			results = new ArrayList<>(dataSize);
+			results = new ArrayList<Double>(dataSize);
 
 		} else {
-			dailyPriceData = new ArrayList<>(10000);
-			dailyPriceDate = new ArrayList<>(10000);
+			dailyPriceData = new ArrayList<String>(10000);
+			dailyPriceDate = new ArrayList<String>(10000);
 
 			if (!RunContext.Stop)
 				Utilities.ReadValues(filePath, dailyPriceDate, dailyPriceData, false, false);
 
 			DailyDataCache.selectionName = this.selectionName;
-			DailyDataCache.dailyPriceData = new ArrayList<>(dailyPriceData);
-			DailyDataCache.dailyPriceDate = new ArrayList<>(dailyPriceDate);
+			DailyDataCache.dailyPriceData = new ArrayList<String>(dailyPriceData);
+			DailyDataCache.dailyPriceDate = new ArrayList<String>(dailyPriceDate);
 
 			dataSize = dailyPriceData.size();
 
@@ -101,7 +100,7 @@ public class BubbleIndex {
 
 			DailyDataCache.dailyPriceDoubleValues = dailyPriceDoubleValues;
 
-			results = new ArrayList<>(dataSize);
+			results = new ArrayList<Double>(dataSize);
 		}
 	}
 
@@ -126,9 +125,9 @@ public class BubbleIndex {
 		if (!RunContext.Stop)
 			setFilePaths();
 
-		dailyPriceData = new ArrayList<>();
-		dailyPriceDate = new ArrayList<>();
-		results = new ArrayList<>();
+		dailyPriceData = new ArrayList<String>();
+		dailyPriceDate = new ArrayList<String>();
+		results = new ArrayList<Double>();
 
 		if (!RunContext.Stop)
 			Utilities.ReadValues(filePath, dailyPriceDate, dailyPriceData, false, false);
@@ -149,8 +148,8 @@ public class BubbleIndex {
 	 */
 	public void runBubbleIndex(final BubbleIndexWorker bubbleIndexWorker) {
 		if (dataSize > window) {
-			final RunIndex runIndex = new RunIndex(bubbleIndexWorker, dailyPriceDoubleValues, getDataSize(), window,
-					results, dailyPriceDate, previousFilePath, selectionName, omega, mCoeff, tCrit);
+			final RunIndex runIndex = new RunIndex(bubbleIndexWorker, dailyPriceDoubleValues, dataSize, window, results,
+					dailyPriceDate, previousFilePath, selectionName, omega, mCoeff, tCrit);
 
 			if (!RunContext.forceCPU) {
 				try {
@@ -158,12 +157,12 @@ public class BubbleIndex {
 							selectionName);
 					runIndex.execIndexWithGPU();
 				} catch (final FailedToRunIndex er) {
-					Logs.myLogger.error("Category Name = {}, Selection Name = {}, Window = {}. {}", categoryName,
+					Logs.myLogger.info("Category Name = {}, Selection Name = {}, Window = {}. {}", categoryName,
 							selectionName, window, er);
 					if (RunContext.isGUI) {
-						bubbleIndexWorker.publishText("Error: " + er.getMessage());
+						bubbleIndexWorker.publishText(er.getMessage());
 					} else {
-						System.out.println("Error: " + er.getMessage());
+						System.out.println(er.getMessage());
 					}
 					results.clear();
 				}
@@ -207,7 +206,7 @@ public class BubbleIndex {
 				try {
 					Logs.myLogger.info("Writing output file: {}", previousFilePath);
 
-					ExportData.WriteCSV(savePath, results, getDataSize() - window, Name, dailyPriceDate,
+					ExportData.WriteCSV(savePath, results, dataSize - window, Name, dailyPriceDate,
 							new File(previousFilePath).exists());
 				} catch (final IOException ex) {
 					Logs.myLogger.error("Failed to write csv output. Save path = {}. {}", savePath, ex);
@@ -232,10 +231,10 @@ public class BubbleIndex {
 		Logs.myLogger.info(
 				"Plotting. Category Name = {}, Selection Name = {}, Windows = {}," + "BegDate = {}, EndDate = {}",
 				categoryName, selectionName, windowsString, begDate.toString(), endDate.toString());
-		new BubbleIndexPlot(categoryName, selectionName, windowsString, begDate,
-				endDate, isCustomRange, dailyPriceData, dailyPriceDate);
-		new DerivativePlot(categoryName, selectionName, windowsString, begDate,
-				endDate, isCustomRange, dailyPriceData, dailyPriceDate);
+		new BubbleIndexPlot(categoryName, selectionName, windowsString, begDate, endDate, isCustomRange, dailyPriceData,
+				dailyPriceDate);
+		new DerivativePlot(categoryName, selectionName, windowsString, begDate, endDate, isCustomRange, dailyPriceData,
+				dailyPriceDate);
 
 	}
 
@@ -245,34 +244,18 @@ public class BubbleIndex {
 	 * 
 	 */
 	private void setFilePaths() {
-		String userDir = "";
-		try {
-			userDir = Indices.getFilePath();
-		} catch (final UnsupportedEncodingException ex) {
-			Utilities.displayOutput("Error while getting file path. " + ex.getLocalizedMessage(), false);
-		}
-		final String filePathSymbol = System.getProperty("file.separator");
 
-		filePath = userDir + filePathSymbol + "ProgramData" + filePathSymbol + categoryName + filePathSymbol
-				+ selectionName + filePathSymbol + selectionName + "dailydata.csv";
+		filePath = Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + categoryName
+				+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName + "dailydata.csv";
 
-		savePath = userDir + filePathSymbol + "ProgramData" + filePathSymbol + categoryName + filePathSymbol
-				+ selectionName + filePathSymbol;
+		savePath = Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + categoryName
+				+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol;
 
-		previousFilePath = userDir + filePathSymbol + "ProgramData" + filePathSymbol + categoryName + filePathSymbol
-				+ selectionName + filePathSymbol + selectionName + Integer.toString(window) + "days.csv";
+		previousFilePath = Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + categoryName
+				+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName
+				+ Integer.toString(window) + "days.csv";
 
 		Utilities.displayOutput("Output File Path: " + previousFilePath, false);
-	}
-
-	/**
-	 * getDataSize simple helper method to get the number of entries in the
-	 * daily data file.
-	 * 
-	 * @return size of daily data
-	 */
-	public int getDataSize() {
-		return dataSize;
 	}
 
 	/**
@@ -280,7 +263,7 @@ public class BubbleIndex {
 	 * 
 	 */
 	private void convertPrices() {
-		for (int i = 0; i < getDataSize(); i++) {
+		for (int i = 0; i < dataSize; i++) {
 			try {
 				dailyPriceDoubleValues[i] = Double.parseDouble(dailyPriceData.get(i));
 			} catch (final NumberFormatException ex) {

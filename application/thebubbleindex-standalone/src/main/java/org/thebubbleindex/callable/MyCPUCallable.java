@@ -1,5 +1,10 @@
 package org.thebubbleindex.callable;
 
+import static info.yeppp.Core.Multiply_V64fS64f_V64f;
+import static info.yeppp.Core.Multiply_V64fV64f_V64f;
+import static info.yeppp.Math.Cos_V64f_V64f;
+import static info.yeppp.Math.Log_V64f_V64f;
+
 import java.util.concurrent.Callable;
 import org.apache.commons.math3.util.FastMath;
 import org.thebubbleindex.math.LombScargle;
@@ -14,14 +19,14 @@ import org.thebubbleindex.util.Utilities;
  * 
  * @author ttrott
  */
-public class MyCPUCallable implements Callable<Float> {
+public class MyCPUCallable implements Callable<Double> {
 
 	private final int numberOfDays;
 	private final int index;
 	private final LombScargle lombScargle;
 	private final double tCritDouble;
 	private final double mCoeffDouble;
-	private double omegaDouble;
+	private final double omegaDouble;
 	private final double[] dailyPriceValues;
 	private final String displayPeriodString;
 	private final String selectionName;
@@ -41,17 +46,19 @@ public class MyCPUCallable implements Callable<Float> {
 	 * @param selectionName
 	 */
 	public MyCPUCallable(final BubbleIndexWorker bubbleIndexWorker, final int index, final int numberOfDays,
-			final LombScargle lombScargle, final double tCritDouble, final double mCoeffDouble,
-			final double[] dailyPriceValues, final String displayPeriodString, final String selectionName) {
+			final LombScargle lombScargle, final double tCritDouble, final double[] dailyPriceValues,
+			final String displayPeriodString, final String selectionName) {
 		this.numberOfDays = numberOfDays;
 		this.index = index;
 		this.lombScargle = lombScargle;
 		this.tCritDouble = tCritDouble;
-		this.mCoeffDouble = mCoeffDouble;
 		this.dailyPriceValues = dailyPriceValues;
 		this.displayPeriodString = displayPeriodString;
 		this.selectionName = selectionName;
 		this.bubbleIndexWorker = bubbleIndexWorker;
+		this.omegaDouble = lombScargle.omegaDouble;
+		this.mCoeffDouble = lombScargle.mCoeffDouble;
+
 	}
 
 	/**
@@ -60,7 +67,7 @@ public class MyCPUCallable implements Callable<Float> {
 	 * @return the value of The Bubble Index at a specific date
 	 */
 	@Override
-	public Float call() {
+	public Double call() {
 
 		if (!RunContext.Stop) {
 			final double[] TimeValues = new double[numberOfDays];
@@ -68,37 +75,51 @@ public class MyCPUCallable implements Callable<Float> {
 			final double[] LogCosTimeValues = new double[numberOfDays];
 			final double[] SelectedData = new double[numberOfDays];
 			final double[] Coef = new double[3];
+			final double[] LogTimeValuesTemp = new double[numberOfDays];
 
+			// Arrays used in the H,Q derivative calculation and periodogram
 			for (int k = 0; k < numberOfDays; k++) {
 				TimeValues[k] = numberOfDays + tCritDouble - k;
 				TimeValues_M_Power[k] = FastMath.pow(TimeValues[k], mCoeffDouble);
-				LogCosTimeValues[k] = FastMath.cos(omegaDouble * FastMath.log(TimeValues[k])) * TimeValues_M_Power[k];
 				SelectedData[k] = dailyPriceValues[k + index + 1];
 			}
+			final double[] tempFour = new double[numberOfDays];
+			final double[] tempFive = new double[numberOfDays];
+
+			Log_V64f_V64f(TimeValues, 0, tempFour, 0, numberOfDays);
+
+			System.arraycopy(tempFour, 0, LogTimeValuesTemp, 0, numberOfDays);
+
+			Multiply_V64fS64f_V64f(tempFour, 0, omegaDouble, tempFive, 0, numberOfDays);
+			Cos_V64f_V64f(tempFive, 0, tempFour, 0, numberOfDays);
+			Multiply_V64fV64f_V64f(tempFour, 0, TimeValues_M_Power, 0, tempFive, 0, numberOfDays);
+
+			System.arraycopy(tempFive, 0, LogCosTimeValues, 0, numberOfDays);
 
 			// Normalize data to a price starting at 100
 			Utilities.Normalize(SelectedData, numberOfDays);
 
 			Utilities.DataReverse(SelectedData, numberOfDays);
 
+			// Fit the curve with the equation given in:
 			Utilities.LinearFit(SelectedData, TimeValues_M_Power, LogCosTimeValues, Coef, numberOfDays);
 
-			final float Temp = lombScargle.hqDerivative(TimeValues, Coef, numberOfDays);
+			final double Temp = lombScargle.hqDerivative(TimeValues, Coef, numberOfDays);
 
-			final float output = Temp;
+			final double output = Temp;
 
 			if (RunContext.isGUI) {
-				bubbleIndexWorker.publishText("Name: " + selectionName + " Date: " + displayPeriodString + " Value: "
-						+ output + " Length: " + numberOfDays);
+				bubbleIndexWorker.publishText(String.format("Name: %s    Date: %s    Value: %15.2f    Window: %d",
+						selectionName, displayPeriodString, output, numberOfDays));
 			} else {
-				System.out.println("Name : " + selectionName + " Date: " + displayPeriodString + " Value: " + output
-						+ " Length: " + numberOfDays);
+				System.out.println(String.format("Name: %s    Date: %s    Value: %15.2f    Window: %d", selectionName,
+						displayPeriodString, output, numberOfDays));
 			}
 			return Temp;
 		}
 
 		else {
-			return 0.0f;
+			return 0.0;
 		}
 	}
 }

@@ -100,8 +100,8 @@ public class RunIndex {
 
 		final LombScargle lombScargle = new LombScargle(70, 18, 19, omegaDouble, mCoeffDouble);
 
-		final List<String> DateList = new ArrayList<>();
-		final List<String> DataList = new ArrayList<>();
+		final List<String> DateList = new ArrayList<String>(10000);
+		final List<String> DataList = new ArrayList<String>(10000);
 
 		if (dataSize - window <= 1) {
 			throw new FailedToRunIndex("Window larger than Data. Data Size = " + dataSize + " :: Window = " + window);
@@ -117,7 +117,7 @@ public class RunIndex {
 			try {
 				UpdateLength = dailyPriceDate.size() - updateDateMatch(DateList) - 1;
 				if (UpdateLength == 0) {
-					throw new FailedToRunIndex("No need to run index. Fully Updated.");
+					throw new FailedToRunIndex("No need to run window " + window + ". Fully Updated.");
 				}
 			} catch (final InvalidData ex) {
 				throw new FailedToRunIndex("Error with data while calculating update length..." + ex);
@@ -132,13 +132,13 @@ public class RunIndex {
 
 		final int numBatches = (int) Math.ceil((dataSize - window - START_INDEX) / 500.0);
 
-		final List<CLPlatform> platforms = new ArrayList<>();
-		final List<CLContext> contexts = new ArrayList<>();
-		final List<Integer> maxComputeUnits = new ArrayList<>();
-		final List<CLQueue> queues = new ArrayList<>();
-		final List<CLProgram> programs = new ArrayList<>();
-		final List<CLKernel> addFloatsKernels = new ArrayList<>();
-		final List<ByteOrder> byteOrders = new ArrayList<>();
+		final List<CLPlatform> platforms = new ArrayList<CLPlatform>(5);
+		final List<CLContext> contexts = new ArrayList<CLContext>(5);
+		final List<Integer> maxComputeUnits = new ArrayList<Integer>(5);
+		final List<CLQueue> queues = new ArrayList<CLQueue>(5);
+		final List<CLProgram> programs = new ArrayList<CLProgram>(5);
+		final List<CLKernel> addFloatsKernels = new ArrayList<CLKernel>(5);
+		final List<ByteOrder> byteOrders = new ArrayList<ByteOrder>(5);
 
 		try {
 			final CLPlatform[] platformsArray = JavaCL.listGPUPoweredPlatforms();
@@ -151,10 +151,6 @@ public class RunIndex {
 				platforms.add(platform);
 				final CLDevice[] allDevices = platform.listGPUDevices(true);
 				for (final CLDevice device : allDevices) {
-					// Utilities.displayOutput("Device: " + device.getName(),
-					// false);
-					// Utilities.displayOutput("Driver:" +
-					// device.getDriverVersion(), false);
 					final CLContext context = JavaCL.createContext(null, device);
 					contexts.add(context);
 					maxComputeUnits.add(device.getMaxComputeUnits());
@@ -196,7 +192,7 @@ public class RunIndex {
 			final int batchEndIndex = (batch + 1) * 500 + START_INDEX;
 			final ExecutorService executor = Executors.newFixedThreadPool(RunContext.threadNumber);
 
-			final List<Callable<Float>> callables = new ArrayList<>();
+			final List<Callable<Float>> callables = new ArrayList<Callable<Float>>(dataSize);
 
 			createGPUCallables(contexts, programs, addFloatsKernels, queues, byteOrders, maxComputeUnits, callables,
 					batchStartIndex, Math.min(dataSize - window, batchEndIndex), lombScargle);
@@ -233,8 +229,8 @@ public class RunIndex {
 
 		final LombScargle lombScargle = new LombScargle(70, 18, 19, omegaDouble, mCoeffDouble);
 
-		final List<String> DateList = new ArrayList<>();
-		final List<String> DataList = new ArrayList<>();
+		final List<String> DateList = new ArrayList<String>(10000);
+		final List<String> DataList = new ArrayList<String>(10000);
 
 		if (dataSize - window <= 1) {
 			throw new FailedToRunIndex("Window larger than Data. Data Size = " + dataSize + " :: Window = " + window);
@@ -268,17 +264,17 @@ public class RunIndex {
 			final int batchEndIndex = (batch + 1) * 500 + START_INDEX;
 			final ExecutorService executor = Executors.newFixedThreadPool(RunContext.threadNumber);
 
-			final List<Callable<Float>> callables = new ArrayList<>();
+			final List<Callable<Double>> callables = new ArrayList<Callable<Double>>(dataSize);
 
 			for (int j = batchStartIndex; j < Math.min(dataSize - window, batchEndIndex); j++) {
-				callables.add(new MyCPUCallable(bubbleIndexWorker, j, window, lombScargle, tCritDouble, mCoeffDouble,
+				callables.add(new MyCPUCallable(bubbleIndexWorker, j, window, lombScargle, tCritDouble,
 						dailyPriceValues, dailyPriceDate.get(j + window), selectionName));
 			}
 			try {
-				final List<Future<Float>> tempResults = executor.invokeAll(callables);
+				final List<Future<Double>> tempResults = executor.invokeAll(callables);
 
-				for (final Future<Float> futures : tempResults) {
-					results.add((double) futures.get());
+				for (final Future<Double> futures : tempResults) {
+					results.add(futures.get());
 				}
 
 				executor.shutdown();

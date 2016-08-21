@@ -139,9 +139,9 @@ public class LombScargle {
 	 * @param SIZE
 	 * @return
 	 */
-	public float hqDerivative(final double[] TimeValues, final double[] Coef, final int SIZE) {
+	public double hqDerivative(final double[] TimeValues, final double[] Coef, final int SIZE) {
 
-		float value = 0.0f;
+		double value = 0.0;
 
 		final double[] LogTimeValues = new double[SIZE];
 		final double[] tempFour = new double[SIZE];
@@ -188,11 +188,11 @@ public class LombScargle {
 							* (B_prime + C_prime * tempNine[k]);
 				}
 
-				final float[] SpectralDensity = new float[freqSize];
+				final double[] SpectralDensity = new double[freqSize];
 
 				computeLombScargle(LogTimeValues, HQDerivativeData, SpectralDensity, SIZE);
 
-				final float Temp = MaxOneDim(SpectralDensity, freqSize);
+				final double Temp = MaxOneDim(SpectralDensity, freqSize);
 				if (Temp > value)
 					value = Temp;
 			}
@@ -210,8 +210,8 @@ public class LombScargle {
 	 *            The size of the array
 	 * @return The maximum of the array
 	 */
-	public static float MaxOneDim(final float[] Array, final int SIZE) {
-		float MaxValue = 0.0f;
+	public static double MaxOneDim(final double[] Array, final int SIZE) {
+		double MaxValue = 0.0;
 		for (int i = 0; i < SIZE; i++) {
 			if (Array[i] > MaxValue) {
 				MaxValue = Array[i];
@@ -228,7 +228,7 @@ public class LombScargle {
 	 * @param SpectralDensity
 	 * @param SIZE
 	 */
-	public void computeLombScargle(final double[] TimeValues, final double[] TimeSeries, final float[] SpectralDensity,
+	public void computeLombScargle(final double[] TimeValues, final double[] TimeSeries, final double[] SpectralDensity,
 			final int SIZE) {
 
 		double SinSum, CosSum, CosResidSum, SinResidSum;
@@ -310,7 +310,7 @@ public class LombScargle {
 			CosResidSum = FastMath.pow(CosResidSum, 2.0);
 			SinResidSum = FastMath.pow(SinResidSum, 2.0);
 
-			SpectralDensity[i] = (float) (CosResidSum * 1.0f / CosSum + SinResidSum * 1.0f / SinSum);
+			SpectralDensity[i] = CosResidSum * 1.0 / CosSum + SinResidSum * 1.0 / SinSum;
 		}
 	}
 }

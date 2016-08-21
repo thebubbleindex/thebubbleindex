@@ -1,9 +1,9 @@
 package org.thebubbleindex.inputs;
 
-import com.opencsv.CSVReader;
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,25 +40,15 @@ public class InputCategory {
 	}
 
 	public void setComponents() {
-		CSVReader reader = null;
 		try {
-			reader = new CSVReader(new FileReader(this.location));
-			final List<String[]> myEntries = reader.readAll();
-			for (final String[] myEntry : myEntries) {
-				components.add(myEntry[0]);
+			final List<String> lines = Files.readAllLines(new File(location).toPath());
+			for (final String line : lines) {
+				components.add(line);
 			}
 		} catch (final FileNotFoundException ex) {
-			Logs.myLogger.error("location = {}. {}", this.location, ex);
+			Logs.myLogger.error("location = {}. {}", location, ex);
 		} catch (final IOException ex) {
-			Logs.myLogger.error("location = {}. {}", this.location, ex);
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (final IOException e) {
-					Logs.myLogger.error("Failed to close reader.");
-				}
-			}
+			Logs.myLogger.error("location = {}. {}", location, ex);
 		}
 	}
 

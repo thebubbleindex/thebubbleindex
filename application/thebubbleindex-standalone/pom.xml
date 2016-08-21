@@ -56,11 +56,6 @@
 			<artifactId>mtj</artifactId>
 			<version>1.0.2</version>
 		</dependency>
-		<dependency>
-			<groupId>com.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>3.7</version>
-		</dependency>
 		<!-- Need to manually install the Yeppp! library to your repository -->
 		<!-- mvn install:install-file -Dfile=${project.basedir}/src/main/resources/yeppp-bundle.jar 
 			-DgroupId=yeppp -DartifactId=yeppp-java -Dversion=1.0 -Dpackaging=jar -->

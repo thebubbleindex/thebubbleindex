@@ -70,8 +70,8 @@ public class GUI extends javax.swing.JFrame {
 		InputStream input = null;
 		try {
 			Logs.myLogger.info("Reading gui.properties.");
-			input = new FileInputStream(Indices.getFilePath() + System.getProperty("file.separator") + "ProgramData"
-					+ System.getProperty("file.separator") + "gui.properties");
+			input = new FileInputStream(Indices.userDir + Indices.filePathSymbol + "ProgramData"
+					+ Indices.filePathSymbol + "gui.properties");
 			guiProperties.load(input);
 			customInit(guiProperties);
 
@@ -91,11 +91,7 @@ public class GUI extends javax.swing.JFrame {
 			}
 		}
 
-		try {
-			Utilities.displayOutput("Working Dir: " + Indices.getFilePath(), false);
-		} catch (final UnsupportedEncodingException ex) {
-			Utilities.displayOutput("Error finding working dir..." + ex.getLocalizedMessage(), false);
-		}
+		Utilities.displayOutput("Working Dir: " + Indices.userDir, false);
 	}
 
 	/**
@@ -111,8 +107,8 @@ public class GUI extends javax.swing.JFrame {
 		InputStream input = null;
 		try {
 			Logs.myLogger.info("Reading gui.properties.");
-			input = new FileInputStream(Indices.getFilePath() + System.getProperty("file.separator") + "ProgramData"
-					+ System.getProperty("file.separator") + "gui.properties");
+			input = new FileInputStream(Indices.userDir + Indices.filePathSymbol + "ProgramData"
+					+ Indices.filePathSymbol + "gui.properties");
 			guiProperties.load(input);
 			customInit(guiProperties);
 
@@ -260,10 +256,10 @@ public class GUI extends javax.swing.JFrame {
 
 		final GroupLayout layout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout.createParallelGroup(
-				GroupLayout.Alignment.LEADING)
-				.addGroup(layout.createSequentialGroup().addContainerGap().addGroup(layout
-						.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup()
+		layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(layout
+				.createSequentialGroup().addContainerGap()
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addGroup(layout.createSequentialGroup()
 								.addComponent(OutputText, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
 										Short.MAX_VALUE)
 								.addGap(10, 10, 10))
@@ -316,20 +312,21 @@ public class GUI extends javax.swing.JFrame {
 												.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 												.addComponent(quandlKeyTextField, GroupLayout.PREFERRED_SIZE, 103,
 														GroupLayout.PREFERRED_SIZE))
-										.addGroup(GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-												.addComponent(WindowsLabel)
-												.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-												.addComponent(windowsTextField))
-										.addGroup(layout.createSequentialGroup().addGroup(layout
-												.createParallelGroup(GroupLayout.Alignment.LEADING)
-												.addComponent(DropDownCategory, GroupLayout.PREFERRED_SIZE,
-														GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-												.addComponent(SelectionLabel)
-												.addComponent(DropDownSelection, GroupLayout.PREFERRED_SIZE,
-														GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-												.addComponent(
-														CategoryLabel)
-												.addComponent(SelectionAreaLabel).addComponent(ModelOptionsHeaderLabel))
+										.addGroup(GroupLayout.Alignment.LEADING,
+												layout.createSequentialGroup().addComponent(WindowsLabel)
+														.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+														.addComponent(windowsTextField))
+										.addGroup(layout.createSequentialGroup()
+												.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+														.addComponent(DropDownCategory, GroupLayout.PREFERRED_SIZE,
+																GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+														.addComponent(SelectionLabel)
+														.addComponent(DropDownSelection, GroupLayout.PREFERRED_SIZE,
+																GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+														.addComponent(CategoryLabel)
+														.addComponent(
+																SelectionAreaLabel)
+														.addComponent(ModelOptionsHeaderLabel))
 												.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
 														GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 												.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -358,100 +355,84 @@ public class GUI extends javax.swing.JFrame {
 								.addGap(73, 73, 73)))));
 		layout.setVerticalGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addGroup(
-								layout.createSequentialGroup()
-										.addComponent(TitleLabel, GroupLayout.PREFERRED_SIZE, 52,
-												GroupLayout.PREFERRED_SIZE)
-										.addGap(0, 0,
-												0)
-										.addComponent(SelectionAreaLabel).addGap(19, 19, 19)
-										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-												.addGroup(layout.createSequentialGroup().addGroup(layout
-														.createParallelGroup(GroupLayout.Alignment.BASELINE)
-														.addComponent(CategoryLabel).addComponent(threadsTextLabel)
-														.addComponent(ThreadNumber, GroupLayout.PREFERRED_SIZE,
-																GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-														.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-														.addGroup(layout
-																.createParallelGroup(GroupLayout.Alignment.TRAILING)
-																.addGroup(layout
-																		.createSequentialGroup()
-																		.addGroup(layout
-																				.createParallelGroup(
-																						GroupLayout.Alignment.BASELINE)
-																				.addComponent(DropDownCategory,
-																						GroupLayout.PREFERRED_SIZE,
-																						GroupLayout.DEFAULT_SIZE,
-																						GroupLayout.PREFERRED_SIZE)
-																				.addComponent(TCriticalLabel)
-																				.addComponent(TCriticalField,
-																						GroupLayout.PREFERRED_SIZE,
-																						GroupLayout.DEFAULT_SIZE,
-																						GroupLayout.PREFERRED_SIZE))
-																		.addGap(20, 20, 20).addComponent(SelectionLabel)
-																		.addPreferredGap(
-																				LayoutStyle.ComponentPlacement.RELATED)
-																		.addComponent(DropDownSelection,
-																				GroupLayout.PREFERRED_SIZE,
-																				GroupLayout.DEFAULT_SIZE,
-																				GroupLayout.PREFERRED_SIZE))
-																.addGroup(layout.createSequentialGroup()
-																		.addGroup(layout
-																				.createParallelGroup(
-																						GroupLayout.Alignment.BASELINE)
-																				.addComponent(OmegaTextLabel)
-																				.addComponent(OmegaTextField,
-																						GroupLayout.PREFERRED_SIZE,
-																						GroupLayout.DEFAULT_SIZE,
-																						GroupLayout.PREFERRED_SIZE))
-																		.addPreferredGap(
-																				LayoutStyle.ComponentPlacement.RELATED)
-																		.addGroup(layout
-																				.createParallelGroup(
-																						GroupLayout.Alignment.BASELINE)
-																				.addComponent(MTextLabel)
-																				.addComponent(MTextField,
-																						GroupLayout.PREFERRED_SIZE,
-																						GroupLayout.DEFAULT_SIZE,
-																						GroupLayout.PREFERRED_SIZE))))
-														.addGap(18, 18, 18).addComponent(ModelOptionsHeaderLabel))
-												.addComponent(forceCPUBox))
-										.addGap(18, 18, 18)
-										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-												.addComponent(windowsTextField, GroupLayout.PREFERRED_SIZE,
-														GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-												.addComponent(WindowsLabel))
-										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
-										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+						.addGroup(layout.createSequentialGroup()
+								.addComponent(TitleLabel, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
+								.addGap(0, 0, 0).addComponent(SelectionAreaLabel)
+								.addGap(19, 19,
+										19)
+								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+										.addGroup(layout.createSequentialGroup()
 												.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-														.addComponent(quandlKeyTextField, GroupLayout.PREFERRED_SIZE,
-																GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-														.addComponent(quandlKeyLabel))
-												.addComponent(GraphOptionsHeaderLabel))
-										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-												.addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-														.addGroup(layout
+														.addComponent(CategoryLabel)
+														.addComponent(threadsTextLabel).addComponent(
+																ThreadNumber, GroupLayout.PREFERRED_SIZE,
+																GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+												.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+												.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+														.addGroup(layout.createSequentialGroup().addGroup(layout
 																.createParallelGroup(GroupLayout.Alignment.BASELINE)
-																.addComponent(GraphCheckBox).addComponent(customBegDate,
+																.addComponent(DropDownCategory,
+																		GroupLayout.PREFERRED_SIZE,
+																		GroupLayout.DEFAULT_SIZE,
+																		GroupLayout.PREFERRED_SIZE)
+																.addComponent(TCriticalLabel).addComponent(
+																		TCriticalField, GroupLayout.PREFERRED_SIZE,
+																		GroupLayout.DEFAULT_SIZE,
+																		GroupLayout.PREFERRED_SIZE))
+																.addGap(20, 20, 20).addComponent(SelectionLabel)
+																.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																.addComponent(DropDownSelection,
 																		GroupLayout.PREFERRED_SIZE,
 																		GroupLayout.DEFAULT_SIZE,
 																		GroupLayout.PREFERRED_SIZE))
-														.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-														.addComponent(customDates))
-												.addComponent(customEndDate, GroupLayout.Alignment.TRAILING,
-														GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-														GroupLayout.PREFERRED_SIZE)
-												.addComponent(RunProgram, GroupLayout.Alignment.TRAILING))
-										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(StopRunningButton)
-										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+														.addGroup(layout.createSequentialGroup().addGroup(layout
+																.createParallelGroup(GroupLayout.Alignment.BASELINE)
+																.addComponent(OmegaTextLabel).addComponent(
+																		OmegaTextField, GroupLayout.PREFERRED_SIZE,
+																		GroupLayout.DEFAULT_SIZE,
+																		GroupLayout.PREFERRED_SIZE))
+																.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																.addGroup(layout
+																		.createParallelGroup(
+																				GroupLayout.Alignment.BASELINE)
+																		.addComponent(MTextLabel).addComponent(
+																				MTextField, GroupLayout.PREFERRED_SIZE,
+																				GroupLayout.DEFAULT_SIZE,
+																				GroupLayout.PREFERRED_SIZE))))
+												.addGap(18, 18, 18).addComponent(ModelOptionsHeaderLabel))
+										.addComponent(forceCPUBox))
+								.addGap(18, 18, 18)
+								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+										.addComponent(windowsTextField, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(WindowsLabel))
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-												.addComponent(ExitButton).addComponent(runAllNames)
-												.addComponent(runAllTypes).addComponent(updateDataButton))
-										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(OutputText, GroupLayout.PREFERRED_SIZE, 197,
-												GroupLayout.PREFERRED_SIZE)));
+												.addComponent(quandlKeyTextField, GroupLayout.PREFERRED_SIZE,
+														GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+												.addComponent(quandlKeyLabel))
+										.addComponent(GraphOptionsHeaderLabel))
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+										.addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+												.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+														.addComponent(GraphCheckBox).addComponent(customBegDate,
+																GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+																GroupLayout.PREFERRED_SIZE))
+												.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+												.addComponent(customDates))
+										.addComponent(customEndDate, GroupLayout.Alignment.TRAILING,
+												GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+												GroupLayout.PREFERRED_SIZE)
+										.addComponent(RunProgram, GroupLayout.Alignment.TRAILING))
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(StopRunningButton)
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+										.addComponent(ExitButton).addComponent(runAllNames).addComponent(runAllTypes)
+										.addComponent(updateDataButton))
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(OutputText,
+										GroupLayout.PREFERRED_SIZE, 197, GroupLayout.PREFERRED_SIZE)));
 
 		pack();
 	}
