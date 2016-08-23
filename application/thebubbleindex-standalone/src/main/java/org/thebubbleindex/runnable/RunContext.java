@@ -2,11 +2,11 @@ package org.thebubbleindex.runnable;
 
 /**
  *
- * @author green
+ * @author bigttrott
  */
 public class RunContext {
 
-	public static int threadNumber;
+	public static int threadNumber = 1;
 	public static boolean isGUI;
 	public static boolean forceCPU;
 	public static volatile boolean Stop;

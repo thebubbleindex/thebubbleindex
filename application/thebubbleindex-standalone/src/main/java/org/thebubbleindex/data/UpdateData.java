@@ -1,9 +1,9 @@
 package org.thebubbleindex.data;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -24,32 +24,34 @@ import org.thebubbleindex.swing.UpdateWorker;
 
 /**
  *
- * @author ttrott
+ * @author bigttrott
  */
 public class UpdateData {
 
-	private final List<String> Categories = new ArrayList<String>();
+	private final List<String> Categories = new ArrayList<String>(45);
 	private final UpdateWorker updateWorker;
+	public final static String updateCategories = "UpdateCategories.csv";
+	public final static String updateSelectionFile = "UpdateSelection.csv";
 
 	public UpdateData(final UpdateWorker updateWorker, final String quandlKey) {
 		this.updateWorker = updateWorker;
 		Logs.myLogger.info("Running update.");
 		getTypes();
-		final Map<String, Integer> errorsPerCategory = new HashMap<>();
+		final Map<String, Integer> errorsPerCategory = new HashMap<String, Integer>(50);
 		int errors;
 
 		for (final String Category : Categories) {
 			errors = 0;
-			final List<String> Selections = new ArrayList<String>();
-			final List<String> Sources = new ArrayList<String>();
-			final List<String> quandlDataSet = new ArrayList<String>();
-			final List<String> quandlDataName = new ArrayList<String>();
-			final List<Integer> quandlColumn = new ArrayList<Integer>();
-			final List<String> isYahooIndex = new ArrayList<String>();
+			final List<String> Selections = new ArrayList<String>(500);
+			final List<String> Sources = new ArrayList<String>(500);
+			final List<String> quandlDataSet = new ArrayList<String>(500);
+			final List<String> quandlDataName = new ArrayList<String>(500);
+			final List<Integer> quandlColumn = new ArrayList<Integer>(500);
+			final List<String> isYahooIndex = new ArrayList<String>(500);
 			getCategoryList(Category, Selections, Sources, quandlDataSet, quandlDataName, quandlColumn, isYahooIndex);
 
 			final ExecutorService executor = Executors.newFixedThreadPool(RunContext.threadNumber);
-			final List<Callable<Integer>> callables = new ArrayList<>();
+			final List<Callable<Integer>> callables = new ArrayList<Callable<Integer>>(500);
 
 			for (int j = 0; j < Selections.size(); j++) {
 				callables.add(new UpdateRunnable(this.updateWorker, Category, Selections.get(j), Sources.get(j),
@@ -93,11 +95,22 @@ public class UpdateData {
 	 */
 	private void getTypes() {
 		try {
-			final Charset charset = Charset.forName("UTF-8");
-			final Path filepath = FileSystems.getDefault()
-					.getPath(Indices.getFilePath() + "ProgramData" + Indices.filePathSymbol + "UpdateCategories.csv");
+
+			if (!new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + updateCategories)
+					.exists()) {
+				Logs.myLogger.error("Unable to find update list... creating it.");
+				try {
+					new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + updateCategories)
+							.createNewFile();
+				} catch (final IOException e) {
+					Logs.myLogger.error("Unable to create update list file.");
+				}
+			}
+
+			final Path filepath = new File(
+					Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + updateCategories).toPath();
 			Logs.myLogger.info("Filepath: {}", filepath);
-			final BufferedReader reader = Files.newBufferedReader(filepath, charset);
+			final BufferedReader reader = Files.newBufferedReader(filepath, Charset.defaultCharset());
 			String line;
 			while ((line = reader.readLine()) != null) {
 				Categories.add(line);
@@ -127,12 +140,27 @@ public class UpdateData {
 			final List<String> quandlDataSet, final List<String> quandlDataName, final List<Integer> quandlColumn,
 			final List<String> isYahooIndex) {
 		try {
-			final Charset charset = Charset.forName("UTF-8");
-			final Path filepath = FileSystems.getDefault().getPath(Indices.getFilePath() + "ProgramData"
-					+ Indices.filePathSymbol + Category + Indices.filePathSymbol + "UpdateSelection.csv");
+			final File updateFile = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol
+					+ Category + Indices.filePathSymbol + updateSelectionFile);
+			if (!updateFile.exists()) {
+				Logs.myLogger.error("Unable to find update selection list for {}... creating it.", Category);
+				try {
+					new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + Category).mkdirs();
+					updateFile.createNewFile();
+					final Path tempFilePath = updateFile.toPath();
+					final List<String> lines = new ArrayList<String>(1);
+					lines.add(String.format(
+							"Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex"));
+					Files.write(tempFilePath, lines, Charset.defaultCharset());
+				} catch (final IOException e) {
+					Logs.myLogger.error("Unable to create update selection list for {}. Error: {}", Category, e);
+				}
+			}
+
+			final Path filepath = updateFile.toPath();
 			Logs.myLogger.info("Filepath: {}", filepath);
 
-			final BufferedReader reader = Files.newBufferedReader(filepath, charset);
+			final BufferedReader reader = Files.newBufferedReader(filepath, Charset.defaultCharset());
 
 			// These files have headers
 			String line = reader.readLine();
@@ -146,6 +174,13 @@ public class UpdateData {
 				isYahooIndex.add(splits[5]);
 			}
 
+			Logs.myLogger.info("Found {} entries in {} update list.", Selections.size(), Category);
+			if (RunContext.isGUI) {
+				updateWorker.publishText("Found " + Selections.size() + " entries in " + Category + " update list.");
+
+			} else {
+				System.out.println("Found " + Selections.size() + " entries in " + Category + " update list.");
+			}
 		} catch (final IOException ex) {
 			Logs.myLogger.error("Failed to get Name Selections from {}/UpdateSelection.csv... {}", Category, ex);
 			final String cat = Category;
