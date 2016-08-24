@@ -1,25 +1,24 @@
 package org.thebubbleindex.data;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.thebubbleindex.inputs.Indices;
@@ -29,31 +28,23 @@ import org.thebubbleindex.swing.UpdateWorker;
 
 /**
  *
- * @author ttrott
+ * @author bigttrott
  */
 public class URLS {
+	private static final String todaysYear = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
+	public static final String dailyDataFile = "dailydata.csv";
+
 	private String dataName;
 	private String url;
 	private String dataType;
 	private String source;
-	private Path path;
 	private final int startYear = 1900;
-	private Date today;
-	private final DateFormat df = new SimpleDateFormat("yyyy");
-	private boolean INDEX = false;
-	private String yahooSymbol;
+	private boolean isYahooIndex;
 	private String QuandlDataset;
 	private String QuandlName;
 	private int QuandlColumn;
-	private boolean specialSymbol = false;
 	private UpdateWorker updateWorker;
-
-	/**
-	 * 
-	 */
-	public void setToday() {
-		this.today = new Date();
-	}
+	private boolean overwrite;
 
 	public void setUpdateWorker(final UpdateWorker updateWorker) {
 		this.updateWorker = updateWorker;
@@ -65,34 +56,29 @@ public class URLS {
 	 */
 	public void setDataName(final String dataName) {
 		this.dataName = dataName;
-		final String name = this.dataName;
-		if (RunContext.isGUI) {
-			updateWorker.publishText("GET: " + name);
-		} else {
-			System.out.println("GET: " + name);
-		}
 	}
 
 	/**
 	 * 
 	 */
 	public void setYahooUrl() {
-		if (this.INDEX) {
-			this.yahooSymbol = "%5E";
-		} else {
-			this.yahooSymbol = "";
-		}
+		final String yahooSymbol = isYahooIndex ? "%5E" : "";
+		url = "http://ichart.yahoo.com/table.csv?s=" + yahooSymbol + dataName + "&a=0&b=1&c=" + startYear
+				+ "&d=11&e=31&f=" + todaysYear + "&g=d&ignore=.csv";
+	}
 
-		this.url = "http://ichart.yahoo.com/table.csv?s=" + this.yahooSymbol + this.dataName + "&a=0&b=1&c="
-				+ this.startYear + "&d=11&e=31&f=" + getYear() + "&g=d&ignore=.csv";
+	@Override
+	public String toString() {
+		return "URLS [dataName=" + dataName + ", url=" + url + ", dataType=" + dataType + ", source=" + source
+				+ ", isYahooIndex=" + isYahooIndex + ", QuandlDataset=" + QuandlDataset + ", QuandlName=" + QuandlName
+				+ ", QuandlColumn=" + QuandlColumn + ", overwrite=" + overwrite + "]";
 	}
 
 	/**
 	 * 
 	 */
 	public void setFEDUrl() {
-		this.url = "https://research.stlouisfed.org/fred2/series/" + this.dataName + "/downloaddata/" + this.dataName
-				+ ".csv";
+		url = "https://research.stlouisfed.org/fred2/series/" + dataName + "/downloaddata/" + dataName + ".csv";
 	}
 
 	/**
@@ -104,10 +90,9 @@ public class URLS {
 	public void setQuandlUrl(final String dataset, final String name, final String quandlKey) {
 		this.QuandlDataset = dataset;
 		this.QuandlName = name;
-		this.url = "https://www.quandl.com/api/v1/datasets/" + this.QuandlDataset + "/" + this.QuandlName
-				+ ".csv?sort_order=asc";
+		url = "https://www.quandl.com/api/v1/datasets/" + QuandlDataset + "/" + QuandlName + ".csv?sort_order=asc";
 		if (quandlKey.trim().length() > 0) {
-			this.url = this.url + "&api_key=" + quandlKey.trim();
+			url = url + "&api_key=" + quandlKey.trim();
 		}
 	}
 
@@ -122,8 +107,8 @@ public class URLS {
 	/**
 	 * 
 	 */
-	public void isSpecial() {
-		this.specialSymbol = true;
+	public void setYahooIndex(final boolean isYahooIndex) {
+		this.isYahooIndex = isYahooIndex;
 	}
 
 	/**
@@ -131,7 +116,6 @@ public class URLS {
 	 * @param dataType
 	 */
 	public void setDataType(final String dataType) {
-		this.INDEX = this.specialSymbol;
 		this.dataType = dataType;
 	}
 
@@ -145,62 +129,6 @@ public class URLS {
 
 	/**
 	 * 
-	 * @throws UnsupportedEncodingException
-	 */
-	public void setPath() throws UnsupportedEncodingException {
-		this.path = FileSystems.getDefault().getPath(Indices.getFilePath() + this.dataName + "raw.csv");
-		final Path pathstring = this.path;
-		if (RunContext.isGUI) {
-			updateWorker.publishText("Path: " + pathstring + " ...");
-		} else {
-			System.out.println("Path: " + pathstring + " ...");
-		}
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getYear() {
-		setToday();
-		final String s = df.format(this.today);
-		return s;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getDataName() {
-		return this.dataName;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getUrl() {
-		return this.url;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Path getPath() {
-		return this.path;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getDataType() {
-		return this.dataType;
-	}
-
-	/**
-	 * 
 	 * @return
 	 */
 	public String getSource() {
@@ -209,51 +137,60 @@ public class URLS {
 
 	/**
 	 * 
+	 * @param overwrite
+	 */
+	public void setOverwrite(final Boolean overwrite) {
+		this.overwrite = overwrite;
+	}
+
+	/**
+	 * 
 	 * @param outputstream
-	 * @throws java.net.MalformedURLException
-	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public void readURL_file(final ByteArrayOutputStream outputstream) throws MalformedURLException, IOException {
-		final URL url1 = new URL(url);
-		final byte[] ba1 = new byte[1024];
-		int baLength;
-		// FileOutputStream fos1 = new FileOutputStream(Indices.getFilePath() +
-		// this.dataName + "raw.csv");
-		// Create connection
+	public void readURL_file(final ByteArrayOutputStream outputstream) throws IOException {
 		if (RunContext.isGUI) {
-			updateWorker.publishText("Connecting to " + url1.toString() + " ...");
+			updateWorker.publishText("GET: " + dataName);
 		} else {
-			System.out.println("Connection to " + url1.toString() + " ...");
+			System.out.println("GET: " + dataName);
 		}
-
-		url1.openConnection();
-
 		if (RunContext.isGUI) {
-			updateWorker.publishText("Downloading the CSV: " + this.dataName + "...");
+			updateWorker.publishText("Downloading file: " + dataName + ". Connecting to: " + url + " ...");
 		} else {
-			System.out.println("Downloading the CSV: " + this.dataName + "...");
+			System.out.println("Downloading file: " + dataName + ". Connecting to: " + url + " ...");
 		}
+		final URL urlFile = new URL(url);
+		final ReadableByteChannel rbc = Channels.newChannel(urlFile.openStream());
+		final WritableByteChannel outputChannel = Channels.newChannel(outputstream);
+		fastChannelCopy(rbc, outputChannel);
+	}
 
-		try ( // Read the CSV from the URL and save to a local file
-				final InputStream is1 = url1.openStream()) {
-			while ((baLength = is1.read(ba1)) != -1) {
-				outputstream.write(ba1, 0, baLength);
-			}
+	/**
+	 * Source:
+	 * https://thomaswabner.wordpress.com/2007/10/09/fast-stream-copy-using-javanio-channels/
+	 * 
+	 * @param src
+	 * @param dest
+	 * @throws IOException
+	 */
+	public static void fastChannelCopy(final ReadableByteChannel src, final WritableByteChannel dest)
+			throws IOException {
+		final ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024);
+		while (src.read(buffer) != -1) {
+			// prepare the buffer to be drained
+			buffer.flip();
+			// write to the channel, may block
+			dest.write(buffer);
+			// If partial transfer, shift remainder down
+			// If buffer is empty, same as doing clear()
+			buffer.compact();
 		}
-
-		// } catch (final IOException e) {
-		// Logs.myLogger.error("{} :: {}", url1.toExternalForm(), e);
-		// Utilities.displayOutput("Failed while reading bytes from " +
-		// url1.toExternalForm(), false);
-		// throw new IOException(e);
-		// }
-		//
-		// } catch (final NullPointerException npe) {
-		// Logs.myLogger.error("Invaild URL: {}. {}", this.url, npe);
-		// Utilities.displayOutput("Invalid URL: " + this.url, false);
-		// throw new NullPointerException();
-		// }
+		// EOF will leave buffer in fill state
+		buffer.flip();
+		// make sure the buffer is fully drained.
+		while (buffer.hasRemaining()) {
+			dest.write(buffer);
+		}
 	}
 
 	/**
@@ -272,14 +209,15 @@ public class URLS {
 			QUANDL = true;
 		}
 
-		final Charset charset = Charset.forName("UTF-8");
-		final List<String> dateData = new ArrayList<String>();
-		final List<String> priceData = new ArrayList<String>();
+		final List<String> dateData = new ArrayList<String>(1000);
+		final List<String> priceData = new ArrayList<String>(1000);
 
 		try {
-			try ( // BufferedReader reader = Files.newBufferedReader(this.path,
-					// charset);
-					final BufferedReader reader = new BufferedReader(new StringReader(outputstream.toString()))) {
+			final byte[] content = outputstream.toByteArray();
+			final InputStream is = new ByteArrayInputStream(content);
+
+			try (final BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+
 				// Ignore header is True for Yahoo, FED, and QUANDL
 				String line = reader.readLine();
 
@@ -360,45 +298,34 @@ public class URLS {
 				// write data
 			}
 		} catch (final IOException x) {
+			final String name = this.dataName;
 			Logs.myLogger.error("Failed to write CSV file. Category Name = {}, Selection Name = {}. {}", this.dataType,
-					this.dataName, x);
+					name, x);
 			if (RunContext.isGUI) {
-				updateWorker.publishText("Failed to process CSV file: " + this.dataName);
+				updateWorker.publishText("Failed to process CSV file: " + name);
 			} else {
-				System.out.println("Failed to process CSV file: " + this.dataName);
+				System.out.println("Failed to process CSV file: " + name);
 			}
-			throw new IOException(x);
+			throw new IOException("Failed to process CSV file: " + name);
 		}
 
-		final List<String> oldpriceData = new ArrayList<String>();
-		final List<String> olddateData = new ArrayList<String>();
+		final List<String> oldpriceData = new ArrayList<String>(1000);
+		final List<String> olddateData = new ArrayList<String>(1000);
 
-		final Path filepath = FileSystems.getDefault()
-				.getPath(Indices.getFilePath() + "ProgramData" + Indices.filePathSymbol + this.dataType
-						+ Indices.filePathSymbol + this.dataName + Indices.filePathSymbol + this.dataName
-						+ "dailydata.csv");
+		final Path filepath = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol
+				+ this.dataType + Indices.filePathSymbol + this.dataName + Indices.filePathSymbol + this.dataName
+				+ dailyDataFile).toPath();
 
-		// if dailydata file already exists for certain countries, delete them
-		final String[] badCountries = { "Stocks", "HongKong", "Germany", "UnitedKingdom", "India", "Brazil", "China",
-				"Japan", "Australia", "Argentina", "SouthKorea", "Israel", "Singapore", "Italy", "Mexico", "Indonesia",
-				"France", "Canada", "Taiwan", "Austria", "Denmark", "Netherlands", "NewZealand", "Norway", "Spain",
-				"Sweden", "Switzerland", "Russia", "Dubai", "Greece", "Baltic", "Peru", "Venezuela", "Chile" };
-
-		boolean matchBadCountry = false;
-		for (final String badCountry : badCountries) {
-			if (this.dataType.matches(badCountry) && Files.exists(filepath)) {
-				matchBadCountry = true;
+		if (overwrite) {
+			if (Files.exists(filepath)) {
+				Files.delete(filepath);
 			}
-		}
-
-		if (matchBadCountry) {
-			Files.delete(filepath);
 		}
 
 		if (Files.exists(filepath)) {
 
 			// No Header
-			try (final BufferedReader reader = Files.newBufferedReader(filepath, charset)) {
+			try (final BufferedReader reader = Files.newBufferedReader(filepath)) {
 				// No Header
 				String line; // = reader.readLine();
 
@@ -409,8 +336,9 @@ public class URLS {
 					olddateData.add(splits[0]);
 					oldpriceData.add(splits[1]);
 				}
-			} // = reader.readLine();
-				// find where dates match
+			}
+
+			// find where dates match
 			final String oldDateDataLastString = olddateData.get(olddateData.size() - 1);
 
 			int match = 0;
@@ -420,20 +348,21 @@ public class URLS {
 				}
 			}
 
-			final File dailydata = new File(Indices.getFilePath() + "ProgramData" + Indices.filePathSymbol
+			final File dailydata = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol
 					+ this.dataType + Indices.filePathSymbol + this.dataName + Indices.filePathSymbol + this.dataName
-					+ "dailydata.csv");
+					+ dailyDataFile);
 
 			dailydata.createNewFile();
+
 			final FileWriter writer = new FileWriter(dailydata);
 
 			for (int i = 0; i < olddateData.size(); i++) {
-				writer.write(olddateData.get(i) + "\t" + oldpriceData.get(i) + "\n");
+				writer.write(String.format("%s\t%s%n", olddateData.get(i), oldpriceData.get(i)));
 			}
 
 			if (match > 0) {
 				for (int i = match + 1; i < dateData.size(); i++) {
-					writer.write(dateData.get(i) + "\t" + priceData.get(i) + "\n");
+					writer.write(String.format("%s\t%s%n", dateData.get(i), priceData.get(i)));
 				}
 			}
 			writer.flush();
@@ -442,16 +371,18 @@ public class URLS {
 		} else {
 
 			try {
-				final File dailydata = new File(Indices.getFilePath() + "ProgramData" + Indices.filePathSymbol
+				final File dailydata = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol
 						+ this.dataType + Indices.filePathSymbol + this.dataName + Indices.filePathSymbol
-						+ this.dataName + "dailydata.csv");
+						+ this.dataName + dailyDataFile);
 
-				new File(Indices.getFilePath() + "ProgramData" + Indices.filePathSymbol
-						+ this.dataType + Indices.filePathSymbol + this.dataName + Indices.filePathSymbol).mkdirs();
+				new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + this.dataType
+						+ Indices.filePathSymbol + this.dataName + Indices.filePathSymbol).mkdirs();
+
 				dailydata.createNewFile();
+
 				try (final FileWriter writer = new FileWriter(dailydata)) {
 					for (int i = 0; i < dateData.size(); i++) {
-						writer.write(dateData.get(i) + "\t" + priceData.get(i) + "\n");
+						writer.write(String.format("%s\t%s%n", dateData.get(i), priceData.get(i)));
 					}
 					writer.flush();
 				}
@@ -459,13 +390,13 @@ public class URLS {
 			} catch (final IOException th) {
 				final String name = this.dataName;
 				Logs.myLogger.error("Failed to create daily data. Category Name = {}, Selection Name = {}. {}",
-						this.dataType, this.dataName, th);
+						this.dataType, name, th);
 				if (RunContext.isGUI) {
 					updateWorker.publishText("Failed to create daily data: " + name);
 				} else {
 					System.out.println("Failed to create daily data: " + name);
 				}
-				throw new IOException(th);
+				throw new IOException("Failed to create daily data: " + name);
 			}
 		}
 	}

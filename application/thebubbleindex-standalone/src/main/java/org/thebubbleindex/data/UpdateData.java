@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
@@ -30,25 +31,35 @@ public class UpdateData {
 
 	private final List<String> Categories = new ArrayList<String>(45);
 	private final UpdateWorker updateWorker;
+	private String quandlKey = "";
 	public final static String updateCategories = "UpdateCategories.csv";
 	public final static String updateSelectionFile = "UpdateSelection.csv";
 
 	public UpdateData(final UpdateWorker updateWorker, final String quandlKey) {
 		this.updateWorker = updateWorker;
+		this.quandlKey = quandlKey;
+		Logs.myLogger.info("Initializing update.");
+		init();
+	}
+
+	public void run() {
 		Logs.myLogger.info("Running update.");
-		getTypes();
+		
 		final Map<String, Integer> errorsPerCategory = new HashMap<String, Integer>(50);
-		int errors;
 
 		for (final String Category : Categories) {
-			errors = 0;
+			int errors = 0;
+
 			final List<String> Selections = new ArrayList<String>(500);
 			final List<String> Sources = new ArrayList<String>(500);
 			final List<String> quandlDataSet = new ArrayList<String>(500);
 			final List<String> quandlDataName = new ArrayList<String>(500);
 			final List<Integer> quandlColumn = new ArrayList<Integer>(500);
-			final List<String> isYahooIndex = new ArrayList<String>(500);
-			getCategoryList(Category, Selections, Sources, quandlDataSet, quandlDataName, quandlColumn, isYahooIndex);
+			final List<Boolean> isYahooIndex = new ArrayList<Boolean>(500);
+			final List<Boolean> overwrite = new ArrayList<Boolean>(500);
+
+			readCategoryList(Category, Selections, Sources, quandlDataSet, quandlDataName, quandlColumn, isYahooIndex,
+					overwrite);
 
 			final ExecutorService executor = Executors.newFixedThreadPool(RunContext.threadNumber);
 			final List<Callable<Integer>> callables = new ArrayList<Callable<Integer>>(500);
@@ -56,7 +67,7 @@ public class UpdateData {
 			for (int j = 0; j < Selections.size(); j++) {
 				callables.add(new UpdateRunnable(this.updateWorker, Category, Selections.get(j), Sources.get(j),
 						quandlDataSet.get(j), quandlDataName.get(j), quandlColumn.get(j), isYahooIndex.get(j),
-						quandlKey));
+						quandlKey, overwrite.get(j)));
 			}
 
 			final List<Future<Integer>> results;
@@ -78,9 +89,15 @@ public class UpdateData {
 			}
 
 			executor.shutdownNow();
-			final int finalErrorNumber = errors;
+			try {
+				executor.awaitTermination(5, TimeUnit.SECONDS);
+			} catch (final InterruptedException ex) {
+				executor.shutdownNow();
+				Logs.myLogger.error("While updating category {}. Await termination execution exception. {}", Category, ex);
+			}
+
+			final Integer finalErrorNumber = new Integer(errors);
 			errorsPerCategory.put(Category, finalErrorNumber);
-			// updatelist = new ArrayList();
 		}
 		checkForErrors(errorsPerCategory);
 		if (RunContext.isGUI) {
@@ -93,7 +110,7 @@ public class UpdateData {
 	/**
 	 * 
 	 */
-	private void getTypes() {
+	private void init() {
 		try {
 
 			if (!new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + updateCategories)
@@ -136,9 +153,9 @@ public class UpdateData {
 	 * @param quandlColumn
 	 * @param isYahooIndex
 	 */
-	private void getCategoryList(final String Category, final List<String> Selections, final List<String> DataTypes,
+	private void readCategoryList(final String Category, final List<String> Selections, final List<String> DataTypes,
 			final List<String> quandlDataSet, final List<String> quandlDataName, final List<Integer> quandlColumn,
-			final List<String> isYahooIndex) {
+			final List<Boolean> isYahooIndex, final List<Boolean> overwrite) {
 		try {
 			final File updateFile = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol
 					+ Category + Indices.filePathSymbol + updateSelectionFile);
@@ -171,13 +188,17 @@ public class UpdateData {
 				quandlDataSet.add(splits[2]);
 				quandlDataName.add(splits[3]);
 				quandlColumn.add(Integer.parseInt(splits[4]));
-				isYahooIndex.add(splits[5]);
+				isYahooIndex.add(Boolean.parseBoolean(splits[5]));
+				if (splits.length > 6) {
+					overwrite.add(Boolean.parseBoolean(splits[6]));
+				} else {
+					overwrite.add(new Boolean(false));
+				}
 			}
 
 			Logs.myLogger.info("Found {} entries in {} update list.", Selections.size(), Category);
 			if (RunContext.isGUI) {
 				updateWorker.publishText("Found " + Selections.size() + " entries in " + Category + " update list.");
-
 			} else {
 				System.out.println("Found " + Selections.size() + " entries in " + Category + " update list.");
 			}
@@ -201,9 +222,9 @@ public class UpdateData {
 			final String categoryName = errors.getKey();
 			final int errorNumber = errors.getValue();
 			if (RunContext.isGUI) {
-				updateWorker.publishText(categoryName + ": Errors or missing files = " + errorNumber);
+				updateWorker.publishText(categoryName + ": Errors = " + errorNumber);
 			} else {
-				System.out.println(categoryName + ": Errors of missing files = " + errorNumber);
+				System.out.println(categoryName + ": Errors = " + errorNumber);
 			}
 		}
 	}

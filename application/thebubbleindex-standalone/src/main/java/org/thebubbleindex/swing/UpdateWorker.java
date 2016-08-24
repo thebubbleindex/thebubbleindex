@@ -24,8 +24,8 @@ public class UpdateWorker extends SwingWorker<Boolean, String> {
 	@Override
 	protected Boolean doInBackground() {
 		Logs.myLogger.info("Update button clicked");
-
-		new UpdateData(this, quandlKey);
+		final UpdateData updateData = new UpdateData(this, quandlKey);
+		updateData.run();
 		return true;
 	}
 

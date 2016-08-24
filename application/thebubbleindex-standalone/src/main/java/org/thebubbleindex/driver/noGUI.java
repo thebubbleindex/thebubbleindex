@@ -130,9 +130,7 @@ public class noGUI {
 									categoryName, selectionName, ex);
 						}
 					}
-				}
-
-				else if (type == RunType.Category) {
+				} else if (type == RunType.Category) {
 					categoryName = args[++i];
 					windows = args[++i];
 					threads = Integer.parseInt(args[++i]);
@@ -157,9 +155,7 @@ public class noGUI {
 							bubbleIndex.outputResults(null);
 						}
 					}
-				}
-
-				else if (type == RunType.All) {
+				} else if (type == RunType.All) {
 					windows = args[++i];
 					threads = Integer.parseInt(args[++i]);
 					tCrit = Float.parseFloat(args[++i]);
@@ -186,9 +182,7 @@ public class noGUI {
 							}
 						}
 					}
-				}
-
-				else if (type == RunType.Update) {
+				} else if (type == RunType.Update) {
 					RunContext.threadNumber = Runtime.getRuntime().availableProcessors();
 					String quandlKey;
 					try {
@@ -196,10 +190,9 @@ public class noGUI {
 					} catch (final Exception ex) {
 						quandlKey = "";
 					}
-					new UpdateData(null, quandlKey);
-				}
-
-				else {
+					final UpdateData updateData = new UpdateData(null, quandlKey);
+					updateData.run();
+				} else {
 					RunContext.isGUI = true;
 					GUI.GUImain();
 				}

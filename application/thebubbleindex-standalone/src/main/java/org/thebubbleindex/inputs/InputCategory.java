@@ -18,11 +18,12 @@ public class InputCategory {
 	private String name;
 	private String location;
 	private final ArrayList<String> components;
+	public static final String fileEnding = ".csv";
 
 	public InputCategory(final String name) {
 		components = new ArrayList<String>(100);
 		this.name = name;
-		this.location = Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + this.name + ".csv";
+		this.location = Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + this.name + fileEnding;
 	}
 
 	public InputCategory(final String name, final String location) {

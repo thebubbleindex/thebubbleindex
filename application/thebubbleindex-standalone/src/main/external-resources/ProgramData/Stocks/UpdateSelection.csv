@@ -1,2 +1,2 @@
-Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex
-TSLA,Yahoo,NA,NA,0,0
+Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex,Overwrite
+TSLA,Yahoo,NA,NA,0,false,true
