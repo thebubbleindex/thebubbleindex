@@ -17,7 +17,7 @@ import org.thebubbleindex.util.Utilities;
  * value returned from the Run method of this class is the value of The Bubble
  * Index for a specific date.
  * 
- * @author ttrott
+ * @author bigttrott
  */
 public class MyCPUCallable implements Callable<Double> {
 

@@ -8,7 +8,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.text.DecimalFormat;
@@ -43,19 +42,24 @@ import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.util.Utilities;
 
 /**
+ * Plots the derivatives of The Bubble Index with JFreeChart
  *
- * @author ttrott Plots the derivatives of The Bubble Index with JFreeChart
+ * @author bigttrott
  */
 public class DerivativePlot {
 	private final int[] backtestDayLengths;
-
 	private final List<String> dailyPriceData;
 	private final Date begDate;
 	private final Date endDate;
-
+	private static final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("yyyy-MM-dd");
+		}
+	};
 	/** MouseEvent X & Y. */
 	private int m_iX, m_iY;
-	private double m_dX, m_dY, m_dXX;
+	private double m_dX, m_dXX;
 	/**
 	 * @param index0Value
 	 *            stores the mouse position relative to price data
@@ -65,8 +69,6 @@ public class DerivativePlot {
 	private double index0Value = 0.0;
 	private final double indexValue[] = { 0.0, 0.0, 0.0, 0.0 };
 
-	/** Crosshair X & Y. */
-	private Line2D m_l2dCrosshairX, m_l2dCrosshairY;
 	public final ChartPanel chartPanel;
 	private final String selectionName;
 	private final List<String> dailyPriceDate;
@@ -372,36 +374,6 @@ public class DerivativePlot {
 		}
 	}
 
-	/*
-	 * WZW override Draw a dynamic crosshair(trace line-both axis)
-	 */
-	@SuppressWarnings("unused")
-	private void drawRTCrosshair() {
-		final Rectangle2D screenDataArea = chartPanel.getScreenDataArea(m_iX, m_iY);
-		if (screenDataArea == null)
-			return;
-
-		final Graphics2D g2 = (Graphics2D) chartPanel.getGraphics();
-		final int iDAMaxX = (int) screenDataArea.getMaxX();
-		final int iDAMinX = (int) screenDataArea.getMinX();
-		final int iDAMaxY = (int) screenDataArea.getMaxY();
-		final int iDAMinY = (int) screenDataArea.getMinY();
-
-		g2.setXORMode(new Color(0xFFFF00));// Color of crosshair
-		if (m_l2dCrosshairX != null && m_l2dCrosshairY != null) {
-			g2.draw(m_l2dCrosshairX);
-			g2.draw(m_l2dCrosshairY);
-		}
-
-		final Line2D l2dX = new Line2D.Double(m_dX, iDAMinY, m_dX, iDAMaxY);
-		g2.draw(l2dX);
-		m_l2dCrosshairX = l2dX;
-		final Line2D l2dY = new Line2D.Double(iDAMinX, m_dY, iDAMaxX, m_dY);
-		g2.draw(l2dY);
-		m_l2dCrosshairY = l2dY;
-		g2.dispose();
-	}
-
 	/**
 	 * WZW override Draw a realtime tooltip at top banner(store X,Y,... value)
 	 */
@@ -481,7 +453,7 @@ public class DerivativePlot {
 				"Deriv" + Integer.toString(backtestDayLengths[1]) + ":",
 				"Deriv" + Integer.toString(backtestDayLengths[0]) + ":", "Price:", "Date:" };
 		final int iLenT = asT.length;
-		final ArrayList<String> alV = new ArrayList<>();
+		final ArrayList<String> alV = new ArrayList<String>(iLenT);
 		String sV = "";
 		// ^Binding
 		for (int i = iLenT - 1; i >= 0; i--) {
@@ -516,8 +488,7 @@ public class DerivativePlot {
 	private String getHMS() {
 		final long lDte = (long) this.m_dXX;
 		final Date dtXX = new Date(lDte);
-		final SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-		final String date = dateformat.format(dtXX);
+		final String date = dateformat.get().format(dtXX);
 
 		return date;
 	}

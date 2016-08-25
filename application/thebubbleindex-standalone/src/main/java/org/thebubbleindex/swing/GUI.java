@@ -4,13 +4,13 @@ import com.nativelibs4java.util.IOUtils;
 
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -21,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
@@ -41,9 +42,9 @@ import org.thebubbleindex.util.Utilities;
  * GUI Creates, draws, and contains the input fields to run the GUI mode of The
  * Bubble Index application.
  * 
- * @author ttrott
+ * @author bigttrott
  */
-public class GUI extends javax.swing.JFrame {
+public class GUI extends JFrame {
 
 	/**
 	 * 
@@ -132,11 +133,7 @@ public class GUI extends javax.swing.JFrame {
 		TCriticalField.setText(String.valueOf(tCrit));
 		MTextField.setText(String.valueOf(mCoeff));
 
-		try {
-			Utilities.displayOutput("Working Dir: " + Indices.getFilePath(), false);
-		} catch (final UnsupportedEncodingException ex) {
-			Utilities.displayOutput("Error finding working dir..." + ex.getLocalizedMessage(), false);
-		}
+		Utilities.displayOutput("Working Dir: " + Indices.userDir, false);
 	}
 
 	/**
@@ -628,7 +625,7 @@ public class GUI extends javax.swing.JFrame {
 	protected void updateDropDownSelection(final String name) {
 
 		for (final String category : Indices.categoriesAndComponents.keySet()) {
-			if (name.equals(category)) {
+			if (name.equalsIgnoreCase(category)) {
 				final InputCategory inputCategory = Indices.categoriesAndComponents.get(category);
 				DropDownCategory.setSelectedItem(name);
 				DropDownSelection.setModel(new DefaultComboBoxModel<String>(inputCategory.getComponentsAsArray()));
@@ -741,7 +738,7 @@ public class GUI extends javax.swing.JFrame {
 	private final JLabel ModelOptionsHeaderLabel = new JLabel();
 	private final JTextField OmegaTextField = new JTextField();
 	private final JLabel OmegaTextLabel = new JLabel();
-	public static final java.awt.TextArea OutputText = new java.awt.TextArea();
+	public static final TextArea OutputText = new java.awt.TextArea();
 	private final JButton RunProgram = new JButton();
 	private final JLabel SelectionAreaLabel = new JLabel();
 	private final JLabel SelectionLabel = new JLabel();

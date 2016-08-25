@@ -24,7 +24,7 @@ import org.thebubbleindex.logging.Logs;
  * <a href="http://en.wikipedia.org/wiki/Least-squares_spectral_analysis">Least
  * Squares spectral analysis</a>
  * 
- * @author ttrott
+ * @author bigttrott
  */
 public class LombScargle {
 
@@ -245,11 +245,7 @@ public class LombScargle {
 		final double Mean = -1.0 * Sum * 1.0 / SIZE;
 
 		// TimeSeries becomes the residual
-		// Subtract_IV64fS64f_IV64f(TimeSeries, 0, Mean, SIZE);
 		Add_V64fS64f_V64f(TimeSeries, 0, Mean, Residual, 0, SIZE);
-		// for (int i = 0; i < SIZE; i++) {
-		// Residual[i] = TimeSeries[i] - Mean;
-		// }
 
 		for (int i = 0; i < freqSize; i++) {
 
@@ -266,9 +262,6 @@ public class LombScargle {
 			Sin_V64f_V64f(TwoOmegaT, 0, tempArrayTwo, 0, SIZE);
 
 			for (int j = 0; j < SIZE; j++) {
-				// TwoOmegaT[j] = 2.0 * Omega * TimeValues[j];
-				// SinSum = SinSum + FastMath.sin(TwoOmegaT[j]);
-				// CosSum = CosSum + FastMath.cos(TwoOmegaT[j]);
 				SinSum = SinSum + tempArrayTwo[j];
 				CosSum = CosSum + tempArrayOne[j];
 			}
@@ -292,19 +285,10 @@ public class LombScargle {
 			Multiply_V64fV64f_V64f(tempArrayTwo, 0, Residual, 0, tempArrayFour, 0, SIZE);
 
 			for (int j = 0; j < SIZE; j++) {
-				// OmegaTMinusTau[j] = Omega * (TimeValues[j] - Tau);
 				CosResidSum = CosResidSum + tempArrayThree[j];
-				// CosResidSum = CosResidSum + Residual[j] *
-				// FastMath.cos(OmegaTMinusTau[j]);
 				SinResidSum = SinResidSum + tempArrayFour[j];
-				// SinResidSum = SinResidSum + Residual[j] *
-				// FastMath.sin(OmegaTMinusTau[j]);
 				SinSum = SinSum + FastMath.pow(tempArrayTwo[j], 2.0);
 				CosSum = CosSum + FastMath.pow(tempArrayOne[j], 2.0);
-				// SinSum = SinSum +
-				// FastMath.pow(FastMath.sin(OmegaTMinusTau[j]), 2.0);
-				// CosSum = CosSum +
-				// FastMath.pow(FastMath.cos(OmegaTMinusTau[j]), 2.0);
 			}
 
 			CosResidSum = FastMath.pow(CosResidSum, 2.0);

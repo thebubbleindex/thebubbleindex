@@ -9,7 +9,7 @@ import org.thebubbleindex.logging.Logs;
 
 /**
  *
- * @author ttrott
+ * @author bigttrott
  */
 public class ExportData {
 

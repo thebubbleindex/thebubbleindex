@@ -17,12 +17,11 @@ import org.thebubbleindex.util.Utilities;
 
 /**
  *
- * @author green
+ * @author bigttrott
  */
 public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 
 	final private RunType type;
-
 	final private GUI gui;
 	final private String windowsInput;
 	final private Double omega;

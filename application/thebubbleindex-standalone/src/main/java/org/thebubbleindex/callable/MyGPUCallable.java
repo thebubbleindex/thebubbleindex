@@ -30,7 +30,7 @@ import static org.bridj.Pointer.allocateFloats;
  * value returned from the Run method of this class is the value of The Bubble
  * Index for a specific date.
  * 
- * @author ttrott
+ * @author bigttrott
  */
 public class MyGPUCallable implements Callable<Float> {
 

@@ -14,9 +14,9 @@ import org.thebubbleindex.swing.UpdateWorker;
  */
 public class UpdateRunnable implements Callable<Integer> {
 
-	private final String Category;
-	private final String Selections;
-	private final String Sources;
+	private final String category;
+	private final String selections;
+	private final String sources;
 	private final String quandlDataSet;
 	private final String quandlDataName;
 	private final int quandlColumn;
@@ -42,9 +42,9 @@ public class UpdateRunnable implements Callable<Integer> {
 			final Boolean isYahooIndex, final String quandlKey, final Boolean overwrite) {
 
 		this.updateWorker = updateWorker;
-		this.Category = Category;
-		this.Selections = Selections;
-		this.Sources = Sources;
+		this.category = Category;
+		this.selections = Selections;
+		this.sources = Sources;
 		this.quandlDataSet = quandlDataSet;
 		this.quandlDataName = quandlDataName;
 		this.quandlColumn = quandlColumn;
@@ -62,15 +62,15 @@ public class UpdateRunnable implements Callable<Integer> {
 		if (!RunContext.Stop) {
 			final URLS selection = new URLS();
 			selection.setUpdateWorker(updateWorker);
-			selection.setDataName(Selections);
+			selection.setDataName(selections);
 			selection.setYahooIndex(isYahooIndex);
-			selection.setDataType(Category);
-			selection.setSource(Sources);
+			selection.setDataType(category);
+			selection.setSource(sources);
 
-			if (selection.getSource().equals("QUANDL")) {
+			if (selection.getSource().equalsIgnoreCase("QUANDL")) {
 				selection.setQuandlUrl(quandlDataSet, quandlDataName, quandlKey);
 				selection.setQuandlColumn(quandlColumn);
-			} else if (selection.getSource().equals("FED")) {
+			} else if (selection.getSource().equalsIgnoreCase("FED")) {
 				selection.setFEDUrl();
 			} else {
 				selection.setYahooUrl();
@@ -86,10 +86,10 @@ public class UpdateRunnable implements Callable<Integer> {
 				try {
 					selection.readURL_file(outputstream);
 				} catch (final IOException ex) {
-					Logs.myLogger.error("Category = {}, Selections = {}. {}", Category, Selections, ex);
+					Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, ex);
 					return 1;
 				} catch (final Throwable th) {
-					Logs.myLogger.error("Category = {}, Selections = {}. {}", Category, Selections, th);
+					Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, th);
 					return 1;
 				}
 			}
@@ -99,14 +99,14 @@ public class UpdateRunnable implements Callable<Integer> {
 					try {
 						selection.cleanData(outputstream);
 					} catch (final IOException ex) {
-						Logs.myLogger.error("Category = {}, Selections = {}. {}", Category, Selections, ex);
+						Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, ex);
 						return 1;
 					} catch (final Throwable th) {
-						Logs.myLogger.error("Category = {}, Selections = {}. {}", Category, Selections, th);
+						Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, th);
 						return 1;
 					}
 				} else {
-					Logs.myLogger.error("Category = {}, Selections = {}. {}", Category, Selections,
+					Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections,
 							"Outputstream size = 0.");
 					return 1;
 				}

@@ -14,7 +14,7 @@ import org.thebubbleindex.logging.Logs;
 
 /**
  *
- * @author ttrott
+ * @author bigttrott
  * 
  */
 public class Indices {
@@ -23,7 +23,7 @@ public class Indices {
 	public final static String categoryList = "CategoryList.csv";
 	public static String userDir;
 	public final static String filePathSymbol = File.separator;
-	public final static Map<String, InputCategory> categoriesAndComponents = new TreeMap<>();
+	public final static Map<String, InputCategory> categoriesAndComponents = new TreeMap<String, InputCategory>();
 
 	public static void initialize() {
 

@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  *
- * @author ttrott
+ * @author bigttrott
  */
 public class DailyDataCache {
 

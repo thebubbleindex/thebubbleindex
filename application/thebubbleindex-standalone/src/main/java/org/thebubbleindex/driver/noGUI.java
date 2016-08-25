@@ -22,7 +22,7 @@ import org.thebubbleindex.util.Utilities;
  * either run in a Graphical User Interface (GUI) mode or a non-GUI mode via
  * command line arguments.
  * 
- * @author ttrott
+ * @author bigttrott
  */
 public class noGUI {
 
@@ -88,7 +88,7 @@ public class noGUI {
 
 			int i = 0;
 
-			if (args[i].equals("noGUI")) {
+			if (args[i].equalsIgnoreCase("noGUI")) {
 
 				Logs.myLogger.info("Running non-GUI mode");
 				RunContext.isGUI = false;

@@ -36,14 +36,13 @@ import org.thebubbleindex.util.Utilities;
 /**
  * RunIndex creates a Run instance with the GPU or CPU execution code
  * 
- * @author ttrott
+ * @author bigttrott
  */
 public class RunIndex {
-
+	public static String src;
 	final private double[] dailyPriceValues;
 	final private int dataSize;
 	final private int window;
-
 	final private List<Double> results;
 	final private List<String> dailyPriceDate;
 	final private double omegaDouble;
@@ -52,8 +51,6 @@ public class RunIndex {
 	final private String selectionName;
 	final private String previousFilePath;
 	final private BubbleIndexWorker bubbleIndexWorker;
-
-	public static String src;
 
 	/**
 	 * RunIndex constructor
@@ -343,11 +340,8 @@ public class RunIndex {
 			int index = 0;
 
 			for (final CLContext context : contexts) {
-				final int computeUnits = context.getDevices()[0].getMaxComputeUnits();// only
-																						// one
-																						// device
-																						// per
-																						// context
+				// only one device per context
+				final int computeUnits = context.getDevices()[0].getMaxComputeUnits();
 
 				randomSum = Math.min(randomSum + computeUnits * 1.0 / totalComputeUnitsSum, 1.0);
 				contextComputeMapping.put(context, randomSum);

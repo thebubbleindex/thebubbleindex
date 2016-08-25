@@ -9,7 +9,7 @@ import org.thebubbleindex.util.Utilities;
 
 /**
  *
- * @author green
+ * @author bigttrott
  */
 public class UpdateWorker extends SwingWorker<Boolean, String> {
 

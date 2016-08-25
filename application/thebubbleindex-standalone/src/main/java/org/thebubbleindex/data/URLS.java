@@ -19,7 +19,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
@@ -40,9 +42,9 @@ public class URLS {
 	private String source;
 	private final int startYear = 1900;
 	private boolean isYahooIndex;
-	private String QuandlDataset;
-	private String QuandlName;
-	private int QuandlColumn;
+	private String quandlDataset;
+	private String quandlName;
+	private int quandlColumn;
 	private UpdateWorker updateWorker;
 	private boolean overwrite;
 
@@ -70,8 +72,8 @@ public class URLS {
 	@Override
 	public String toString() {
 		return "URLS [dataName=" + dataName + ", url=" + url + ", dataType=" + dataType + ", source=" + source
-				+ ", isYahooIndex=" + isYahooIndex + ", QuandlDataset=" + QuandlDataset + ", QuandlName=" + QuandlName
-				+ ", QuandlColumn=" + QuandlColumn + ", overwrite=" + overwrite + "]";
+				+ ", isYahooIndex=" + isYahooIndex + ", QuandlDataset=" + quandlDataset + ", QuandlName=" + quandlName
+				+ ", QuandlColumn=" + quandlColumn + ", overwrite=" + overwrite + "]";
 	}
 
 	/**
@@ -88,9 +90,9 @@ public class URLS {
 	 * @param quandlKey
 	 */
 	public void setQuandlUrl(final String dataset, final String name, final String quandlKey) {
-		this.QuandlDataset = dataset;
-		this.QuandlName = name;
-		url = "https://www.quandl.com/api/v1/datasets/" + QuandlDataset + "/" + QuandlName + ".csv?sort_order=asc";
+		this.quandlDataset = dataset;
+		this.quandlName = name;
+		url = "https://www.quandl.com/api/v1/datasets/" + quandlDataset + "/" + quandlName + ".csv?sort_order=asc";
 		if (quandlKey.trim().length() > 0) {
 			url = url + "&api_key=" + quandlKey.trim();
 		}
@@ -101,7 +103,7 @@ public class URLS {
 	 * @param Column
 	 */
 	public void setQuandlColumn(final int Column) {
-		this.QuandlColumn = Column;
+		this.quandlColumn = Column;
 	}
 
 	/**
@@ -203,9 +205,9 @@ public class URLS {
 		boolean YAHOO = false;
 		boolean QUANDL = false;
 
-		if (this.source.matches("Yahoo")) {
+		if (source.equalsIgnoreCase("Yahoo")) {
 			YAHOO = true;
-		} else if (this.source.matches("QUANDL")) {
+		} else if (source.equalsIgnoreCase("QUANDL")) {
 			QUANDL = true;
 		}
 
@@ -218,73 +220,45 @@ public class URLS {
 
 			try (final BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
 
+				// ignore the lines with the date repeats (common in yahoo data)
+				final Set<String> dateSet = new HashSet<String>(1000);
+
 				// Ignore header is True for Yahoo, FED, and QUANDL
 				String line = reader.readLine();
 
 				while ((line = reader.readLine()) != null) {
-					// fileData.add(line);
-
 					final String[] splits = line.split(",");
-					if (YAHOO) {
-						if (splits.length > 6) {
-							boolean found = false;
-							for (String p : dateData) {
-								if (p.equals(splits[0])) {
-									found = true;
-									break;
-								}
-							}
-							if (!found) {
-								try {
-									priceData.add(String.valueOf(Double.parseDouble(splits[6])));
-									dateData.add(splits[0]);
-								} catch (final NumberFormatException ex) {
-									Logs.myLogger.error(
-											"Failed to write line. Category Name = {}. Selection Name = {}.",
-											this.dataType, this.dataName);
-								}
-							}
+					if (splits.length > 0 && dateSet.contains(splits[0])) {
+						continue;
+					}
+					if (YAHOO && splits.length > 6) {
+						try {
+							priceData.add(String.valueOf(Double.parseDouble(splits[6])));
+							dateData.add(splits[0]);
+							dateSet.add(splits[0]);
+						} catch (final NumberFormatException ex) {
+							Logs.myLogger.error("Failed to write line: {}. Category Name = {}. Selection Name = {}.",
+									line, dataType, dataName);
 						}
-					} else if (QUANDL) {
-						if (splits.length > this.QuandlColumn - 1) {
-							boolean found = false;
-							for (String p : dateData) {
-								if (p.equals(splits[0])) {
-									found = true;
-									break;
-								}
-							}
-							if (!found) {
-								try {
-									priceData.add(String.valueOf(Double.parseDouble(splits[this.QuandlColumn - 1])));
-									dateData.add(splits[0]);
-								} catch (final NumberFormatException ex) {
-									Logs.myLogger.error(
-											"Failed to write line. Category Name = {}. Selection Name = {}.",
-											this.dataType, this.dataName);
-								}
-							}
+					} else if (QUANDL && splits.length > quandlColumn - 1) {
+						try {
+							priceData.add(String.valueOf(Double.parseDouble(splits[quandlColumn - 1])));
+							dateData.add(splits[0]);
+							dateSet.add(splits[0]);
+						} catch (final NumberFormatException ex) {
+							Logs.myLogger.error("Failed to write line: {}. Category Name = {}. Selection Name = {}.",
+									line, dataType, dataName);
 						}
 					} else {
-						if (splits.length > 1) {
-							if (!splits[1].equals(".")) {
-								boolean found = false;
-								for (String p : dateData) {
-									if (p.equals(splits[0])) {
-										found = true;
-										break;
-									}
-								}
-								if (!found) {
-									try {
-										priceData.add(String.valueOf(Double.parseDouble(splits[1])));
-										dateData.add(splits[0]);
-									} catch (final NumberFormatException ex) {
-										Logs.myLogger.error(
-												"Failed to write line. Category Name = {}. Selection Name = {}.",
-												this.dataType, this.dataName);
-									}
-								}
+						if (splits.length > 1 && !splits[1].equals(".")) {
+							try {
+								priceData.add(String.valueOf(Double.parseDouble(splits[1])));
+								dateData.add(splits[0]);
+								dateSet.add(splits[0]);
+							} catch (final NumberFormatException ex) {
+								Logs.myLogger.error(
+										"Failed to write line: {}. Category Name = {}. Selection Name = {}.", line,
+										dataType, dataName);
 							}
 						}
 					}
@@ -298,23 +272,21 @@ public class URLS {
 				// write data
 			}
 		} catch (final IOException x) {
-			final String name = this.dataName;
-			Logs.myLogger.error("Failed to write CSV file. Category Name = {}, Selection Name = {}. {}", this.dataType,
-					name, x);
+			Logs.myLogger.error("Failed to write CSV file. Category Name = {}, Selection Name = {}. {}", dataType,
+					dataName, x);
 			if (RunContext.isGUI) {
-				updateWorker.publishText("Failed to process CSV file: " + name);
+				updateWorker.publishText("Failed to process CSV file: " + dataName);
 			} else {
-				System.out.println("Failed to process CSV file: " + name);
+				System.out.println("Failed to process CSV file: " + dataName);
 			}
-			throw new IOException("Failed to process CSV file: " + name);
+			throw new IOException("Failed to process CSV file: " + dataName);
 		}
 
 		final List<String> oldpriceData = new ArrayList<String>(1000);
 		final List<String> olddateData = new ArrayList<String>(1000);
 
-		final Path filepath = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol
-				+ this.dataType + Indices.filePathSymbol + this.dataName + Indices.filePathSymbol + this.dataName
-				+ dailyDataFile).toPath();
+		final Path filepath = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + dataType
+				+ Indices.filePathSymbol + dataName + Indices.filePathSymbol + dataName + dailyDataFile).toPath();
 
 		if (overwrite) {
 			if (Files.exists(filepath)) {
@@ -349,8 +321,7 @@ public class URLS {
 			}
 
 			final File dailydata = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol
-					+ this.dataType + Indices.filePathSymbol + this.dataName + Indices.filePathSymbol + this.dataName
-					+ dailyDataFile);
+					+ dataType + Indices.filePathSymbol + dataName + Indices.filePathSymbol + dataName + dailyDataFile);
 
 			dailydata.createNewFile();
 
@@ -372,11 +343,11 @@ public class URLS {
 
 			try {
 				final File dailydata = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol
-						+ this.dataType + Indices.filePathSymbol + this.dataName + Indices.filePathSymbol
-						+ this.dataName + dailyDataFile);
+						+ dataType + Indices.filePathSymbol + dataName + Indices.filePathSymbol + dataName
+						+ dailyDataFile);
 
-				new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + this.dataType
-						+ Indices.filePathSymbol + this.dataName + Indices.filePathSymbol).mkdirs();
+				new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + dataType
+						+ Indices.filePathSymbol + dataName + Indices.filePathSymbol).mkdirs();
 
 				dailydata.createNewFile();
 
@@ -388,15 +359,14 @@ public class URLS {
 				}
 
 			} catch (final IOException th) {
-				final String name = this.dataName;
 				Logs.myLogger.error("Failed to create daily data. Category Name = {}, Selection Name = {}. {}",
-						this.dataType, name, th);
+						dataType, dataName, th);
 				if (RunContext.isGUI) {
-					updateWorker.publishText("Failed to create daily data: " + name);
+					updateWorker.publishText("Failed to create daily data: " + dataName);
 				} else {
-					System.out.println("Failed to create daily data: " + name);
+					System.out.println("Failed to create daily data: " + dataName);
 				}
-				throw new IOException("Failed to create daily data: " + name);
+				throw new IOException("Failed to create daily data: " + dataName);
 			}
 		}
 	}

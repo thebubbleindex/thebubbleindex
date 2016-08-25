@@ -8,7 +8,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +31,6 @@ import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.SegmentedTimeline;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -48,21 +46,24 @@ import org.thebubbleindex.util.Utilities;
 
 /**
  *
- * @author ttrott
+ * @author bigttrott
  */
 public class BubbleIndexPlot {
 	private final int[] backtestDayLengths;
 	public final Date begDate;
 	public final Date endDate;
 	public final boolean isCustomRange;
-
+	private static final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("yyyy-MM-dd");
+		}
+	};
 	/** MouseEvent X & Y. */
 	private int m_iX, m_iY;
-	private double m_dX, m_dY, m_dXX;
+	private double m_dX, m_dXX;
 	private double index4Value = 0.0;
 	private double[] indexValue = { 0.0, 0.0, 0.0, 0.0 };
-	/** Crosshair X & Y. */
-	private Line2D m_l2dCrosshairX, m_l2dCrosshairY;
 	public final ChartPanel chartPanel;
 	private final String selectionName;
 	private final List<String> dailyPriceData;
@@ -216,7 +217,7 @@ public class BubbleIndexPlot {
 			axis.setRange(begDate, endDate);
 
 			// Set the vertical range
-			final List<Double> Values = new ArrayList<>();
+			final List<Double> Values = new ArrayList<Double>(4);
 
 			final TimeSeriesCollection collect = (TimeSeriesCollection) plot.getDataset(0);
 			for (int i = 0; i < 4; i++) {
@@ -274,7 +275,7 @@ public class BubbleIndexPlot {
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
 		final TimeSeries s1 = new TimeSeries(selectionName + " Price Data");
 
-		final List<Double> DoubleValues = new ArrayList<>();
+		final List<Double> DoubleValues = new ArrayList<Double>(dailyPriceData.size());
 		listToDouble(dailyPriceData, DoubleValues);
 
 		for (int i = 0; i < dailyPriceDate.size(); i++) {
@@ -304,10 +305,10 @@ public class BubbleIndexPlot {
 
 			TimeSeriesArray[i] = new TimeSeries(
 					selectionName + Integer.toString(backtestDayLengths[i]) + " Bubble Index Data");
-
-			final List<String> DateList = new ArrayList<>();
-			final List<String> DataListString = new ArrayList<>();
-			final List<Double> DataListDouble = new ArrayList<>();
+			final int size = dailyPriceData.size();
+			final List<String> DateList = new ArrayList<String>(size);
+			final List<String> DataListString = new ArrayList<String>(size);
+			final List<Double> DataListDouble = new ArrayList<Double>(size);
 
 			final String previousFilePath = Indices.userDir + "ProgramData" + Indices.filePathSymbol + categoryName
 					+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName
@@ -357,7 +358,7 @@ public class BubbleIndexPlot {
 				DateValues[i] = Integer.parseInt(temp[i]);
 			}
 		} else {
-			Logs.myLogger.error("Invalid input. temp.lenght = {}, DateValues.lenght = {}.", temp.length,
+			Logs.myLogger.error("Invalid input. temp.length = {}, DateValues.length = {}.", temp.length,
 					DateValues.length);
 		}
 	}
@@ -371,35 +372,6 @@ public class BubbleIndexPlot {
 		for (final String DataListString1 : DataListString) {
 			DataListDouble.add(Double.parseDouble(DataListString1));
 		}
-	}
-
-	/*
-	 * WZW override Draw a dynamic crosshair(trace line-both axis)
-	 */
-	@SuppressWarnings("unused")
-	private void drawRTCrosshair() {
-		final Rectangle2D screenDataArea = chartPanel.getScreenDataArea(m_iX, m_iY);
-		if (screenDataArea == null)
-			return;
-
-		final Graphics2D g2 = (Graphics2D) chartPanel.getGraphics();
-		final int iDAMaxX = (int) screenDataArea.getMaxX();
-		final int iDAMinX = (int) screenDataArea.getMinX();
-		final int iDAMaxY = (int) screenDataArea.getMaxY();
-		final int iDAMinY = (int) screenDataArea.getMinY();
-
-		g2.setXORMode(new Color(0xFFFF00));// Color of crosshair
-		if (m_l2dCrosshairX != null && m_l2dCrosshairY != null) {
-			g2.draw(m_l2dCrosshairX);
-			g2.draw(m_l2dCrosshairY);
-		}
-		final Line2D l2dX = new Line2D.Double(m_dX, iDAMinY, m_dX, iDAMaxY);
-		g2.draw(l2dX);
-		m_l2dCrosshairX = l2dX;
-		final Line2D l2dY = new Line2D.Double(iDAMinX, m_dY, iDAMaxX, m_dY);
-		g2.draw(l2dY);
-		m_l2dCrosshairY = l2dY;
-		g2.dispose();
 	}
 
 	/*
@@ -417,13 +389,9 @@ public class BubbleIndexPlot {
 
 		final XYPlot plot = (XYPlot) chartPanel.getChart().getPlot();
 		final DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
-		final ValueAxis rangeAxis = plot.getRangeAxis();
 		final RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();
-		final RectangleEdge rangeAxisEdge = plot.getRangeAxisEdge();
 
 		final double dXX = dateAxis.java2DToValue(this.m_dX, screenDataArea, domainAxisEdge);
-		@SuppressWarnings("unused")
-		final double dYY = rangeAxis.java2DToValue(this.m_dY, screenDataArea, rangeAxisEdge);
 		this.m_dXX = dXX;
 		// ^Get title and data
 		final ArrayList<String> alInfo = getInfo();
@@ -485,7 +453,7 @@ public class BubbleIndexPlot {
 				selectionName + Integer.toString(backtestDayLengths[0]) + ":", "Price:", "Date:" };
 
 		final int iLenT = asT.length;
-		final ArrayList<String> alV = new ArrayList<>();
+		final ArrayList<String> alV = new ArrayList<String>(iLenT);
 		String sV = "";
 		// ^Binding
 		for (int i = iLenT - 1; i >= 0; i--) {
@@ -519,11 +487,9 @@ public class BubbleIndexPlot {
 	 * WZW override get Hour Minute Seconds
 	 */
 	private String getHMS() {
-
 		final long lDte = (long) this.m_dXX;
 		final Date dtXX = new Date(lDte);
-		final SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-		final String date = dateformat.format(dtXX);
+		final String date = dateformat.get().format(dtXX);
 
 		return date;
 	}

@@ -1,8 +1,5 @@
 /**
- * 
- */
-/**
- * @author ttrott
+ * @author bigttrott
  *
  */
 package org.thebubbleindex.swing;

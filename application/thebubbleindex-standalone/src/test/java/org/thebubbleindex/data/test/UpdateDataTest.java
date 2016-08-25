@@ -16,6 +16,11 @@ import org.thebubbleindex.data.UpdateData;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.runnable.RunContext;
 
+/**
+ * 
+ * @author bigttrott
+ *
+ */
 public class UpdateDataTest {
 
 	@Test

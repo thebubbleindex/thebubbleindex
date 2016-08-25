@@ -29,7 +29,7 @@ import org.thebubbleindex.swing.UpdateWorker;
  */
 public class UpdateData {
 
-	private final List<String> Categories = new ArrayList<String>(45);
+	private final List<String> categories = new ArrayList<String>(45);
 	private final UpdateWorker updateWorker;
 	private String quandlKey = "";
 	public final static String updateCategories = "UpdateCategories.csv";
@@ -47,7 +47,7 @@ public class UpdateData {
 		
 		final Map<String, Integer> errorsPerCategory = new HashMap<String, Integer>(50);
 
-		for (final String Category : Categories) {
+		for (final String category : categories) {
 			int errors = 0;
 
 			final List<String> Selections = new ArrayList<String>(500);
@@ -58,14 +58,14 @@ public class UpdateData {
 			final List<Boolean> isYahooIndex = new ArrayList<Boolean>(500);
 			final List<Boolean> overwrite = new ArrayList<Boolean>(500);
 
-			readCategoryList(Category, Selections, Sources, quandlDataSet, quandlDataName, quandlColumn, isYahooIndex,
+			readCategoryList(category, Selections, Sources, quandlDataSet, quandlDataName, quandlColumn, isYahooIndex,
 					overwrite);
 
 			final ExecutorService executor = Executors.newFixedThreadPool(RunContext.threadNumber);
 			final List<Callable<Integer>> callables = new ArrayList<Callable<Integer>>(500);
 
 			for (int j = 0; j < Selections.size(); j++) {
-				callables.add(new UpdateRunnable(this.updateWorker, Category, Selections.get(j), Sources.get(j),
+				callables.add(new UpdateRunnable(updateWorker, category, Selections.get(j), Sources.get(j),
 						quandlDataSet.get(j), quandlDataName.get(j), quandlColumn.get(j), isYahooIndex.get(j),
 						quandlKey, overwrite.get(j)));
 			}
@@ -80,12 +80,12 @@ public class UpdateData {
 						// updatelist.add(futures.get());
 					} catch (final ExecutionException ex) {
 						errors++;
-						Logs.myLogger.error("Category Name = {}. {}", Category, ex);
+						Logs.myLogger.error("Category Name = {}. {}", category, ex);
 					}
 				}
 
 			} catch (final InterruptedException ex) {
-				Logs.myLogger.error("Category Name = {}. {}", Category, ex);
+				Logs.myLogger.error("Category Name = {}. {}", category, ex);
 			}
 
 			executor.shutdownNow();
@@ -93,11 +93,11 @@ public class UpdateData {
 				executor.awaitTermination(5, TimeUnit.SECONDS);
 			} catch (final InterruptedException ex) {
 				executor.shutdownNow();
-				Logs.myLogger.error("While updating category {}. Await termination execution exception. {}", Category, ex);
+				Logs.myLogger.error("While updating category {}. Await termination execution exception. {}", category, ex);
 			}
 
 			final Integer finalErrorNumber = new Integer(errors);
-			errorsPerCategory.put(Category, finalErrorNumber);
+			errorsPerCategory.put(category, finalErrorNumber);
 		}
 		checkForErrors(errorsPerCategory);
 		if (RunContext.isGUI) {
@@ -130,7 +130,7 @@ public class UpdateData {
 			final BufferedReader reader = Files.newBufferedReader(filepath, Charset.defaultCharset());
 			String line;
 			while ((line = reader.readLine()) != null) {
-				Categories.add(line);
+				categories.add(line);
 			}
 
 		} catch (final IOException ex) {
