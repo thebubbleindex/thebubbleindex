@@ -2,10 +2,12 @@ package org.thebubbleindex.plot;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
@@ -116,9 +118,14 @@ public class DerivativePlot {
 	 * @param title
 	 */
 	public void drawDerivativePlot(final String title) {
+		// get the screen size as a java dimension
+		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int height = screenSize.height * 9 / 10;
+		int width = screenSize.width * 9 / 10;
 
 		// adjust several settings of the frame and display
 		final JFrame f = new JFrame(title);
+		f.setPreferredSize(new Dimension(width, height));
 		f.setTitle(title);
 		f.setLayout(new BorderLayout(0, 5));
 		f.add(chartPanel, BorderLayout.CENTER);
@@ -193,8 +200,10 @@ public class DerivativePlot {
 		plot.setDataset(1, createDataset());
 		plot.mapDatasetToRangeAxis(1, 1);
 		plot.setBackgroundPaint(Color.BLACK);
-		plot.setDomainGridlinePaint(Color.white);
-		plot.setRangeGridlinePaint(Color.white);
+		plot.setDomainGridlinesVisible(false);
+		plot.setRangeGridlinesVisible(false);
+		// plot.setDomainGridlinePaint(Color.white);
+		// plot.setRangeGridlinePaint(Color.white);
 		plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
 
 		final XYItemRenderer r = plot.getRenderer();
