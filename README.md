@@ -1,5 +1,7 @@
 # The Bubble Index
 
+[Download Pre-Built Jar](https://bigttrott-thebubbleindex.netdna-ssl.com/Release/thebubbleindex_08252016.zip)
+
 [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.google.code.gson/gson/badge.svg)](http://)
 
 The Bubble Index, a Java application designed to monitor LPPL Oscillations in financial markets. All results can be viewed at: https://www.thebubbleindex.com
