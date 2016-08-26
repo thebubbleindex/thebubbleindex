@@ -13,10 +13,14 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -49,7 +53,8 @@ import org.thebubbleindex.util.Utilities;
  * @author bigttrott
  */
 public class DerivativePlot {
-	private final int[] backtestDayLengths;
+	private final int maxWindows = 4;
+	private final List<Integer> backtestDayLengths = new ArrayList<Integer>(maxWindows);
 	private final List<String> dailyPriceData;
 	private final Date begDate;
 	private final Date endDate;
@@ -76,6 +81,7 @@ public class DerivativePlot {
 	private final List<String> dailyPriceDate;
 	private final String categoryName;
 	private final boolean isCustomRange;
+	private int dailyPriceDataSize;
 
 	static {
 		// set a theme using the new shadow generator feature available in
@@ -95,11 +101,17 @@ public class DerivativePlot {
 		this.dailyPriceData = dailyPriceData;
 		this.begDate = begDate;
 		this.endDate = endDate;
+		dailyPriceDataSize = dailyPriceData.size();
 		final String windowsStringArray[] = windowsString.split(",");
-		backtestDayLengths = new int[windowsStringArray.length];
-		int i = 0;
-		for (final String window : windowsStringArray) {
-			backtestDayLengths[i++] = Integer.parseInt(window);
+		final Set<Integer> windowSet = new HashSet<Integer>(maxWindows);
+		for (int i = 0; i < windowsStringArray.length; i++) {
+			if (backtestDayLengths.size() >= maxWindows)
+				break;
+			final Integer window = Integer.parseInt(windowsStringArray[i]);
+			if (!windowSet.contains(window)) {
+				backtestDayLengths.add(window);
+				windowSet.add(window);
+			}
 		}
 		final String title = "The Bubble Index\u2122: " + this.selectionName + " (Derivatives)";
 		chartPanel = createChart();
@@ -177,8 +189,9 @@ public class DerivativePlot {
 	 * @return A chart.
 	 */
 	private ChartPanel createChart() {
-		// Create price dataset
+		// Create datasets
 		final XYDataset dataset = createDerivDataset();
+		final XYDataset dataset2 = createDataset();
 
 		final JFreeChart chart = ChartFactory.createTimeSeriesChart(
 				"The Bubble Index\u2122: " + selectionName + " (Derivatives)", // title
@@ -194,10 +207,12 @@ public class DerivativePlot {
 
 		// Create deriv dataset and add to the plot
 		final XYPlot plot = (XYPlot) chart.getPlot();
+
 		final NumberAxis axis2 = new NumberAxis("Price");
 		axis2.setAutoRangeIncludesZero(false);
+
 		plot.setRangeAxis(1, axis2);
-		plot.setDataset(1, createDataset());
+		plot.setDataset(1, dataset2);
 		plot.mapDatasetToRangeAxis(1, 1);
 		plot.setBackgroundPaint(Color.BLACK);
 		plot.setDomainGridlinesVisible(false);
@@ -206,6 +221,7 @@ public class DerivativePlot {
 		// plot.setRangeGridlinePaint(Color.white);
 		plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
 
+		// draw lines
 		final XYItemRenderer r = plot.getRenderer();
 		if (r instanceof XYLineAndShapeRenderer) {
 			final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
@@ -224,38 +240,13 @@ public class DerivativePlot {
 		renderer2.setDrawSeriesLineAsPath(true);
 		renderer2.setSeriesPaint(0, Color.YELLOW);
 		plot.setRenderer(1, renderer2);
+
+		// init date axis
 		final DateAxis axis = (DateAxis) plot.getDomainAxis();
-
 		if (isCustomRange) {
-			Logs.myLogger.info("Creating custom range. Beginning date = {}. End date = {}", begDate.toString(),
-					endDate.toString());
-
+			// Set the horizontal range
 			axis.setRange(begDate, endDate);
-
-			double highest, lowest;
-
-			final TimeSeriesCollection collect2 = (TimeSeriesCollection) plot.getDataset(1);
-
-			lowest = plot.getDataset(1).getYValue(0, collect2.getSurroundingItems(0, begDate.getTime())[0]);
-			highest = plot.getDataset(1).getYValue(0, collect2.getSurroundingItems(0, endDate.getTime())[0]);
-
-			// Customize the display of the timeseries for better visual display
-			for (long i = begDate.getTime(); i < endDate.getTime(); i = i + 86400000) {
-				final int[] closeValues = collect2.getSurroundingItems(0, i);
-
-				if (plot.getDataset(1).getYValue(0, closeValues[0]) < lowest) {
-					lowest = plot.getDataset(1).getYValue(0, closeValues[0]);
-				}
-
-				if (plot.getDataset(1).getYValue(0, closeValues[0]) > highest) {
-					highest = plot.getDataset(1).getYValue(0, closeValues[0]);
-				}
-			}
-
-			plot.getRangeAxis(1).setRange(lowest - .1 * Math.abs(lowest - highest),
-					highest + .1 * Math.abs(lowest - highest));
 		}
-
 		axis.setTimeline(SegmentedTimeline.newMondayThroughFridayTimeline());
 
 		return new ChartPanel(chart);
@@ -272,11 +263,22 @@ public class DerivativePlot {
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
 		final TimeSeries s1 = new TimeSeries(selectionName + " Price Data");
 
-		final List<Double> DoubleValues = new ArrayList<>();
+		final List<Double> DoubleValues = new ArrayList<Double>(dailyPriceDataSize);
 		listToDouble(dailyPriceData, DoubleValues);
 
-		for (int i = 0; i < dailyPriceDate.size(); i++) {
-			DoubleValues.set(i, DoubleValues.get(i));
+		for (int i = 0; i < dailyPriceDataSize; i++) {
+			if (isCustomRange) {
+				Date tempDate = null;
+				try {
+					tempDate = dateformat.get().parse(dailyPriceDate.get(i));
+				} catch (final ParseException e) {
+				}
+				final int compareBegValue = tempDate.compareTo(begDate);
+				final int compareEndValue = tempDate.compareTo(endDate);
+				if (compareBegValue < 0 || compareEndValue > 0) {
+					continue;
+				}
+			}
 			final int[] DateValuesArray = new int[3];
 			getDateValues(DateValuesArray, dailyPriceDate.get(i));
 
@@ -298,19 +300,19 @@ public class DerivativePlot {
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
 		final TimeSeries[] TimeSeriesArray = new TimeSeries[4];
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < backtestDayLengths.size(); i++) {
 
 			TimeSeriesArray[i] = new TimeSeries(
-					selectionName + " " + Integer.toString(backtestDayLengths[i]) + " Deriv.");
+					selectionName + " " + Integer.toString(backtestDayLengths.get(i)) + " Deriv.");
 
-			final List<String> DateList = new ArrayList<>();
-			final List<String> DataListString = new ArrayList<>();
-			final List<Double> DataListDouble = new ArrayList<>();
-			final List<Double> DataListDeriv = new ArrayList<>();
+			final List<String> DateList = new ArrayList<String>(dailyPriceDataSize);
+			final List<String> DataListString = new ArrayList<String>(dailyPriceDataSize);
+			final List<Double> DataListDouble = new ArrayList<Double>(dailyPriceDataSize);
+			final List<Double> DataListDeriv = new ArrayList<Double>(dailyPriceDataSize);
 
 			final String previousFilePath = Indices.userDir + "ProgramData" + Indices.filePathSymbol + categoryName
 					+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName
-					+ Integer.toString(backtestDayLengths[i]) + "days.csv";
+					+ Integer.toString(backtestDayLengths.get(i)) + "days.csv";
 
 			if (new File(previousFilePath).exists()) {
 				Logs.myLogger.info("Found previous file = {}", previousFilePath);
@@ -337,6 +339,19 @@ public class DerivativePlot {
 				}
 
 				for (int j = 0; j < DataListDeriv.size(); j++) {
+					if (isCustomRange) {
+						Date tempDate = null;
+						try {
+							tempDate = dateformat.get().parse(DateList.get(j));
+						} catch (final ParseException e) {
+						}
+						final int compareBegValue = tempDate.compareTo(begDate);
+						final int compareEndValue = tempDate.compareTo(endDate);
+						if (compareBegValue < 0 || compareEndValue > 0) {
+							continue;
+						}
+					}
+
 					final int[] DateValuesArray = new int[3];
 					getDateValues(DateValuesArray, DateList.get(j));
 
@@ -457,10 +472,24 @@ public class DerivativePlot {
 	 */
 	private ArrayList<String> getInfo() {
 		final DecimalFormat dfV = new DecimalFormat("#,###,###,##0.0000");
-		final String[] asT = new String[] { "Deriv" + Integer.toString(backtestDayLengths[3]) + ":",
-				"Deriv" + Integer.toString(backtestDayLengths[2]) + ":",
-				"Deriv" + Integer.toString(backtestDayLengths[1]) + ":",
-				"Deriv" + Integer.toString(backtestDayLengths[0]) + ":", "Price:", "Date:" };
+		final String[] asT = new String[6];
+		final int size = backtestDayLengths.size();
+		final List<Integer> tempList = new ArrayList<Integer>(4);
+		for (int i = 0; i < 4; i++) {
+			if (i < size) {
+				tempList.add(backtestDayLengths.get(i));
+			} else {
+				tempList.add(backtestDayLengths.get(size - 1));
+			}
+		}
+
+		for (int i = 0; i < 4; i++) {
+			// only display the first four
+			final String windowIntString = Integer.toString(tempList.get(3 - i));
+			asT[i] = selectionName + windowIntString + ":";
+		}
+		asT[4] = "Price:";
+		asT[5] = "Date:";
 		final int iLenT = asT.length;
 		final ArrayList<String> alV = new ArrayList<String>(iLenT);
 		String sV = "";

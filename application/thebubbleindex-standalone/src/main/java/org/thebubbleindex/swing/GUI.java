@@ -49,7 +49,7 @@ public class GUI extends JFrame {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -506515368957479177L;
+	private static final long serialVersionUID = -911183288004591630L;
 	private double omega;
 	private double mCoeff;
 	private double tCrit;
@@ -58,9 +58,16 @@ public class GUI extends JFrame {
 	private String selectionName;
 	private boolean GRAPH_ON;
 	private boolean isCustomRange;
-	private Date begDate;
-	private Date endDate;
+	private static Date begDate = new Date(0);
+	private static Date endDate = new Date();
 	private String quandlKey;
+
+	private static final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("yyyy-MM-dd");
+		}
+	};
 
 	/**
 	 * Creates new form GUI
@@ -197,9 +204,9 @@ public class GUI extends JFrame {
 
 		GraphCheckBox.setText("Plot Graph");
 
-		customBegDate.setValue(new Date(0));
+		customBegDate.setValue(begDate);
 
-		customEndDate.setValue(new Date());
+		customEndDate.setValue(endDate);
 
 		customDates.setText("Plot Custom Dates");
 
@@ -482,9 +489,6 @@ public class GUI extends JFrame {
 		if (customDates.isSelected()) {
 			begDate = (Date) customBegDate.getValue();
 			endDate = (Date) customEndDate.getValue();
-		} else {
-			begDate = new Date(0);
-			endDate = new Date();
 		}
 	}
 
@@ -515,7 +519,6 @@ public class GUI extends JFrame {
 				runAllNames.setEnabled(true);
 				runAllTypes.setEnabled(true);
 				StopRunningButton.setEnabled(false);
-				customEndDate.setValue(new Date());
 				updateDataButton.setEnabled(true);
 			}
 		});
@@ -748,9 +751,9 @@ public class GUI extends JFrame {
 	public final JTextField ThreadNumber = new JTextField();
 	private final JLabel TitleLabel = new JLabel();
 	private final JLabel WindowsLabel = new JLabel();
-	private final JFormattedTextField customBegDate = new JFormattedTextField(new SimpleDateFormat("yyyy-MM-dd"));
+	private final JFormattedTextField customBegDate = new JFormattedTextField(dateformat.get());
 	private final JCheckBox customDates = new JCheckBox();
-	private final JFormattedTextField customEndDate = new JFormattedTextField(new SimpleDateFormat("yyyy-MM-dd"));
+	private final JFormattedTextField customEndDate = new JFormattedTextField(dateformat.get());
 	public final JCheckBox forceCPUBox = new JCheckBox();
 	private JLabel quandlKeyLabel;
 	private JTextField quandlKeyTextField;

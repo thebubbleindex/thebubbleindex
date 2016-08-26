@@ -12,13 +12,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -51,7 +53,8 @@ import org.thebubbleindex.util.Utilities;
  * @author bigttrott
  */
 public class BubbleIndexPlot {
-	private final int[] backtestDayLengths;
+	private final int maxWindows = 4;
+	private final List<Integer> backtestDayLengths = new ArrayList<Integer>(maxWindows);
 	public final Date begDate;
 	public final Date endDate;
 	public final boolean isCustomRange;
@@ -71,6 +74,7 @@ public class BubbleIndexPlot {
 	private final List<String> dailyPriceData;
 	private final List<String> dailyPriceDate;
 	private final String categoryName;
+	private int dailyPriceDataSize;
 
 	static {
 		// set a theme using the new shadow generator feature available in
@@ -89,11 +93,17 @@ public class BubbleIndexPlot {
 		this.isCustomRange = isCustomRange;
 		this.dailyPriceData = dailyPriceData;
 		this.dailyPriceDate = dailyPriceDate;
+		dailyPriceDataSize = dailyPriceData.size();
 		final String windowsStringArray[] = windowsString.split(",");
-		backtestDayLengths = new int[windowsStringArray.length];
-		int i = 0;
-		for (final String window : windowsStringArray) {
-			backtestDayLengths[i++] = Integer.parseInt(window);
+		final Set<Integer> windowSet = new HashSet<Integer>(maxWindows);
+		for (int i = 0; i < windowsStringArray.length; i++) {
+			if (backtestDayLengths.size() >= maxWindows)
+				break;
+			final Integer window = Integer.parseInt(windowsStringArray[i]);
+			if (!windowSet.contains(window)) {
+				backtestDayLengths.add(window);
+				windowSet.add(window);
+			}
 		}
 
 		final String title = "The Bubble Index\u2122: " + this.selectionName;
@@ -173,8 +183,16 @@ public class BubbleIndexPlot {
 	 * @return A chart.
 	 */
 	private ChartPanel createChart() {
+		// create the numerical data to be displayed
 		final XYDataset dataset = createDataset();
+		final XYDataset dataset2 = createDataset2();
 
+		if (isCustomRange) {
+			Logs.myLogger.info("Creating custom range. Beginning date = {}. End date = {}", begDate.toString(),
+					endDate.toString());
+		}
+
+		// init chart object
 		final JFreeChart chart = ChartFactory.createTimeSeriesChart("The Bubble Index\u2122: " + selectionName, // title
 				"Date", // x-axis label
 				"Index Value (Relative)", // y-axis label
@@ -186,11 +204,18 @@ public class BubbleIndexPlot {
 
 		chart.setBackgroundPaint(Color.white);
 
+		// modify the plot area
 		final XYPlot plot = (XYPlot) chart.getPlot();
+
+		// for indices, not necessary to always display 0.0
+		final NumberAxis axis1 = (NumberAxis) plot.getRangeAxis();
+		axis1.setAutoRangeIncludesZero(false);
+
 		final NumberAxis axis2 = new NumberAxis("Price");
 		axis2.setAutoRangeIncludesZero(false);
+
 		plot.setRangeAxis(1, axis2);
-		plot.setDataset(1, createDataset2());
+		plot.setDataset(1, dataset2);
 		plot.mapDatasetToRangeAxis(1, 1);
 		plot.setBackgroundPaint(Color.BLACK);
 		plot.setDomainGridlinesVisible(false);
@@ -199,6 +224,7 @@ public class BubbleIndexPlot {
 		// plot.setRangeGridlinePaint(Color.white);
 		plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
 
+		// draw the lines
 		final XYItemRenderer r = plot.getRenderer();
 		if (r instanceof XYLineAndShapeRenderer) {
 			final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
@@ -218,58 +244,13 @@ public class BubbleIndexPlot {
 		renderer2.setSeriesPaint(0, Color.YELLOW);
 		plot.setRenderer(1, renderer2);
 
+		// init the date axis
 		final DateAxis axis = (DateAxis) plot.getDomainAxis();
 
 		if (isCustomRange) {
-			Logs.myLogger.info("Creating custom range. Beginning date = {}. End date = {}", begDate.toString(),
-					endDate.toString());
 			// Set the horizontal range
 			axis.setRange(begDate, endDate);
-
-			// Set the vertical range
-			final List<Double> Values = new ArrayList<Double>(4);
-
-			final TimeSeriesCollection collect = (TimeSeriesCollection) plot.getDataset(0);
-			for (int i = 0; i < 4; i++) {
-				final int[] closeBegValues = collect.getSurroundingItems(i, begDate.getTime());
-				final int[] closeEndValues = collect.getSurroundingItems(i, endDate.getTime());
-				Values.add(plot.getDataset(0).getYValue(i, closeBegValues[0]));
-				Values.add(plot.getDataset(0).getYValue(i, closeEndValues[0]));
-			}
-
-			double highest = Values.get(0), lowest = Values.get(0);
-			for (int i = 0; i < Values.size(); i++) {
-				if (Values.get(i) < lowest) {
-					lowest = Values.get(i);
-				}
-				if (Values.get(i) > highest) {
-					highest = Values.get(i);
-				}
-			}
-
-			plot.getRangeAxis(0).setRange(lowest, highest + .1 * Math.abs(lowest - highest));
-
-			// second do it for the time series
-			final TimeSeriesCollection collect2 = (TimeSeriesCollection) plot.getDataset(1);
-
-			lowest = plot.getDataset(1).getYValue(0, collect2.getSurroundingItems(0, begDate.getTime())[0]);
-			highest = plot.getDataset(1).getYValue(0, collect2.getSurroundingItems(0, endDate.getTime())[0]);
-
-			for (long i = begDate.getTime(); i < endDate.getTime(); i = i + 86400000) {
-				final int[] closeValues = collect2.getSurroundingItems(0, i);
-
-				if (plot.getDataset(1).getYValue(0, closeValues[0]) < lowest) {
-					lowest = plot.getDataset(1).getYValue(0, closeValues[0]);
-				}
-				if (plot.getDataset(1).getYValue(0, closeValues[0]) > highest) {
-					highest = plot.getDataset(1).getYValue(0, closeValues[0]);
-				}
-			}
-
-			plot.getRangeAxis(1).setRange(lowest - .1 * Math.abs(lowest - highest),
-					highest + .1 * Math.abs(lowest - highest));
 		}
-
 		axis.setTimeline(SegmentedTimeline.newMondayThroughFridayTimeline());
 
 		return new ChartPanel(chart);
@@ -285,11 +266,22 @@ public class BubbleIndexPlot {
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
 		final TimeSeries s1 = new TimeSeries(selectionName + " Price Data");
 
-		final List<Double> DoubleValues = new ArrayList<Double>(dailyPriceData.size());
+		final List<Double> DoubleValues = new ArrayList<Double>(dailyPriceDataSize);
 		listToDouble(dailyPriceData, DoubleValues);
 
-		for (int i = 0; i < dailyPriceDate.size(); i++) {
-			DoubleValues.set(i, DoubleValues.get(i));
+		for (int i = 0; i < dailyPriceDataSize; i++) {
+			if (isCustomRange) {
+				Date tempDate = null;
+				try {
+					tempDate = dateformat.get().parse(dailyPriceDate.get(i));
+				} catch (final ParseException e) {
+				}
+				final int compareBegValue = tempDate.compareTo(begDate);
+				final int compareEndValue = tempDate.compareTo(endDate);
+				if (compareBegValue < 0 || compareEndValue > 0) {
+					continue;
+				}
+			}
 			final int[] DateValuesArray = new int[3];
 			getDateValues(DateValuesArray, dailyPriceDate.get(i));
 
@@ -306,23 +298,21 @@ public class BubbleIndexPlot {
 	 */
 	private XYDataset createDataset() {
 		Logs.myLogger.info("Creating data set for each window.");
-		double highest = 0.0;
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
 
-		final TimeSeries[] TimeSeriesArray = new TimeSeries[4];
+		final TimeSeries[] TimeSeriesArray = new TimeSeries[backtestDayLengths.size()];
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < backtestDayLengths.size(); i++) {
 
 			TimeSeriesArray[i] = new TimeSeries(
-					selectionName + Integer.toString(backtestDayLengths[i]) + " Bubble Index Data");
-			final int size = dailyPriceData.size();
-			final List<String> DateList = new ArrayList<String>(size);
-			final List<String> DataListString = new ArrayList<String>(size);
-			final List<Double> DataListDouble = new ArrayList<Double>(size);
+					selectionName + Integer.toString(backtestDayLengths.get(i)) + " Bubble Index Data");
+			final List<String> DateList = new ArrayList<String>(dailyPriceDataSize);
+			final List<String> DataListString = new ArrayList<String>(dailyPriceDataSize);
+			final List<Double> DataListDouble = new ArrayList<Double>(dailyPriceDataSize);
 
 			final String previousFilePath = Indices.userDir + "ProgramData" + Indices.filePathSymbol + categoryName
 					+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName
-					+ Integer.toString(backtestDayLengths[i]) + "days.csv";
+					+ Integer.toString(backtestDayLengths.get(i)) + "days.csv";
 
 			if (new File(previousFilePath).exists()) {
 
@@ -332,26 +322,30 @@ public class BubbleIndexPlot {
 
 				listToDouble(DataListString, DataListDouble);
 
-				final double max = setMax(backtestDayLengths[i]);
+				final double stdWindowValue = setMax(backtestDayLengths.get(i));
 
 				for (int j = 0; j < DataListDouble.size(); j++) {
-					DataListDouble.set(j, DataListDouble.get(j) * 1.0 / max * 100);
-
+					if (isCustomRange) {
+						Date tempDate = null;
+						try {
+							tempDate = dateformat.get().parse(DateList.get(j));
+						} catch (final ParseException e) {
+						}
+						final int compareBegValue = tempDate.compareTo(begDate);
+						final int compareEndValue = tempDate.compareTo(endDate);
+						if (compareBegValue < 0 || compareEndValue > 0) {
+							continue;
+						}
+					}
 					final int[] DateValuesArray = new int[3];
 					getDateValues(DateValuesArray, DateList.get(j));
 
 					TimeSeriesArray[i].add(new Day(DateValuesArray[2], DateValuesArray[1], DateValuesArray[0]),
-							DataListDouble.get(j));
-				}
-
-				if (Collections.max(DataListDouble) > highest) {
-					highest = Collections.max(DataListDouble);
+							DataListDouble.get(j) * 1.0 / stdWindowValue * 100.0);
 				}
 			}
-
 			dataset.addSeries(TimeSeriesArray[i]);
 		}
-
 		return dataset;
 	}
 
@@ -453,14 +447,28 @@ public class BubbleIndexPlot {
 	}
 
 	/*
-	 * WZW override get Info
+	 * Creates the "live" numeric updates in the top left of the chart
 	 */
 	private ArrayList<String> getInfo() {
 		final DecimalFormat dfV = new DecimalFormat("#,###,###,##0.0000");
-		final String[] asT = new String[] { selectionName + Integer.toString(backtestDayLengths[3]) + ":",
-				selectionName + Integer.toString(backtestDayLengths[2]) + ":",
-				selectionName + Integer.toString(backtestDayLengths[1]) + ":",
-				selectionName + Integer.toString(backtestDayLengths[0]) + ":", "Price:", "Date:" };
+		final String[] asT = new String[6];
+		final int size = backtestDayLengths.size();
+		final List<Integer> tempList = new ArrayList<Integer>(4);
+		for (int i = 0; i < 4; i++) {
+			if (i < size) {
+				tempList.add(backtestDayLengths.get(i));
+			} else {
+				tempList.add(backtestDayLengths.get(size - 1));
+			}
+		}
+
+		for (int i = 0; i < 4; i++) {
+			// only display the first four
+			final String windowIntString = Integer.toString(tempList.get(3 - i));
+			asT[i] = selectionName + windowIntString + ":";
+		}
+		asT[4] = "Price:";
+		asT[5] = "Date:";
 
 		final int iLenT = asT.length;
 		final ArrayList<String> alV = new ArrayList<String>(iLenT);
@@ -505,28 +513,12 @@ public class BubbleIndexPlot {
 	}
 
 	/**
+	 * Standard value of the bubble index
 	 * 
 	 * @param dayLength
 	 * @return
 	 */
 	private double setMax(final int dayLength) {
 		return FastMath.exp(-9.746393 + 3.613444 * FastMath.log((double) dayLength)) * 2.0 + 550;
-	}
-
-	/**
-	 * 
-	 * @throws IOException
-	 */
-	public void checkFiles() throws IOException {
-		for (int i = 0; i < 4; i++) {
-			final String filePath = Indices.userDir + "ProgramData" + Indices.filePathSymbol + categoryName
-					+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName
-					+ Integer.toString(backtestDayLengths[i]) + "days.csv";
-
-			if (!new File(filePath).exists()) {
-				Logs.myLogger.error("Could not find file. file path = {}", filePath);
-				throw new IOException();
-			}
-		}
 	}
 }
