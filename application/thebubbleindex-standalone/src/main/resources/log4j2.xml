@@ -10,7 +10,7 @@
 			<PatternLayout
 				pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
 		</Console>
-		<RollingFile name="infoLogger"
+		<RollingFile name="infoLogger-windows"
 			fileName="${user-dir}${log-path}/${user-name}-thebubbleindex-info-${date:yyyy-MM-dd}.log"
 			immediateFlush="true" append="false"
 			filePattern="${user-dir}${log-path}/${user-name}-thebubbleindex-info-%d{yyyy-MM-dd}-%i.log">
@@ -20,7 +20,7 @@
 			</Policies>
 			<DefaultRolloverStrategy max="10" />
 		</RollingFile>
-		<RollingFile name="errorLogger"
+		<RollingFile name="errorLogger-windows"
 			fileName="${user-dir}${log-path}/${user-name}-thebubbleindex-errors-${date:yyyy-MM-dd}.log"
 			immediateFlush="true" append="false"
 			filePattern="${user-dir}${log-path}/${user-name}-thebubbleindex-errors-%d{yyyy-MM-dd}-%i.log">
@@ -31,11 +31,36 @@
 			</Policies>
 			<DefaultRolloverStrategy max="10" />
 		</RollingFile>
+		<RollingFile name="infoLogger-linux"
+			fileName="${user-dir}/${log-path}/thebubbleindex-info-${date:yyyy-MM-dd}.log"
+			immediateFlush="true" append="false"
+			filePattern="${user-dir}/${log-path}/thebubbleindex-info-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level - %msg%n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingFile>
+		<RollingFile name="errorLogger-linux"
+			fileName="${user-dir}/${log-path}/thebubbleindex-errors-${date:yyyy-MM-dd}.log"
+			immediateFlush="true" append="false"
+			filePattern="${user-dir}/${log-path}/thebubbleindex-errors-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout
+				pattern="%d{yyy-MM-dd HH:mm:ss.SSS} %class{36} %L %M %-5level - %msg%n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingFile>
 	</Appenders>
 	<Loggers>
-		<Logger name="mylogger" level="ALL" additivity="true">
-			<AppenderRef ref="infoLogger" level="info" />
-			<AppenderRef ref="errorLogger" level="error" />
+		<Logger name="mylogger-windows" level="ALL" additivity="true">
+			<AppenderRef ref="infoLogger-windows" level="info" />
+			<AppenderRef ref="errorLogger-windows" level="error" />
+		</Logger>
+		<Logger name="mylogger-linux" level="ALL" additivity="true">
+			<AppenderRef ref="infoLogger-linux" level="info" />
+			<AppenderRef ref="errorLogger-linux" level="error" />
 		</Logger>
 		<Root level="INFO" additivity="false">
 			<AppenderRef ref="console-log" />

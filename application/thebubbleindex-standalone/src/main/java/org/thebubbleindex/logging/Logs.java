@@ -13,6 +13,12 @@ public class Logs {
 	public static Logger myLogger;
 
 	static {
-		myLogger = LogManager.getLogger("mylogger");
+		final String osName = System.getProperty("os.name").toLowerCase();
+		System.out.println("OS Name: " + osName);
+		if (osName != null && osName.indexOf("win") >= 0) {
+			myLogger = LogManager.getLogger("mylogger-windows");
+		} else {
+			myLogger = LogManager.getLogger("mylogger-linux");
+		}
 	}
 }
