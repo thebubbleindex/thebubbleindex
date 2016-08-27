@@ -51,8 +51,8 @@ public class DerivativePlotTest {
 		parseDailyData(lines, dailyPriceData, dailyPriceDate);
 		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
 
-		new DerivativePlot(categoryName, selectionName, windowsString, begDate, endDate, isCustomRange, dailyPriceData,
-				dailyPriceDate);
+		new DerivativePlot(null, categoryName, selectionName, windowsString, begDate, endDate, isCustomRange,
+				dailyPriceData, dailyPriceDate);
 
 		for (int i = 0; i < 10; i++) {
 			// Pause for 4 seconds
@@ -86,8 +86,8 @@ public class DerivativePlotTest {
 		parseDailyData(lines, dailyPriceData, dailyPriceDate);
 		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
 
-		new DerivativePlot(categoryName, selectionName, windowsString, begDate, endDate, isCustomRange, dailyPriceData,
-				dailyPriceDate);
+		new DerivativePlot(null, categoryName, selectionName, windowsString, begDate, endDate, isCustomRange,
+				dailyPriceData, dailyPriceDate);
 
 		for (int i = 0; i < 10; i++) {
 			// Pause for 4 seconds

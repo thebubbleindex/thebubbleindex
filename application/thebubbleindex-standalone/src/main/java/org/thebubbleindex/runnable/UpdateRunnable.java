@@ -2,6 +2,8 @@ package org.thebubbleindex.runnable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.thebubbleindex.data.URLS;
@@ -97,7 +99,14 @@ public class UpdateRunnable implements Callable<Integer> {
 			if (!RunContext.Stop) {
 				if (outputstream.size() > 0) {
 					try {
-						selection.cleanData(outputstream);
+
+						final List<String> dateData = new ArrayList<String>(1000);
+						final List<String> priceData = new ArrayList<String>(1000);
+
+						selection.parseAndCleanDataStream(outputstream, dateData, priceData);
+						outputstream.close();
+						selection.updateData(dateData, priceData);
+						
 					} catch (final IOException ex) {
 						Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, ex);
 						return 1;

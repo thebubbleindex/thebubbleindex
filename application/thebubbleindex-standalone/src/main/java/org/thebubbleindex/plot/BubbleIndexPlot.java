@@ -44,8 +44,11 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
+import org.thebubbleindex.exception.FailedToRunIndex;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
+import org.thebubbleindex.runnable.RunContext;
+import org.thebubbleindex.swing.BubbleIndexWorker;
 import org.thebubbleindex.util.Utilities;
 
 /**
@@ -75,6 +78,7 @@ public class BubbleIndexPlot {
 	private final List<String> dailyPriceDate;
 	private final String categoryName;
 	private int dailyPriceDataSize;
+	private final BubbleIndexWorker bubbleIndexWorker;
 
 	static {
 		// set a theme using the new shadow generator feature available in
@@ -82,10 +86,11 @@ public class BubbleIndexPlot {
 		ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", true));
 	}
 
-	public BubbleIndexPlot(final String categoryName, final String selectionName, final String windowsString,
-			final Date begDate, final Date endDate, final boolean isCustomRange, final List<String> dailyPriceData,
-			final List<String> dailyPriceDate) {
+	public BubbleIndexPlot(final BubbleIndexWorker bubbleIndexWorker, final String categoryName,
+			final String selectionName, final String windowsString, final Date begDate, final Date endDate,
+			final boolean isCustomRange, final List<String> dailyPriceData, final List<String> dailyPriceDate) {
 		Logs.myLogger.info("Initializing Bubble Index Plot.");
+		this.bubbleIndexWorker = bubbleIndexWorker;
 		this.categoryName = categoryName;
 		this.selectionName = selectionName;
 		this.begDate = begDate;
@@ -181,6 +186,7 @@ public class BubbleIndexPlot {
 	 *            a dataset.
 	 *
 	 * @return A chart.
+	 * @throws FailedToRunIndex
 	 */
 	private ChartPanel createChart() {
 		// create the numerical data to be displayed
@@ -190,8 +196,14 @@ public class BubbleIndexPlot {
 		if (isCustomRange) {
 			Logs.myLogger.info("Creating custom range. Beginning date = {}. End date = {}", begDate.toString(),
 					endDate.toString());
+			if (RunContext.isGUI) {
+				bubbleIndexWorker.publishText(String.format("Creating custom range. Beginning date = %s. End date = %s",
+						begDate.toString(), endDate.toString()));
+			} else {
+				System.out.println(String.format("Creating custom range. Beginning date = %s. End date = %s",
+						begDate.toString(), endDate.toString()));
+			}
 		}
-
 		// init chart object
 		final JFreeChart chart = ChartFactory.createTimeSeriesChart("The Bubble Index\u2122: " + selectionName, // title
 				"Date", // x-axis label
@@ -295,6 +307,7 @@ public class BubbleIndexPlot {
 	/**
 	 * 
 	 * @return
+	 * @throws FailedToRunIndex
 	 */
 	private XYDataset createDataset() {
 		Logs.myLogger.info("Creating data set for each window.");
@@ -317,12 +330,23 @@ public class BubbleIndexPlot {
 			if (new File(previousFilePath).exists()) {
 
 				Logs.myLogger.info("Found previous file = {}", previousFilePath);
-
-				Utilities.ReadValues(previousFilePath, DataListString, DateList, true, true);
-
+				if (RunContext.isGUI) {
+					bubbleIndexWorker.publishText("Found previous file: " + previousFilePath);
+				} else {
+					System.out.println("Found previous file: " + previousFilePath);
+				}
+				try {
+					Utilities.ReadValues(previousFilePath, DataListString, DateList, true, true);
+				} catch (final FailedToRunIndex ex) {
+					if (RunContext.isGUI) {
+						bubbleIndexWorker.publishText("Failed to read previous file: " + previousFilePath);
+					} else {
+						System.out.println("Failed to read previous file: " + previousFilePath);
+					}
+				}
 				listToDouble(DataListString, DataListDouble);
 
-				final double stdWindowValue = setMax(backtestDayLengths.get(i));
+				final double stdWindowValue = getStandardValue(backtestDayLengths.get(i));
 
 				for (int j = 0; j < DataListDouble.size(); j++) {
 					if (isCustomRange) {
@@ -342,6 +366,12 @@ public class BubbleIndexPlot {
 
 					TimeSeriesArray[i].add(new Day(DateValuesArray[2], DateValuesArray[1], DateValuesArray[0]),
 							DataListDouble.get(j) * 1.0 / stdWindowValue * 100.0);
+				}
+			} else {
+				if (RunContext.isGUI) {
+					bubbleIndexWorker.publishText("Failed to find previous file: " + previousFilePath);
+				} else {
+					System.out.println("Failed to find previous file: " + previousFilePath);
 				}
 			}
 			dataset.addSeries(TimeSeriesArray[i]);
@@ -518,7 +548,7 @@ public class BubbleIndexPlot {
 	 * @param dayLength
 	 * @return
 	 */
-	private double setMax(final int dayLength) {
+	private double getStandardValue(final int dayLength) {
 		return FastMath.exp(-9.746393 + 3.613444 * FastMath.log((double) dayLength)) * 2.0 + 550;
 	}
 }

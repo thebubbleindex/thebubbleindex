@@ -65,6 +65,10 @@ public class Indices {
 				tempInputCategory.setComponents();
 				categoriesAndComponents.put(categoryName, tempInputCategory);
 			}
+			
+			if (lines.isEmpty()) {
+				categoriesAndComponents.put("Null", new InputCategory("Null"));
+			}
 
 		} catch (final FileNotFoundException ex) {
 			Logs.myLogger.error("File = {}. {}", userDir + programDataFolder + filePathSymbol + categoryList, ex);

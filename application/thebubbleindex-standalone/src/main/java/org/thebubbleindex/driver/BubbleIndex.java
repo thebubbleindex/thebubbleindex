@@ -222,19 +222,22 @@ public class BubbleIndex {
 	 * There is the option to provide custom beginning and end dates from the
 	 * GUI.
 	 * 
+	 * @param bubbleIndexWorker
+	 * 
 	 * @param windowsString
 	 * @param begDate
 	 * @param endDate
 	 * @param isCustomRange
 	 */
-	public void plot(final String windowsString, final Date begDate, final Date endDate, final boolean isCustomRange) {
+	public void plot(final BubbleIndexWorker bubbleIndexWorker, final String windowsString, final Date begDate,
+			final Date endDate, final boolean isCustomRange) {
 		Logs.myLogger.info(
-				"Plotting. Category Name = {}, Selection Name = {}, Windows = {}," + "BegDate = {}, EndDate = {}",
+				"Plotting. Category Name = {}, Selection Name = {}, Windows = {}," + " BegDate = {}, EndDate = {}",
 				categoryName, selectionName, windowsString, begDate.toString(), endDate.toString());
-		new BubbleIndexPlot(categoryName, selectionName, windowsString, begDate, endDate, isCustomRange, dailyPriceData,
-				dailyPriceDate);
-		new DerivativePlot(categoryName, selectionName, windowsString, begDate, endDate, isCustomRange, dailyPriceData,
-				dailyPriceDate);
+		new BubbleIndexPlot(bubbleIndexWorker, categoryName, selectionName, windowsString, begDate, endDate,
+				isCustomRange, dailyPriceData, dailyPriceDate);
+		new DerivativePlot(bubbleIndexWorker, categoryName, selectionName, windowsString, begDate, endDate,
+				isCustomRange, dailyPriceData, dailyPriceDate);
 
 	}
 

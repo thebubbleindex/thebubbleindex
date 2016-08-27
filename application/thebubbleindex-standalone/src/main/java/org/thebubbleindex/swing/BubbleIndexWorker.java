@@ -104,7 +104,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 			publish("Plotting first four time windows...");
 
 			final BubbleIndex bubbleIndex = new BubbleIndex(categoryName, selectionName);
-			bubbleIndex.plot(windowsInput, begDate, endDate, isCustomRange);
+			bubbleIndex.plot(this, windowsInput, begDate, endDate, isCustomRange);
 		}
 	}
 

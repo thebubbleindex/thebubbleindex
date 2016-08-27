@@ -66,12 +66,13 @@ public class LombScargle {
 		this.mCoeffDouble = mCoeffDouble;
 		this.mCoeffFloat = (float) mCoeffDouble;
 
+		InputStream input = null;
 		try {
 			Logs.myLogger.info("Reading lombscargle.properties file.");
 			final Properties lsProperties = new Properties();
 
-			final InputStream input = new FileInputStream(Indices.getFilePath() + System.getProperty("file.separator")
-					+ "ProgramData" + System.getProperty("file.separator") + "lombscargle.properties");
+			input = new FileInputStream(Indices.getFilePath() + System.getProperty("file.separator") + "ProgramData"
+					+ System.getProperty("file.separator") + "lombscargle.properties");
 
 			lsProperties.load(input);
 
@@ -83,6 +84,14 @@ public class LombScargle {
 			Logs.myLogger.error("Using constructor values. Could not find lombscargle.properties file. {}", ex);
 		} catch (final IOException ex) {
 			Logs.myLogger.error("Using constructor values. Error while reading lombscargle.properties file. {}", ex);
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (final IOException ex) {
+					Logs.myLogger.error("Error while closing lombscargle.properties file. {}", ex);
+				}
+			}
 		}
 
 		testFrequencies = new double[this.freqSize];

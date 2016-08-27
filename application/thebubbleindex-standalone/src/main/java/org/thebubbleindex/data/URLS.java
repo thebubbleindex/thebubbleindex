@@ -165,6 +165,8 @@ public class URLS {
 		final ReadableByteChannel rbc = Channels.newChannel(urlFile.openStream());
 		final WritableByteChannel outputChannel = Channels.newChannel(outputstream);
 		fastChannelCopy(rbc, outputChannel);
+		rbc.close();
+		outputChannel.close();
 	}
 
 	/**
@@ -201,7 +203,8 @@ public class URLS {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public void cleanData(final ByteArrayOutputStream outputstream) throws IOException {
+	public void parseAndCleanDataStream(final ByteArrayOutputStream outputstream, final List<String> dateData,
+			final List<String> priceData) throws IOException {
 		boolean YAHOO = false;
 		boolean QUANDL = false;
 
@@ -210,13 +213,10 @@ public class URLS {
 		} else if (source.equalsIgnoreCase("QUANDL")) {
 			QUANDL = true;
 		}
-
-		final List<String> dateData = new ArrayList<String>(1000);
-		final List<String> priceData = new ArrayList<String>(1000);
-
+		InputStream is = null;
 		try {
 			final byte[] content = outputstream.toByteArray();
-			final InputStream is = new ByteArrayInputStream(content);
+			is = new ByteArrayInputStream(content);
 
 			try (final BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
 
@@ -227,7 +227,8 @@ public class URLS {
 				String line = reader.readLine();
 
 				while ((line = reader.readLine()) != null) {
-					final String[] splits = line.split(",");
+					final String[] splits = line.split(",|\\t");
+					// TODO : check if a date is out of order
 					if (splits.length > 0 && dateSet.contains(splits[0])) {
 						continue;
 					}
@@ -280,7 +281,20 @@ public class URLS {
 				System.out.println("Failed to process CSV file: " + dataName);
 			}
 			throw new IOException("Failed to process CSV file: " + dataName);
+		} finally {
+			if (is != null) {
+				is.close();
+			}
 		}
+	}
+
+	/**
+	 * 
+	 * @param dateData
+	 * @param priceData
+	 * @throws IOException
+	 */
+	public void updateData(final List<String> dateData, final List<String> priceData) throws IOException {
 
 		final List<String> oldpriceData = new ArrayList<String>(1000);
 		final List<String> olddateData = new ArrayList<String>(1000);

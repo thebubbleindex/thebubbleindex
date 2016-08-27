@@ -43,8 +43,11 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
+import org.thebubbleindex.exception.FailedToRunIndex;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
+import org.thebubbleindex.runnable.RunContext;
+import org.thebubbleindex.swing.BubbleIndexWorker;
 import org.thebubbleindex.util.Utilities;
 
 /**
@@ -82,6 +85,7 @@ public class DerivativePlot {
 	private final String categoryName;
 	private final boolean isCustomRange;
 	private int dailyPriceDataSize;
+	private final BubbleIndexWorker bubbleIndexWorker;
 
 	static {
 		// set a theme using the new shadow generator feature available in
@@ -89,11 +93,11 @@ public class DerivativePlot {
 		ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", true));
 	}
 
-	public DerivativePlot(final String categoryName, final String selectionName, final String windowsString,
-			final Date begDate, Date endDate, final boolean isCustomRange, final List<String> dailyPriceData,
-			final List<String> dailyPriceDate) {
+	public DerivativePlot(final BubbleIndexWorker bubbleIndexWorker, final String categoryName,
+			final String selectionName, final String windowsString, final Date begDate, Date endDate,
+			final boolean isCustomRange, final List<String> dailyPriceData, final List<String> dailyPriceDate) {
 		Logs.myLogger.info("Initializing Bubble Index Derivative Plot.");
-
+		this.bubbleIndexWorker = bubbleIndexWorker;
 		this.selectionName = selectionName;
 		this.dailyPriceDate = dailyPriceDate;
 		this.categoryName = categoryName;
@@ -296,7 +300,11 @@ public class DerivativePlot {
 	 */
 	private XYDataset createDerivDataset() {
 		Logs.myLogger.info("Creating derivative data set for each window.");
-
+		if (RunContext.isGUI) {
+			bubbleIndexWorker.publishText("Creating derivative data set for each window.");
+		} else {
+			System.out.println("Creating derivative data set for each window.");
+		}
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
 		final TimeSeries[] TimeSeriesArray = new TimeSeries[4];
 
@@ -317,8 +325,15 @@ public class DerivativePlot {
 			if (new File(previousFilePath).exists()) {
 				Logs.myLogger.info("Found previous file = {}", previousFilePath);
 
-				Utilities.ReadValues(previousFilePath, DataListString, DateList, true, true);
-
+				try {
+					Utilities.ReadValues(previousFilePath, DataListString, DateList, true, true);
+				} catch (final FailedToRunIndex ex) {
+					if (RunContext.isGUI) {
+						bubbleIndexWorker.publishText("Failed to read previous file: " + previousFilePath);
+					} else {
+						System.out.println("Failed to read previous file: " + previousFilePath);
+					}
+				}
 				DataListDeriv.add(0.0);
 				listToDouble(DataListString, DataListDouble);
 

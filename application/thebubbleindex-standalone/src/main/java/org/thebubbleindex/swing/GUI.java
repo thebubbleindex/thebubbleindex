@@ -238,7 +238,7 @@ public class GUI extends JFrame {
 
 		ThreadNumber.setText("4");
 
-		windowsTextField.setText("52, 104, 153, 256, 512, 1260, 1764");
+		windowsTextField.setText("52,104,153,256,512,1260,1764");
 
 		WindowsLabel.setText("Windows:");
 
@@ -765,13 +765,26 @@ public class GUI extends JFrame {
 
 	private void customInit(final Properties guiProperties) {
 
-		OmegaTextField.setText(guiProperties.getProperty("omega").trim());
-		TCriticalField.setText(guiProperties.getProperty("tcrit").trim());
-		MTextField.setText(guiProperties.getProperty("mcoeff").trim());
-		windowsTextField.setText(guiProperties.getProperty("windows").trim());
-		ThreadNumber.setText(guiProperties.getProperty("threads"));
-		customBegDate.setText(guiProperties.getProperty("begdate"));
-		customEndDate.setText(guiProperties.getProperty("enddate"));
-
+		if (guiProperties.containsKey("omega")) {
+			OmegaTextField.setText(guiProperties.getProperty("omega").trim());
+		}
+		if (guiProperties.containsKey("tcrit")) {
+			TCriticalField.setText(guiProperties.getProperty("tcrit").trim());
+		}
+		if (guiProperties.containsKey("mcoeff")) {
+			MTextField.setText(guiProperties.getProperty("mcoeff").trim());
+		}
+		if (guiProperties.containsKey("windows")) {
+			windowsTextField.setText(guiProperties.getProperty("windows").trim());
+		}
+		if (guiProperties.containsKey("threads")) {
+			ThreadNumber.setText(guiProperties.getProperty("threads"));
+		}
+		if (guiProperties.containsKey("begdate")) {
+			customBegDate.setText(guiProperties.getProperty("begdate"));
+		}
+		if (guiProperties.containsKey("enddate")) {
+			customEndDate.setText(guiProperties.getProperty("enddate"));
+		}
 	}
 }
