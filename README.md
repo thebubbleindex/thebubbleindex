@@ -75,8 +75,8 @@ To update the data, there must be an UpdateCategories.csv file in the ProgramDat
 
 And the contents and format of the UpdateSelection.csv should be like this:
 
-*Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex*
-*TSLA,Yahoo,NA,NA,0,0*
+*Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex,Overwite*
+*TSLA,Yahoo,NA,NA,0,FALSE,TRUE*
 
 The **Name** value must be the string corresponding to the individual folder for this time series in the ProgramData sub-directories.
 
@@ -94,7 +94,9 @@ The **QuandlName** value must be the name string in the url of the time series o
 
 The **QuandlColumn** value must be the integer representing the column location of the closing or settle price if the data is obtained from Quandl or NA if not.
 
-The **isYahooIndex** value must be set to 1 if the time series is a Yahoo Finance Index, i.e. its quote contains the carrot symbol ^ or set to 0 if not an index.
+The **isYahooIndex** value must be set to TRUE if the time series is a Yahoo Finance Index, i.e. its quote contains the carrot symbol ^ or set to FALSE if not an index.
+
+The **Overwrite** value must be set to TRUE if the time series values will overwrite any existing data, or set to FALSE if this is not desired.
 
 ###### (Optional) To specify runtime GUI properties and Lomb-Scargle properties:
 
