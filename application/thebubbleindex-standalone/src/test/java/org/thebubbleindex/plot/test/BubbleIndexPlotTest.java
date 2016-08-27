@@ -18,6 +18,7 @@ import java.util.Scanner;
 import org.junit.Test;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.plot.BubbleIndexPlot;
+import org.thebubbleindex.testutil.TestUtil;
 
 /**
  * 
@@ -48,7 +49,7 @@ public class BubbleIndexPlotTest {
 		final Path dailyDataPath = new File(dailyDataUrl.toURI()).toPath();
 		final List<String> lines = Files.readAllLines(dailyDataPath, Charset.defaultCharset());
 
-		parseDailyData(lines, dailyPriceData, dailyPriceDate);
+		TestUtil.parseDailyData(lines, dailyPriceData, dailyPriceDate);
 		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
 
 		new BubbleIndexPlot(null, categoryName, selectionName, windowsString, begDate, endDate, isCustomRange,
@@ -83,7 +84,7 @@ public class BubbleIndexPlotTest {
 		final Path dailyDataPath = new File(dailyDataUrl.toURI()).toPath();
 		final List<String> lines = Files.readAllLines(dailyDataPath, Charset.defaultCharset());
 
-		parseDailyData(lines, dailyPriceData, dailyPriceDate);
+		TestUtil.parseDailyData(lines, dailyPriceData, dailyPriceDate);
 		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
 
 		new BubbleIndexPlot(null, categoryName, selectionName, windowsString, begDate, endDate, isCustomRange,
@@ -110,17 +111,6 @@ public class BubbleIndexPlotTest {
 			final Path target = new File(targetPathRoot + fileSep + selectionName + String.valueOf(window) + "days.csv")
 					.toPath();
 			Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
-		}
-	}
-
-	private void parseDailyData(final List<String> lines, final List<String> priceValues,
-			final List<String> dailyPriceDate) {
-		for (final String line : lines) {
-			final Scanner lineScan = new Scanner(line);
-			lineScan.useDelimiter(",|\t");
-			dailyPriceDate.add(lineScan.next());
-			priceValues.add(lineScan.next());
-			lineScan.close();
 		}
 	}
 }
