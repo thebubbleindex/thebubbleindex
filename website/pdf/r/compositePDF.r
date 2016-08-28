@@ -3,11 +3,8 @@ library(xts)
 library(PerformanceAnalytics)
 library(quantmod)
 
-
 filepath<-"/media/green/Data/Dropbox/BubbleIndex/Version4/ProgramData/"
-#Types<-as.matrix(read.csv(paste(filepath,"UpdateCategories.csv",sep="")))
 Types<-as.matrix(c("Stocks","Germany","UnitedKingdom","HongKong","China","Argentina","Japan","India","Brazil","Israel","Australia","Mexico","Italy","France","Norway","Sweden","Switzerland","Greece","Denmark"))
-##Types<-as.matrix(c("Stocks","Germany","UnitedKingdom","HongKong","China","Argentina"))
 OutputPath<-"~/Desktop/Composite/"
 
 #importdates
