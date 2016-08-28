@@ -233,27 +233,38 @@ If you want a custom date range, enter the correct date range in the date range 
 
 ## <a name="TOC-Utilities"></a>Utilities
 
-In the downloads section, there is a zip archive which contains two Java utilities. There should now be the following Utilities available: 
+In the Utilities section, there are several Maven projects: CreateCompositeFiles, CreateD3Files, CreateXYZFiles, and CreateHTML3DFiles.
 
-**combWindows.jar** - Combine Windows
+**CreateD3Files.jar** - Creates D3 timeseries to be used by D3 JavaScript.
 
-This utility will take any number of output files and join them into a single .tsv file called NewStructure.tsv. This can then be processed by the xyzConversion utility below or used for other purposes. To combine the windows, place into the folder all *days.csv files of a single index (ex. DJIA52days.csv, DJIA104days.csv, ..., DJIA1764days.csv).
+Place the jar in the same directory as the ProgramData folder and execute the following command from the terminal or command prompt:
+```
+java -jar CreateD3Files.jar
+```
+
+**CreateCompositeFiles.jar** - Creates the Composite Files and their associated D3 timeseries.
+
+Place the jar in the same directory as the ProgramData folder and execute the following command from the terminal or command prompt:
+```
+java -jar CreateCompositeFiles.jar
+```
+
+**CreateXYZFiles** - Convert the combined windows file (created above) into the (x, y, z, description) file format in order to be processed by 3DFieldPro.
+
+Place jar in the same directory as the ProgramData folder. This utility will take the combined file and create a new file which contains all the entries in the (x, y, z, string) format which many 3D programs prefer.
 
 Now navigate to the folder and execute the following command from the terminal or command prompt:
 ```
-java -jar combWindows.jar *NAME*
+java -jar CreateXYZFiles.jar
 ```
-where **NAME** is the name of the index, for example if the files are named DJIA52days.csv then NAME = DJIA.
 
-**XYZConversion** - Convert the combined windows file (created above) into the (x, y, z, description) file format
+**CreateHTML3DFiles** - 
 
-This utility will take the combined file and create a new file which contains all the entries in the (x, y, z, string) format which many 3D programs prefer. Make sure the combined windows file created with the previous tool and the xyzConversion.jar file are located in the same directory.
 
 Now navigate to the folder and execute the following command from the terminal or command prompt:
 ```
-java -jar xyzConversion.jar *combinedWindowName* *outputFileName*
+java -jar CreateHTML3DFiles.jar
 ```
-where **combinedWindowName** is the name of the file created with the combWindow utility (ex. DJIANewStructure.tsv) and **outputFileName** is any file name which has the .csv file extension (ex. DJIAxyz.csv)
 
 ## <a name="TOC-Compiling-from-Source"></a>Compiling From Source
 

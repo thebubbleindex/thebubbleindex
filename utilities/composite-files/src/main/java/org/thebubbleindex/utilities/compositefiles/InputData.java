@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -49,7 +48,7 @@ public class InputData {
 
 			// check for header
 			if (firstLine) {
-				final String waste = s.nextLine();
+				s.nextLine();
 			}
 			while (s.hasNext()) {
 				line = s.nextLine();
@@ -60,7 +59,7 @@ public class InputData {
 				 * columns. The first column is not needed.
 				 */
 				if (update) {
-					final String waste = lineScan.next();
+					lineScan.next();
 					ColumnOne.add(lineScan.next());
 					ColumnTwo.add(lineScan.next());
 				}
@@ -69,6 +68,7 @@ public class InputData {
 					ColumnOne.add(lineScan.next());
 					ColumnTwo.add(lineScan.next());
 				}
+				lineScan.close();
 			}
 		} catch (final IOException | NoSuchElementException ex) {
 		} finally {
@@ -78,26 +78,10 @@ public class InputData {
 		}
 	}
 
-	/**
-	 * checkForFile checks to see if a file exists
-	 * 
-	 * @param the
-	 *            address of the file
-	 * @return boolean true if file exists
-	 */
-	public static boolean checkForFile(final String filePathString) {
-		final File f = new File(filePathString);
-		if (f.exists()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	public static void writetoFile(final Map<String, Double> quantileIndex, final String savePath) throws IOException {
 
 		FileWriter writer;
-		final Path filepath = FileSystems.getDefault().getPath(savePath);
+		final Path filepath = new File(savePath).toPath();
 		System.out.println("Write To: " + filepath);
 		if (Files.exists(filepath)) {
 			Files.delete(filepath);
@@ -127,26 +111,28 @@ public class InputData {
 		System.out.println("Table size: " + tableSize);
 		final List<String> rows = new ArrayList<String>();
 
-		if (tableSize > 252) {
+		if (tableSize > CreateCompositeFiles.maxLength) {
 			final Iterator<String> rowIterator = d3Table.rowKeySet().iterator();
 			int itIndex = 0;
 			while (rowIterator.hasNext()) {
 
 				final String row = rowIterator.next();
 
-				if (itIndex >= tableSize - 252) {
+				if (itIndex >= tableSize - CreateCompositeFiles.maxLength) {
 					rows.add(row);
 				}
 				itIndex = itIndex + 1;
 			}
-			System.out.println("Table larger than 252. Added " + rows.size() + " rows");
+			System.out.println(
+					"Table larger than " + CreateCompositeFiles.maxLength + ". Added " + rows.size() + " rows");
 		} else {
 			final Iterator<String> rowIterator = d3Table.rowKeySet().iterator();
 
 			while (rowIterator.hasNext()) {
 				rows.add(rowIterator.next());
 			}
-			System.out.println("Table smaller than 252. Added " + rows.size() + " rows");
+			System.out.println(
+					"Table smaller than " + CreateCompositeFiles.maxLength + ". Added " + rows.size() + " rows");
 		}
 
 		int i = 0;
@@ -160,8 +146,7 @@ public class InputData {
 			file.delete();
 		}
 		file.getParentFile().mkdirs();
-		// file.mkdirs(); // If the directory containing the file and/or its
-		// parent(s) does not exist
+
 		file.createNewFile();
 
 		try (final FileWriter writer = new FileWriter(file)) {

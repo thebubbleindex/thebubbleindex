@@ -2,8 +2,9 @@ package org.thebubbleindex.utilities.compositefiles;
 
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
+
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -21,23 +22,10 @@ public class CompositeIndex {
 	private int[] dayWindow;
 	private double[] quantileValues;
 	private HashMap<String, ArrayList<Double>> rawValueMap;
-	// private String[] stockNames;
 	private List<String> stockNames;
 	private int minSize;
 	Map<String, Table<String, Integer, Double>> d3Tables;
-
-	static final Map<Integer, String> quantiles;
-
 	private final InputCategory category;
-
-	static {
-		quantiles = new HashMap<Integer, String>(5);
-		quantiles.put(50, "Fifty");
-		quantiles.put(80, "Eighty");
-		quantiles.put(90, "Ninety");
-		quantiles.put(95, "NinetyFive");
-		quantiles.put(99, "NinetyNine");
-	}
 
 	CompositeIndex(final InputCategory category, final int[] dayWindow, final double[] quantileValues,
 			final int minSize) {
@@ -59,11 +47,11 @@ public class CompositeIndex {
 			for (int j = 0; j < stockNames.size(); j++) {
 
 				final String PreviousFilePath = CreateCompositeFiles.userDir + CreateCompositeFiles.filePathSymbol
-						+ "ProgramData" + CreateCompositeFiles.filePathSymbol + countryName
+						+ CreateCompositeFiles.programDataFolder + CreateCompositeFiles.filePathSymbol + countryName
 						+ CreateCompositeFiles.filePathSymbol + stockNames.get(j) + CreateCompositeFiles.filePathSymbol
 						+ stockNames.get(j) + Integer.toString(dayWindow[i]) + "days.csv";
 
-				final Path filepath = FileSystems.getDefault().getPath(PreviousFilePath);
+				final Path filepath = new File(PreviousFilePath).toPath();
 				if (Files.exists(filepath)) {
 
 					final List<String> dataValues = new ArrayList<String>();
@@ -77,8 +65,9 @@ public class CompositeIndex {
 			}
 			final String savePath = CreateCompositeFiles.userDir + CreateCompositeFiles.filePathSymbol + "Composite"
 					+ CreateCompositeFiles.filePathSymbol + countryName + String.valueOf(dayWindow[i]);
-			final String d3savePath = "/home/green/Desktop/D3/";
-			calculateQuantileValues(dayWindow[i], savePath, d3savePath);
+			new File(CreateCompositeFiles.userDir + CreateCompositeFiles.filePathSymbol + "Composite").mkdirs();
+			new File(CreateCompositeFiles.outputFolder).mkdirs();
+			calculateQuantileValues(dayWindow[i], savePath, CreateCompositeFiles.outputFolder);
 			rawValueMap.clear();
 		}
 	}
@@ -147,17 +136,15 @@ public class CompositeIndex {
 			try {
 				System.out.println("Save Path: " + savePath + "Quantile" + quantileString + ".csv");
 				InputData.writetoFile(sorted, savePath + "Quantile" + quantileString + ".csv");
-				// InputData.createD3File(sorted, d3savePath + "Composite" +
-				// quantiles.get((int)(quantileValues[i]*100)) +
-				// Indices.filePathSymbol
-				// + this.countryName + Indices.filePathSymbol +
-				// this.countryName + ".tsv");
+
 				addToTable(quantileTable, sorted, dayWindow);
-				if (dayWindow == 1764) {
+				if (dayWindow == CreateCompositeFiles.windows[CreateCompositeFiles.windows.length - 1]) {
 					System.out.println("Save Path: " + d3savePath + "Composite"
 							+ getQuantileName((int) (quantileValues[i] * 100)) + CreateCompositeFiles.filePathSymbol
 							+ countryName + CreateCompositeFiles.filePathSymbol + countryName + ".tsv");
-
+					new File(d3savePath + "Composite" + getQuantileName((int) (quantileValues[i] * 100))
+							+ CreateCompositeFiles.filePathSymbol + countryName + CreateCompositeFiles.filePathSymbol)
+									.mkdirs();
 					InputData.createD3File(quantileTable,
 							d3savePath + "Composite" + getQuantileName((int) (quantileValues[i] * 100))
 									+ CreateCompositeFiles.filePathSymbol + countryName
@@ -166,8 +153,7 @@ public class CompositeIndex {
 					d3Tables.put(quantileString, quantileTable);
 				}
 			} catch (final IOException ex) {
-				// ex.printStackTrace();
-				System.out.println("Error writing the file:" + ex);
+				System.out.println("Error writing the file: " + ex);
 			}
 		}
 	}

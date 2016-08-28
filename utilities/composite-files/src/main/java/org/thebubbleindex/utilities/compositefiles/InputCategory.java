@@ -11,22 +11,16 @@ public class InputCategory {
 	private String name;
 	private String location;
 	private ArrayList<String> components;
-	private String folder;
 
 	InputCategory(final String name) {
-		components = new ArrayList<>();
-
+		components = new ArrayList<String>();
 		this.name = name;
-
-		this.folder = CreateCompositeFiles.userDir + CreateCompositeFiles.filePathSymbol
-				+ CreateCompositeFiles.programDataFolder + CreateCompositeFiles.filePathSymbol + this.name
-				+ CreateCompositeFiles.filePathSymbol;
 		this.location = CreateCompositeFiles.userDir + CreateCompositeFiles.filePathSymbol
 				+ CreateCompositeFiles.programDataFolder + CreateCompositeFiles.filePathSymbol + this.name + ".csv";
 	}
 
 	InputCategory(final String name, final String location) {
-		components = new ArrayList<>();
+		components = new ArrayList<String>();
 		this.name = name;
 		this.location = location;
 	}
@@ -41,15 +35,15 @@ public class InputCategory {
 
 	public void setComponents() {
 		try {
-			System.out.println("Location of Component: " + this.location);
-			final List<String> lines = Files.readAllLines(new File(this.location).toPath());
+			System.out.println("Location of Component: " + location);
+			final List<String> lines = Files.readAllLines(new File(location).toPath());
 			for (final String line : lines) {
 				components.add(line);
 			}
 		} catch (final FileNotFoundException ex) {
-			System.out.println("File Not Found Exception. Code 012." + ex);
+			System.out.println("File Not Found: " + name + " at location: " + location);
 		} catch (final IOException ex) {
-			System.out.println("IOException Exception. Code 013." + ex);
+			System.out.println("File Not Found: " + name + " at location: " + location);
 		}
 	}
 
