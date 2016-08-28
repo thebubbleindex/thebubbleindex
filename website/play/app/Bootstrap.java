@@ -5,7 +5,7 @@ import models.*;
 
 @OnApplicationStart
 public class Bootstrap extends Job {
-    public void doJob() {
-    //	Fixtures.loadModels("bubbleindexapp.yml");
-    }
+	public void doJob() {
+		// Fixtures.loadModels("bubbleindexapp.yml");
+	}
 }

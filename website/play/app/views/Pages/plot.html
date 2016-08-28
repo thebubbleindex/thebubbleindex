@@ -1,75 +1,42 @@
 <!doctype html>
 <html class="" lang="en">
-
 	<head>
-
 		<meta charset="utf-8">
-<style>
-
-body {
-  font: 10px sans-serif;
-	background: #FFFFFF !important
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.x.axis path {
-  display: none;
-}
-
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}
-
-</style>
+		<style>
+			body {
+			  font: 10px sans-serif;
+				background: #FFFFFF !important
+			}
+			
+			.axis path,
+			.axis line {
+			  fill: none;
+			  stroke: #000;
+			  shape-rendering: crispEdges;
+			}
+			
+			.x.axis path {
+			  display: none;
+			}
+			
+			.line {
+			  fill: none;
+			  stroke: steelblue;
+			  stroke-width: 1.5px;
+			}
+		</style>
 		<title>The Bubble Index - Plot</title>
-
-#{header /}
+		#{header /}
 			<div class="main-menu-wrapper">
 				<div class="zone-main-menu zone clearfix">
-
 					<div class="main-menu-container container-24">
-
 						<div class="main-menu block">
 							<ul id="sf-menu">
 								<li class="empty">
 									<div></div>
 								</li>
-																<li class="first">
+								<li class="first">
 									<a href="@{Application.index()}">HOME</a>
-									<!--<ul>
-										<li class="first">
-											<a href="#">Home (Street View)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Slideshow)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Header 2)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Header 3)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Header 4)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Header 5)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Header 6)</a>
-										</li>
-										<li class="last">
-											<a href="#">Home (Header 7)</a>
-										</li>
-									</ul>-->
 								</li>
 								<li class="">
 									<a href="@{Pages.method()}">METHOD</a>
@@ -80,7 +47,6 @@ body {
 								<li class="">
 									<a href="@{Pages.links()}">LINKS</a>
 								</li>
-
 								<li class="">
 									<a href="@{Pages.contact()}">CONTACT</a>
 								</li>
@@ -98,132 +64,117 @@ body {
 								</li>
 							</ul>
 						</div>
-
 					</div>
-
 				</div><!-- end of .zone-main-menu -->
 			</div><!-- end of .main-menu-wrapper -->
-
 		</header>
-
 		<section class="section content">
-
-	<div class="project-header block">
-		<div class="block-title">
-			<h1>The Bubble Index: index.symbol</h1>
-		</div>
 		<div class="project-header block">
-			<a href="@{Application.setName(index.id)}">Download PDF</a>
+			<div class="block-title">
+				<h1>The Bubble Index: index.symbol</h1>
+			</div>
+			<div class="project-header block">
+				<a href="@{Application.setName(index.id)}">Download PDF</a>
+			</div>
 		</div>
-	</div>
-			<div class="plot-wrapper">
-
-		<script src="@{'/public/scripts/d3.min.js'}" charset="utf-8"></script>
-<script>
-
-
-
-var margin = {top: 20, right: 80, bottom: 30, left: 50},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
-
-var parseDate = d3.time.format("%Y-%m-%d").parse;
-
-var x = d3.time.scale()
-    .range([0, width]);
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var color = d3.scale.category10();
-
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("right");
-
-var line = d3.svg.line()
-    .interpolate("basis")
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.yvalue); });
-
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-d3.tsv("@{'/public/ProgramData/DJIA.tsv'}", function(error, data) {
-  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
-
-  data.forEach(function(d) {
-    d.date = parseDate(d.date);
-  });
-
-  var indices = color.domain().map(function(name) {
-    return {
-      name: name,
-      values: data.map(function(d) {
-        return {date: d.date, yvalue: +d[name]};
-      })
-    };
-  });
-
-  x.domain(d3.extent(data, function(d) { return d.date; }));
-
-  y.domain([
-    d3.min(indices, function(c) { return d3.min(c.values, function(v) { return v.yvalue; }); }),
-    d3.max(indices, function(c) { return d3.max(c.values, function(v) { return v.yvalue; }); })
-  ]);
-
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-  svg.append("g")
-      .attr("class", "y axis")
-			.attr("transform", "translate(" + width + " ,0)") 
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", "-.71em")
-      .style("text-anchor", "end")
-      .text("Relative Power");
-
-  var index = svg.selectAll(".index")
-      .data(indices)
-    .enter().append("g")
-      .attr("class", "index");
-
-  index.append("path")
-      .attr("class", "line")
-      .attr("d", function(d) { return line(d.values); })
-      .style("stroke", function(d) { return color(d.name); });
-
-  index.append("text")
-      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - Math.floor(Math.random()*200)]}; })
-      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.yvalue) + ")"; })
-      .attr("x", 3)
-      .attr("dy", "-.71em")
-			.style("text-anchor", "start")
-      .text(function(d) { return d.name; });
-});
-
-</script>
-</div>
-
+		<div class="plot-wrapper">
+			<script src="@{'/public/scripts/d3.min.js'}" charset="utf-8"></script>
+			<script>
+				var margin = {top: 20, right: 80, bottom: 30, left: 50},
+				    width = 960 - margin.left - margin.right,
+				    height = 500 - margin.top - margin.bottom;
+				
+				var parseDate = d3.time.format("%Y-%m-%d").parse;
+				
+				var x = d3.time.scale()
+				    .range([0, width]);
+				
+				var y = d3.scale.linear()
+				    .range([height, 0]);
+				
+				var color = d3.scale.category10();
+				
+				var xAxis = d3.svg.axis()
+				    .scale(x)
+				    .orient("bottom");
+				
+				var yAxis = d3.svg.axis()
+				    .scale(y)
+				    .orient("right");
+				
+				var line = d3.svg.line()
+				    .interpolate("basis")
+				    .x(function(d) { return x(d.date); })
+				    .y(function(d) { return y(d.yvalue); });
+				
+				var svg = d3.select("body").append("svg")
+				    .attr("width", width + margin.left + margin.right)
+				    .attr("height", height + margin.top + margin.bottom)
+				  .append("g")
+				    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+				
+				d3.tsv("@{'/public/ProgramData/DJIA.tsv'}", function(error, data) {
+				  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
+				
+				  data.forEach(function(d) {
+				    d.date = parseDate(d.date);
+				  });
+				
+				  var indices = color.domain().map(function(name) {
+				    return {
+				      name: name,
+				      values: data.map(function(d) {
+				        return {date: d.date, yvalue: +d[name]};
+				      })
+				    };
+				  });
+				
+				  x.domain(d3.extent(data, function(d) { return d.date; }));
+				
+				  y.domain([
+				    d3.min(indices, function(c) { return d3.min(c.values, function(v) { return v.yvalue; }); }),
+				    d3.max(indices, function(c) { return d3.max(c.values, function(v) { return v.yvalue; }); })
+				  ]);
+				
+				  svg.append("g")
+				      .attr("class", "x axis")
+				      .attr("transform", "translate(0," + height + ")")
+				      .call(xAxis);
+				
+				  svg.append("g")
+				      .attr("class", "y axis")
+							.attr("transform", "translate(" + width + " ,0)") 
+				      .call(yAxis)
+				    .append("text")
+				      .attr("transform", "rotate(-90)")
+				      .attr("y", 6)
+				      .attr("dy", "-.71em")
+				      .style("text-anchor", "end")
+				      .text("Relative Power");
+				
+				  var index = svg.selectAll(".index")
+				      .data(indices)
+				    .enter().append("g")
+				      .attr("class", "index");
+				
+				  index.append("path")
+				      .attr("class", "line")
+				      .attr("d", function(d) { return line(d.values); })
+				      .style("stroke", function(d) { return color(d.name); });
+				
+				  index.append("text")
+				      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - Math.floor(Math.random()*200)]}; })
+				      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.yvalue) + ")"; })
+				      .attr("x", 3)
+				      .attr("dy", "-.71em")
+							.style("text-anchor", "start")
+				      .text(function(d) { return d.name; });
+				});
+			</script>
+		</div>
 		</section>
-
 		#{footer /}
-
 		<div id="boxed-switch" class="boxed-switch">SWITCH TO BOXED VERSION</div>
-
 		#{scripts /}
 	</body>
-
 </html>

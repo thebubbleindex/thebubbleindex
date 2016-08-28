@@ -1,50 +1,19 @@
 <!doctype html>
 <html class="" lang="en">
-
 	<head>
-
 		<meta charset="utf-8">
 		<title>The Bubble Index - Search</title>
-
-#{header /}
+		#{header /}
 			<div class="main-menu-wrapper">
 				<div class="zone-main-menu zone clearfix">
-
 					<div class="main-menu-container container-24">
-
 						<div class="main-menu block">
 							<ul id="sf-menu">
 								<li class="empty">
 									<div></div>
 								</li>
-																<li class="first">
+								<li class="first">
 									<a href="@{Application.index()}">HOME</a>
-									<!--<ul>
-										<li class="first">
-											<a href="#">Home (Street View)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Slideshow)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Header 2)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Header 3)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Header 4)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Header 5)</a>
-										</li>
-										<li class="">
-											<a href="#">Home (Header 6)</a>
-										</li>
-										<li class="last">
-											<a href="#">Home (Header 7)</a>
-										</li>
-									</ul>-->
 								</li>
 								<li class="">
 									<a href="@{Pages.method()}">ABOUT</a>
@@ -55,7 +24,6 @@
 								<li class="">
 									<a href="@{Pages.links()}">LINKS</a>
 								</li>
-
 								<li class="">
 									<a href="@{Pages.contact()}">CONTACT</a>
 								</li>
@@ -70,14 +38,10 @@
 								</li>
 							</ul>
 						</div>
-
 					</div>
-
 				</div><!-- end of .zone-main-menu -->
 			</div><!-- end of .main-menu-wrapper -->
-
 		</header>
-
 		<section class="section content">
 			<div class="content-wrapper">
 				<div class="zone-content zone clearfix">
@@ -91,33 +55,24 @@
 									<div class="search block">
 									<form id="default-search" class="default-search clearfix" method="get" action="@{Application.searchResults()}">
 										<input type="text" name="search" id="search-what" class="text-input-black input-text" placeholder="Keywords/Ticker..." required/>
-										
 									</form>
 									</div>
 								</div>
 							</div>
 						</div>
-
 					<div class="project-body-container container-24">
-
 						<div class="project-body block">
 							<div class="project-short-description">
 								Enter a ticker symbol or a keyword to search.
 							</div>				
 						</div>
-
 					</div>
 					</div>
 				</div><!-- end of .zone-content -->
 			</div><!-- end of .content-wrapper -->
-
 		</section>
-
 		#{footer /}
-
-
 		#{scripts /}
 		<script type="text/javascript" src="@{'/public/scripts/autocomplete.js'}"></script>
 	</body>
-
 </html>

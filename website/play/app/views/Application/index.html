@@ -1,18 +1,13 @@
 <!doctype html>
 <html class="" lang="en">
-
 	<head>
-
 		<meta charset="utf-8">
-	<meta name="author" content="The Bubble Index" /><meta name="description" content="The Bubble Index measures Log-Periodic Power Law Oscillations in traded assets. These oscillations are precursory indicators of stock market bubbles, crashes and corrections."/>
+		<meta name="author" content="The Bubble Index" /><meta name="description" content="The Bubble Index measures Log-Periodic Power Law Oscillations in traded assets. These oscillations are precursory indicators of stock market bubbles, crashes and corrections."/>
 		<title>The Bubble Index - Home</title>
-#{header /}
-
+		#{header /}
 			<div class="main-menu-wrapper">
 				<div class="zone-main-menu zone clearfix">
-
 					<div class="main-menu-container container-24">
-
 						<div class="main-menu block">
 							<ul id="sf-menu">
 								<li class="empty neighbour-left">
@@ -30,7 +25,6 @@
 								<li class="">
 									<a href="@{Pages.links()}">LINKS</a>
 								</li>
-
 								<li class="">
 									<a href="@{Pages.contact()}">CONTACT</a>
 								</li>
@@ -45,47 +39,29 @@
 								</li>
 							</ul>
 						</div>
-
 					</div>
-
 				</div><!-- end of .zone-main-menu -->
 			</div><!-- end of .main-menu-wrapper -->
-
 		</header>
-
 		<section class="section content">
-
 			<div class="search-wrapper clearfix">
 				<div class="zone-search zone clearfix">
-
 					<div class="search-container container-24">
-
 						<div class="search block">
 							<form id="default-search" class="default-search clearfix" method="get" action="@{Application.searchResults()}">
 								<input type="text" name="search" id="search-what" class="text-input-black input-text" placeholder="Keyword/Ticker..." required/>
-
-							
 							</form>
 						</div>
-
 					</div>
-
 				</div><!-- end of .zone-search -->
 			</div><!-- end of .search-wrapper -->
-
 			<div class="map-wrapper">
-
 				<div id="map" class="map">
-
 				</div>
 			</div><!-- end of .map-wrapper -->
-
-
 			<div class="content-wrapper">
 				<div class="zone-content equalize zone clearfix">
-
 					<div class="content-container container-16">
-
 						<div class="welcome block">
 							<div class="block-title">
 								<h1>Welcome</h1>
@@ -94,7 +70,7 @@
 							<div class="welcome-globe clearfix">
 								<img class="globe" src="@{'/public/images/globe.png'}" alt="" height="244" width="244"/>
 								<img class="globe-background" src="@{'/public/images/globe-background.png'}" alt="" height="201" width="620"/>
-																<a href="@{Application.browselist('Indices')}" class="left edge top">MARKETS</a>
+								<a href="@{Application.browselist('Indices')}" class="left edge top">MARKETS</a>
 								<a href="@{Application.browselist('Currencies')}" class="right edge top">CURRENCIES</a>
 								<a href="@{Application.browselist('Commodities')}" class="left middle top">COMMODITIES</a>
 								<a href="@{Application.browseAmericas()}" class="right middle top">AMERICAS</a>
@@ -105,17 +81,12 @@
 							</div>
 						</div>
 					</div><!-- end of .content-container -->
-
 					#{sidebar /}
-
 				</div><!-- end of .zone-content -->
 			</div><!-- end of .content-wrapper -->
-
 			<div class="partners-wrapper">
 				<div class="zone-partners zone clearfix">
-
 					<div class="partners-container container-24">
-
 						<div class="partners block">
 							<div class="block-title background-white">
 								<h4>LINKS</h4>
@@ -133,31 +104,13 @@
 							An Autonomous Agent
 							</a>
 						</div>
-
 					</div>
-
 				</div><!-- end of .zone-partners -->
 			</div><!-- end of .partners-wrapper -->
-
 			<div class="interlayer"></div>
-
 		</section>
-
 		#{footer /}		
 		#{scripts /}
 		<script type="text/javascript" src="@{'/public/scripts/autocomplete.js'}"></script>
-		<!-- Google Analytics -->
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-			ga('create', 'UA-53821513-1', 'auto');
-			ga('send', 'pageview');
-
-		</script>
-
 	</body>
-
 </html>
