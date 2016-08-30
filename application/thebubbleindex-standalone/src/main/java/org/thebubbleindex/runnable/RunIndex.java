@@ -10,7 +10,9 @@ import com.nativelibs4java.opencl.CLQueue;
 import com.nativelibs4java.opencl.JavaCL;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -109,6 +111,16 @@ public class RunIndex {
 		if (new File(previousFilePath).exists()) {
 
 			Utilities.ReadValues(previousFilePath, DataList, DateList, true, true);
+
+			if (DataList.size() == 0 || DateList.size() == 0) {
+				Logs.myLogger.info("Previous file: {} is blank. Trying to delete it.", previousFilePath);
+				try {
+					Files.delete(new File(previousFilePath).toPath());
+					execIndexWithGPU();
+				} catch (final IOException e) {
+					Logs.myLogger.info("Previous file: {} is blank. Failed to delete it.", previousFilePath);
+				}
+			}
 
 			int UpdateLength = 0;
 			try {
@@ -237,6 +249,16 @@ public class RunIndex {
 		if (new File(previousFilePath).exists()) {
 
 			Utilities.ReadValues(previousFilePath, DataList, DateList, true, true);
+
+			if (DataList.size() == 0 || DateList.size() == 0) {
+				Logs.myLogger.info("Previous file: {} is blank. Trying to delete it.", previousFilePath);
+				try {
+					Files.delete(new File(previousFilePath).toPath());
+					execIndexWithCPU();
+				} catch (final IOException e) {
+					Logs.myLogger.info("Previous file: {} is blank. Failed to delete it.", previousFilePath);
+				}
+			}
 
 			int UpdateLength = 0;
 
