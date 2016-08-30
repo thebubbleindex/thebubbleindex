@@ -138,10 +138,6 @@ java -jar /dir_path/Bubble_Index.jar
 ```
 To get started with The Bubble Index, the daily data must be downloaded or updated. This is all done automatically by clicking the **Update All** button.
 
-When updating non-American stocks (such as Brazil, India, etc...) with the **Update All** button, MAKE SURE TO DELETE ALL PREVIOUS DAILY DATA CSV FILES before the update. (NOTE: with recent releases, manual deletion is not necessary because the program automatically performs the delete) If not, you will get situations where the daily data repeats itself numerous times. You can do this easily in Linux by issuing the following command while in the ProgramData folder:
-```
-find . -type f -name '*dailydata.csv' -delete
-```
 Once the data has been updated, there are two ways to proceed: calculate a single time series or calculate the values for all the times series listed in the drop down category. Select the **Plot Graph** check box if a graph is desired. When plotting, you may specify the Beginning and End Dates via the GUI.
 
 ###### Set Model Parameters
