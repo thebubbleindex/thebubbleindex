@@ -78,7 +78,7 @@ public class GUI extends JFrame {
 		InputStream input = null;
 		try {
 			Logs.myLogger.info("Reading gui.properties.");
-			input = new FileInputStream(Indices.userDir + Indices.filePathSymbol + "ProgramData"
+			input = new FileInputStream(Indices.userDir + Indices.filePathSymbol + Indices.programDataFolder
 					+ Indices.filePathSymbol + "gui.properties");
 			guiProperties.load(input);
 			customInit(guiProperties);

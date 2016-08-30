@@ -71,8 +71,8 @@ public class LombScargle {
 			Logs.myLogger.info("Reading lombscargle.properties file.");
 			final Properties lsProperties = new Properties();
 
-			input = new FileInputStream(Indices.getFilePath() + System.getProperty("file.separator") + "ProgramData"
-					+ System.getProperty("file.separator") + "lombscargle.properties");
+			input = new FileInputStream(Indices.userDir + Indices.filePathSymbol + Indices.programDataFolder
+					+ Indices.filePathSymbol + "lombscargle.properties");
 
 			lsProperties.load(input);
 
