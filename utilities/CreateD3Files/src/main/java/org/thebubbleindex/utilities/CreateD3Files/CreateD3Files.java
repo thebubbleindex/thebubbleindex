@@ -1,6 +1,7 @@
 package org.thebubbleindex.utilities.CreateD3Files;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -21,16 +23,17 @@ import java.util.concurrent.Future;
  */
 public class CreateD3Files {
 
-	final static String programDataFolder = "ProgramData";
-	final static String categoryList = "CategoryList.csv";
-	static String userDir;
-	final public static String filePathSymbol = File.separator;
-	private static Map<String, InputCategory> categoriesAndComponents;
-	final private static String outputFolder = "/home/green/Desktop/D3/";
-	final private static int maxLength = 252;
-	final private static int[] windows = { 52, 104, 153, 256, 512, 1260, 1764, 2520, 5040, 10080 };
-	static String Type = ".tsv";
-	final private static int threadNumber = 4;
+	static String programDataFolder = "ProgramData";
+	static String categoryList = "CategoryList.csv";
+	static String userDir = System.getProperty("user.dir");;
+	static Map<String, InputCategory> categoriesAndComponents = new TreeMap<String, InputCategory>();
+	static String outputFolder = "/home/green/Desktop/D3/";
+	static int maxLength = 252;
+	static int[] windows = { 52, 104, 153, 256, 512, 1260, 1764, 2520, 5040, 10080 };
+	static String fileType = ".tsv";
+	static int threadNumber = 4;
+	final static Properties properties = new Properties();
+	final static String filePathSymbol = File.separator;
 
 	/**
 	 * @param args
@@ -41,15 +44,19 @@ public class CreateD3Files {
 	public static void main(final String[] args)
 			throws IOException, InterruptedException, InterruptedException, InterruptedException, ExecutionException {
 
+		loadProperties(args);
+		
 		System.out.println("output Folder: " + outputFolder);
 		System.out.println("maxLength: " + maxLength);
+		System.out.println("programDataFolder: " + programDataFolder);
+		System.out.println("userDir: " + userDir);
+		System.out.println("categoryList: " + categoryList);
+		System.out.println("fileType: " + fileType);
+
 		System.out.println("windows: ");
 		for (final int windowPrint : windows) {
 			System.out.println(windowPrint);
 		}
-
-		userDir = System.getProperty("user.dir");
-		categoriesAndComponents = new TreeMap<>();
 
 		try {
 			System.out.println(
@@ -63,9 +70,9 @@ public class CreateD3Files {
 			}
 
 		} catch (final FileNotFoundException ex) {
-			System.out.println("File Not Found Exception. Code 008." + ex);
+			System.out.println("Category list File Not Found Exception. " + ex);
 		} catch (final IOException ex) {
-			System.out.println("IO Exception. Code 009." + ex);
+			System.out.println("IO Exception. " + ex);
 		}
 
 		final ExecutorService executor = Executors.newFixedThreadPool(threadNumber);
@@ -82,5 +89,49 @@ public class CreateD3Files {
 			System.out.println("Results: " + (future.get() ? "Success" : "Failure"));
 		}
 		executor.shutdown();
+	}
+	
+	private static void loadProperties(final String[] args) {
+		if (args != null && args.length > 0) {
+			System.out.println("Loading properties from: " + args[0]);
+			try {
+				properties.load(new FileInputStream(args[0]));
+			} catch (final IOException e) {
+				System.out.println("Failed to load properties file: " + args[0]);
+			}
+		} else {
+			try {
+				System.out.println("Loading properties from: " + userDir + filePathSymbol + "composite.properties");
+				properties.load(new FileInputStream(userDir + filePathSymbol + "composite.properties"));
+
+			} catch (final IOException e) {
+				System.out.println("Failed to load properties file.");
+			}
+		}
+		if (properties.containsKey("programDataFolder")) {
+			programDataFolder = properties.getProperty("programDataFolder");
+		}
+		if (properties.containsKey("categoryList")) {
+			categoryList = properties.getProperty("categoryList");
+		}
+		if (properties.containsKey("outputFolder")) {
+			outputFolder = properties.getProperty("outputFolder");
+		}
+		if (properties.containsKey("maxLength")) {
+			maxLength = Integer.parseInt(properties.getProperty("maxLength"));
+		}
+		if (properties.containsKey("windows")) {
+			final String[] windowArray = properties.getProperty("windows").split(",");
+			windows = new int[windowArray.length];
+			for (int i = 0; i < windowArray.length; i++) {
+				windows[i] = Integer.parseInt(windowArray[i]);
+			}
+		}
+		if (properties.containsKey("fileType")) {
+			fileType = properties.getProperty("fileType");
+		}
+		if (properties.containsKey("userDir")) {
+			userDir = properties.getProperty("userDir");
+		}
 	}
 }

@@ -24,7 +24,7 @@ public class InputCategory {
 	private String folder;
 
 	InputCategory(final String name) {
-		components = new ArrayList<>();
+		components = new ArrayList<String>();
 
 		this.name = name;
 
@@ -35,7 +35,7 @@ public class InputCategory {
 	}
 
 	InputCategory(final String name, final String location) {
-		components = new ArrayList<>();
+		components = new ArrayList<String>();
 		this.name = name;
 		this.location = location;
 	}
@@ -50,15 +50,15 @@ public class InputCategory {
 
 	public void setComponents() {
 		try {
-			System.out.println("Location of Component: " + this.location);
-			final List<String> lines = Files.readAllLines(new File(this.location).toPath());
+			System.out.println("Location of Component: " + location);
+			final List<String> lines = Files.readAllLines(new File(location).toPath());
 			for (final String line : lines) {
 				components.add(line);
 			}
 		} catch (final FileNotFoundException ex) {
-			System.out.println("File Not Found Exception. Code 012." + ex);
+			System.out.println("File Not Found Exception. " + ex);
 		} catch (final IOException ex) {
-			System.out.println("IOException Exception. Code 013." + ex);
+			System.out.println("IOException Exception. " + ex);
 		}
 	}
 
@@ -96,29 +96,27 @@ public class InputCategory {
 
 						if (sizeEntries >= maxLength) {
 							for (int i = sizeEntries - maxLength; i < sizeEntries; i++) {
-								try {
-									final String[] lineEntries = lines.get(i).split(",|\\t");
+								final String[] lineEntries = lines.get(i).split(",|\\t");
+								if (lineEntries.length >= 3) {
 									d3Table.put(lineEntries[2], window, lineEntries[1]);
-								} catch (ArrayIndexOutOfBoundsException ex) {
-									System.out.println("Array index out of bounds." + ex);
 								}
 							}
 						} else {
 							for (final String line : lines) {
-								try {
-									final String[] lineEntries = line.split(",|\\t");
+								final String[] lineEntries = line.split(",|\\t");
+								if (lineEntries.length >= 3) {
 									d3Table.put(lineEntries[2], window, lineEntries[1]);
-								} catch (final ArrayIndexOutOfBoundsException ex) {
-									System.out.println("Array index out of bounds." + ex);
 								}
 							}
 						}
 					}
 				} catch (final FileNotFoundException ex) {
+					System.out.println(ex);
 				} catch (final IOException ex) {
+					System.out.println(ex);
 				}
 			}
-			writeFileFromTable(d3Table, outputFolder, component, windows, CreateD3Files.Type);
+			writeFileFromTable(d3Table, outputFolder, component, windows, CreateD3Files.fileType);
 		}
 	}
 
@@ -126,17 +124,16 @@ public class InputCategory {
 			final String component, final int[] windows, final String fileType) throws IOException {
 
 		final File fileFolder = new File(
-				outputFolder + this.name + CreateD3Files.filePathSymbol + component + CreateD3Files.filePathSymbol);
+				outputFolder + name + CreateD3Files.filePathSymbol + component + CreateD3Files.filePathSymbol);
 
-		final File file = new File(outputFolder + this.name + CreateD3Files.filePathSymbol + component
+		final File file = new File(outputFolder + name + CreateD3Files.filePathSymbol + component
 				+ CreateD3Files.filePathSymbol + component + fileType);
 
 		if (file.exists()) {
 			file.delete();
 		}
 
-		fileFolder.mkdirs(); // If the directory containing the file and/or its
-								// parent(s) does not exist
+		fileFolder.mkdirs();
 		file.createNewFile();
 
 		switch (fileType) {
