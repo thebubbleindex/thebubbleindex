@@ -101,8 +101,8 @@ public class CreateD3Files {
 			}
 		} else {
 			try {
-				System.out.println("Loading properties from: " + userDir + filePathSymbol + "composite.properties");
-				properties.load(new FileInputStream(userDir + filePathSymbol + "composite.properties"));
+				System.out.println("Loading properties from: " + userDir + filePathSymbol + "d3.properties");
+				properties.load(new FileInputStream(userDir + filePathSymbol + "d3.properties"));
 
 			} catch (final IOException e) {
 				System.out.println("Failed to load properties file.");
