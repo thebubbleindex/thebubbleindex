@@ -68,7 +68,7 @@
 							</div>
 							<div class="welcome-text">Welcome to The Bubble Index, an index which measures Log-Periodic Power Law Oscillations in traded assets. Either select from a category below or enter a ticker symbol/keyword in the above search field.</div>
 							<div class="welcome-globe clearfix">
-								<img class="globe" src="@{'/public/images/globe.png'}" alt="" height="244" width="244"/>
+								<img id="globePic" class="globe" src="@{'/public/images/globe.png'}" alt="" height="244" width="244"/>
 								<img class="globe-background" src="@{'/public/images/globe-background.png'}" alt="" height="201" width="620"/>
 								<a href="@{Application.browselist('Indices')}" class="left edge top">MARKETS</a>
 								<a href="@{Application.browselist('Currencies')}" class="right edge top">CURRENCIES</a>
@@ -91,7 +91,7 @@
 							<div class="block-title background-white">
 								<h4>LINKS</h4>
 							</div>
-							<a href="//thebubbleindex.codeplex.com" class="partner">
+							<a href="https://github.com/bigttrott/thebubbleindex" class="partner">
 							Source Code / Download
 							</a>
 							<a href="http://tasmania.ethz.ch/pubfco/fco.html" class="partner">
@@ -109,7 +109,12 @@
 			</div><!-- end of .partners-wrapper -->
 			<div class="interlayer"></div>
 		</section>
-		#{footer /}		
+		#{footer /}
+		<script>
+		if ( $(window).width() < 520 ) {
+			document.getElementById("globePic").style.display = "none";
+		}
+		</script>
 		#{scripts /}
 		<script type="text/javascript" src="@{'/public/scripts/autocomplete.js'}"></script>
 	</body>

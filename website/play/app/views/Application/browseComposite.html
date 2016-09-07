@@ -57,7 +57,7 @@
 					<div class="content-container container-24">
 						<div class="welcome block">
 							<div class="welcome-globe clearfix">
-								<img class="globe" src="@{'/public/images/globe.png'}" alt="" height="244" width="244"/>
+								<img id="globePic" class="globe" src="@{'/public/images/globe.png'}" alt="" height="244" width="244"/>
 								<img class="globe-background" src="@{'/public/images/globe-background.png'}" alt="" height="201" width="620"/>
 								<a href="@{Application.browselist('CompositeFifty')}" class="left edge top">50% QUANTILE</a>
 								<a href="@{Application.browselist('CompositeEighty')}" class="right edge top">80% QUANTILE</a>
@@ -74,6 +74,11 @@
 			</div><!-- end of .content-wrapper -->
 		</section>
 		#{footer /}
+		<script>
+		if ( $(window).width() < 520 ) {
+			document.getElementById("globePic").style.display = "none";
+		}
+		</script>		
 		#{scripts /}
 	</body>
 </html>

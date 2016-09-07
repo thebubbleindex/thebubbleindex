@@ -1095,7 +1095,13 @@ public class Application extends Controller {
 		render(index);
 	}
 
-	public static void fullPlot(BubbleIndex index) {
+	public static void fullPlot(String type, String name, String symbol) {
+		BubbleIndex index = new BubbleIndex();
+		index.type = type;
+		index.symbol = symbol;
+		index.name = name;
+		index.findLocation();
+		index.findPlotLocation();
 		render(index);
 	}
 
