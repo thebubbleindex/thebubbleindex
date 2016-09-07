@@ -26,7 +26,7 @@ public class InputCategory {
 	private String folder;
 
 	InputCategory(final String name) {
-		components = new ArrayList<>();
+		components = new ArrayList<String>();
 
 		this.name = name;
 
@@ -37,7 +37,7 @@ public class InputCategory {
 	}
 
 	InputCategory(final String name, final String location) {
-		components = new ArrayList<>();
+		components = new ArrayList<String>();
 		this.name = name;
 		this.location = location;
 	}
@@ -52,15 +52,15 @@ public class InputCategory {
 
 	public void setComponents() {
 		try {
-			System.out.println("Location of Component: " + this.location);
-			final List<String> lines = Files.readAllLines(new File(this.location).toPath());
+			System.out.println("Location of Component: " + location);
+			final List<String> lines = Files.readAllLines(new File(location).toPath());
 			for (final String line : lines) {
 				components.add(line);
 			}
 		} catch (final FileNotFoundException ex) {
-			System.out.println("File Not Found Exception. Code 012." + ex);
+			System.out.println("File Not Found Exception. " + ex);
 		} catch (final IOException ex) {
-			System.out.println("IOException Exception. Code 013." + ex);
+			System.out.println("IOException Exception. " + ex);
 		}
 	}
 
@@ -73,25 +73,25 @@ public class InputCategory {
 	}
 
 	public ArrayList<String> getComponents() {
-		return this.components;
+		return components;
 	}
 
 	public String[] getComponentsAsArray() {
-		String[] stringArray = new String[this.components.size()];
-		stringArray = this.components.toArray(stringArray);
+		String[] stringArray = new String[components.size()];
+		stringArray = components.toArray(stringArray);
 		return stringArray;
 	}
 
 	public void createXYZfiles(final String outputFolder, final Integer[] windows) throws IOException {
 		for (final String component : components) {
 			System.out.println("Reading component: " + component);
-			final Map<String, int[]> allDataTable = new HashMap<>(42000);
-			final List<Integer> windowsExist = new ArrayList<>(windows.length);
+			final Map<String, int[]> allDataTable = new HashMap<String, int[]>(42000);
+			final List<Integer> windowsExist = new ArrayList<Integer>(windows.length);
 			int maximumValue = 0;
 			int dailyDataSize = 5000;
 
 			final File dailyData = new File(
-					this.folder + component + CreateXYZFiles.filePathSymbol + component + "dailydata.csv");
+					folder + component + CreateXYZFiles.filePathSymbol + component + "dailydata.csv");
 
 			if (dailyData.exists()) {
 				final String dailyDataAsString = new String(Files.readAllBytes(dailyData.toPath()));
@@ -100,7 +100,7 @@ public class InputCategory {
 
 			for (int i = 0; i < windows.length; i++) {
 
-				final File file = new File(this.folder + component + CreateXYZFiles.filePathSymbol + component
+				final File file = new File(folder + component + CreateXYZFiles.filePathSymbol + component
 						+ String.valueOf(windows[i]) + "days.csv");
 				if (file.exists()) {
 
@@ -108,23 +108,25 @@ public class InputCategory {
 
 					final String fileAsString = new String(Files.readAllBytes(file.toPath()));
 					final String[] fileLines = fileAsString.split(System.getProperty("line.separator"));
-					// final List<String[]> myEntries = new ArrayList<>(2000);
+
 					for (int j = 1; j < fileLines.length; j++) {
 						final String[] line = fileLines[j].split(",");
-						try {
-							final int value = bubbleStandardValue(line[1], windows[i]);
-							if (value > maximumValue)
-								maximumValue = value;
-							if (allDataTable.containsKey(line[2])) {
-								allDataTable.get(line[2])[i] = value;
-							} else {
-								final int[] valueArray = new int[windows.length];
-								valueArray[i] = value;
-								allDataTable.put(line[2], valueArray);
-							}
-						} catch (final Exception ex) {
-							System.out.println("Exception. Component: " + component + ex);
+						if (line.length >= 3) {
+							try {
+								final int value = bubbleStandardValue(line[1], windows[i]);
+								if (value > maximumValue)
+									maximumValue = value;
+								if (allDataTable.containsKey(line[2])) {
+									allDataTable.get(line[2])[i] = value;
+								} else {
+									final int[] valueArray = new int[windows.length];
+									valueArray[i] = value;
+									allDataTable.put(line[2], valueArray);
+								}
+							} catch (final Exception ex) {
+								System.out.println("Exception. Component: " + component + ex);
 
+							}
 						}
 					}
 				}
@@ -153,7 +155,7 @@ public class InputCategory {
 		final String[] rowsArray = rowSet.toArray(new String[rowSet.size()]);
 
 		int index = 1;
-		final List<byte[]> byteListOutputFile = new ArrayList<>(rowsArray.length);
+		final List<byte[]> byteListOutputFile = new ArrayList<byte[]>(rowsArray.length);
 
 		for (final String date : rowsArray) {
 			final int[] valueArray = allDataTable.get(date);
@@ -180,15 +182,14 @@ public class InputCategory {
 		}
 
 		final File fileFolder = new File(
-				outputFolder + this.name + CreateXYZFiles.filePathSymbol + component + CreateXYZFiles.filePathSymbol);
-		final File file = new File(outputFolder + this.name + CreateXYZFiles.filePathSymbol + component
-				+ CreateXYZFiles.filePathSymbol + component + CreateXYZFiles.Type);
+				outputFolder + name + CreateXYZFiles.filePathSymbol + component + CreateXYZFiles.filePathSymbol);
+		final File file = new File(outputFolder + name + CreateXYZFiles.filePathSymbol + component
+				+ CreateXYZFiles.filePathSymbol + component + CreateXYZFiles.fileType);
 
 		if (file.exists()) {
 			file.delete();
 		}
-		// If the directory containing the file and/or its parent(s) does not
-		// exist
+
 		fileFolder.mkdirs();
 
 		try (final BufferedWriter fw = Files.newBufferedWriter(file.toPath(), Charset.forName("UTF-8"));) {
@@ -197,8 +198,8 @@ public class InputCategory {
 			}
 		}
 
-		final File maxValueFile = new File(outputFolder + this.name + CreateXYZFiles.filePathSymbol + component
-				+ CreateXYZFiles.filePathSymbol + "maxValue" + CreateXYZFiles.Type);
+		final File maxValueFile = new File(outputFolder + name + CreateXYZFiles.filePathSymbol + component
+				+ CreateXYZFiles.filePathSymbol + "maxValue" + CreateXYZFiles.fileType);
 
 		if (maxValueFile.exists()) {
 			maxValueFile.delete();
@@ -235,16 +236,15 @@ public class InputCategory {
 		final int x_len = largest / squareSide;
 
 		final File fileFolder = new File(
-				outputFolder + this.name + CreateXYZFiles.filePathSymbol + component + CreateXYZFiles.filePathSymbol);
+				outputFolder + name + CreateXYZFiles.filePathSymbol + component + CreateXYZFiles.filePathSymbol);
 
-		final File file = new File(outputFolder + this.name + CreateXYZFiles.filePathSymbol + component
+		final File file = new File(outputFolder + name + CreateXYZFiles.filePathSymbol + component
 				+ CreateXYZFiles.filePathSymbol + "EqNet.net");
 
 		if (file.exists()) {
 			file.delete();
 		}
-		// If the directory containing the file and/or its parent(s) does not
-		// exist
+
 		fileFolder.mkdirs();
 
 		try (final BufferedWriter fw = Files.newBufferedWriter(file.toPath(), Charset.forName("UTF-8"));) {
