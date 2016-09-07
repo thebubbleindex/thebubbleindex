@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -32,11 +33,13 @@ import java.text.SimpleDateFormat;
  */
 public final class CreateJSON3DFiles {
 
-	public static final String inputDir = "/home/green/Desktop/XYZdxfFiles/";
-	public static final String outputDir = "/home/green/Desktop/HTMLContours/";
-	public static final String htmlTemplateFile = "/home/green/Desktop/template.html";
-	public static final String dailyDataFolder = "/media/green/Data/Dropbox/BubbleIndex/Version4/ProgramData/";
-	public static final double dailyDataConstant = 30.0;
+	static String userDir = System.getProperty("user.dir");
+	static String filePathSymbol = File.separator;
+	static String inputDir = "/home/green/Desktop/XYZdxfFiles/";
+	static String outputDir = "/home/green/Desktop/HTMLContours/";
+	static String htmlTemplateFile = "/home/green/Desktop/template.html";
+	static String dailyDataFolder = "/media/green/Data/Dropbox/BubbleIndex/Version4/ProgramData/";
+	static double dailyDataConstant = 30.0;
 	private static String template;
 	private static int threadNumber = 4;
 	private String begDateString;
@@ -46,12 +49,25 @@ public final class CreateJSON3DFiles {
 	private int maxWindow;
 	private double maxValue;
 
+	static Properties properties = new Properties();
+
+	public CreateJSON3DFiles() {
+
+	}
+
 	/**
 	 * @param args
 	 *            the command line arguments
 	 * @throws java.io.IOException
 	 */
 	public static void main(final String[] args) throws IOException, InterruptedException, ExecutionException {
+		loadProperties(args);
+		System.out.println("userDir: " + userDir);
+		System.out.println("inputDir: " + inputDir);
+		System.out.println("outputDir: " + outputDir);
+		System.out.println("htmlTemplateFile: " + htmlTemplateFile);
+		System.out.println("dailyDataFolder: " + dailyDataFolder);
+
 		Velocity.init();
 
 		new CreateJSON3DFiles(true);
@@ -85,15 +101,10 @@ public final class CreateJSON3DFiles {
 			try {
 				final String fileContents = new String(Files.readAllBytes(xyzFile.toPath()));
 				maxValue = Double.parseDouble(fileContents);
-
 			} catch (Exception ex) {
 			}
 		}
 		return maxValue;
-	}
-
-	public CreateJSON3DFiles() {
-
 	}
 
 	public CreateJSON3DFiles(final boolean callablesBoolean)
@@ -182,9 +193,9 @@ public final class CreateJSON3DFiles {
 
 	public static void editJSONFile(final String jsonFolderDir, final String folderName)
 			throws FileNotFoundException, IOException {
-		final String jsonFilePath = jsonFolderDir + System.getProperty("file.separator") + "1.json";
+		final String jsonFilePath = jsonFolderDir + filePathSymbol + "1.json";
 		final String jsonFileOutput = jsonFilePath.replace("XYZdxfFiles", "HTMLContours")
-				.replace("values.json" + System.getProperty("file.separator") + "1.json", folderName + ".json");
+				.replace("values.json" + filePathSymbol + "1.json", folderName + ".json");
 
 		FileInputStream inputStream = null;
 		FileOutputStream outputStream = null;
@@ -243,10 +254,9 @@ public final class CreateJSON3DFiles {
 			file.delete();
 		}
 
-		file.getParentFile().mkdirs(); // If the directory containing the file
-										// and/or its parent(s) does not exist
+		file.getParentFile().mkdirs();
 
-		final File fileJSModels = new File(newFileName + System.getProperty("file.separator") + "models.js");
+		final File fileJSModels = new File(newFileName + filePathSymbol + "models.js");
 		final String modelsJSFile = new String(Files.readAllBytes(fileJSModels.toPath()));
 		final String[] lines = modelsJSFile.split(System.getProperty("line.separator"));
 
@@ -323,10 +333,12 @@ public final class CreateJSON3DFiles {
 			} catch (final NumberFormatException | ArrayIndexOutOfBoundsException ex) {
 				logPrices[i] = 0.0;
 			}
+
 			if (logPrices[i] > maxLog)
 				maxLog = logPrices[i];
 			if (logPrices[i] < minLog)
 				minLog = logPrices[i];
+
 		}
 
 		final double[] delta = new double[dailyDataLines.length];
@@ -364,6 +376,49 @@ public final class CreateJSON3DFiles {
 
 			fw.write("]}");
 			fw.close();
+		}
+	}
+
+	private static void loadProperties(final String[] args) {
+		if (args != null && args.length > 0) {
+			System.out.println("Loading properties from: " + args[0]);
+			try {
+				properties.load(new FileInputStream(args[0]));
+			} catch (final IOException e) {
+				System.out.println("Failed to load properties file: " + args[0]);
+			}
+		} else {
+			try {
+				System.out.println("Loading properties from: " + userDir + filePathSymbol + "json3d.properties");
+				properties.load(new FileInputStream(userDir + filePathSymbol + "json3d.properties"));
+
+			} catch (final IOException e) {
+				System.out.println("Failed to load properties file.");
+			}
+		}
+		if (properties.containsKey("dailyDataFolder")) {
+			dailyDataFolder = properties.getProperty("dailyDataFolder");
+		}
+		if (properties.containsKey("htmlTemplateFile")) {
+			htmlTemplateFile = properties.getProperty("htmlTemplateFile");
+		}
+		if (properties.containsKey("outputDir")) {
+			outputDir = properties.getProperty("outputDir");
+		}
+		if (properties.containsKey("inputDir")) {
+			inputDir = properties.getProperty("inputDir");
+		}
+		if (properties.containsKey("dailyDataConstant")) {
+			dailyDataConstant = Double.parseDouble(properties.getProperty("dailyDataConstant"));
+		}
+		if (properties.containsKey("userDir")) {
+			userDir = properties.getProperty("userDir");
+		}
+		if (properties.containsKey("template")) {
+			template = properties.getProperty("template");
+		}
+		if (properties.containsKey("threadNumber")) {
+			threadNumber = Integer.parseInt(properties.getProperty("threadNumber"));
 		}
 	}
 }
