@@ -82,7 +82,7 @@ public class InputData {
 
 		FileWriter writer;
 		final Path filepath = new File(savePath).toPath();
-		System.out.println("Write To: " + filepath);
+
 		if (Files.exists(filepath)) {
 			Files.delete(filepath);
 		}

@@ -21,11 +21,12 @@ public class CompositeIndex {
 	private String countryName;
 	private int[] dayWindow;
 	private double[] quantileValues;
-	private HashMap<String, ArrayList<Double>> rawValueMap;
+	private Map<String, ArrayList<Double>> rawValueMap;
 	private List<String> stockNames;
 	private int minSize;
 	Map<String, Table<String, Integer, Double>> d3Tables;
 	private final InputCategory category;
+	private boolean d3FileWritten = false;
 
 	CompositeIndex(final InputCategory category, final int[] dayWindow, final double[] quantileValues,
 			final int minSize) {
@@ -42,7 +43,7 @@ public class CompositeIndex {
 	public void run() {
 		System.out.println("Name of country: " + category.getName());
 		System.out.println("Number of of stocks: " + stockNames.size());
-
+		System.out.println("Number of windows: " + dayWindow.length);
 		for (int i = 0; i < dayWindow.length; i++) {
 			for (int j = 0; j < stockNames.size(); j++) {
 
@@ -64,11 +65,12 @@ public class CompositeIndex {
 
 			}
 			final String savePath = CreateCompositeFiles.userDir + CreateCompositeFiles.filePathSymbol + "Composite"
-					+ CreateCompositeFiles.filePathSymbol + countryName + String.valueOf(dayWindow[i]);
+					+ CreateCompositeFiles.filePathSymbol + countryName;
 			new File(CreateCompositeFiles.userDir + CreateCompositeFiles.filePathSymbol + "Composite").mkdirs();
 			new File(CreateCompositeFiles.outputFolder).mkdirs();
 			calculateQuantileValues(dayWindow[i], savePath, CreateCompositeFiles.outputFolder);
 			rawValueMap.clear();
+			d3FileWritten = false;
 		}
 	}
 
@@ -86,7 +88,7 @@ public class CompositeIndex {
 				if (rawValueMap.containsKey(date)) {
 					final ArrayList<Double> tempList = rawValueMap.get(date);
 					tempList.add(data);
-					rawValueMap.put(date, tempList);
+					// rawValueMap.put(date, tempList);
 				} else {
 					final ArrayList<Double> tempList = new ArrayList<Double>();
 					tempList.add(data);
@@ -117,13 +119,11 @@ public class CompositeIndex {
 
 			if (d3Tables.containsKey(quantileString)) {
 				quantileTable = d3Tables.get(quantileString);
-			}
-
-			else {
+			} else {
 				quantileTable = TreeBasedTable.create();
 			}
 
-			final HashMap<String, Double> quantileIndex = new HashMap<String, Double>();
+			final Map<String, Double> quantileIndex = new HashMap<String, Double>();
 
 			// iterate over hashmap
 			for (Map.Entry<String, ArrayList<Double>> entry : rawValueMap.entrySet()) {
@@ -134,14 +134,18 @@ public class CompositeIndex {
 			}
 			final Map<String, Double> sorted = new TreeMap<String, Double>(quantileIndex);
 			try {
-				System.out.println("Save Path: " + savePath + "Quantile" + quantileString + ".csv");
-				InputData.writetoFile(sorted, savePath + "Quantile" + quantileString + ".csv");
 
+				new File(savePath + "Quantile" + getQuantileName((int) (quantileValues[i] * 100))).mkdirs();
+				if (sorted.size() > 0) {
+					InputData.writetoFile(sorted,
+							savePath + "Quantile" + getQuantileName((int) (quantileValues[i] * 100))
+									+ CreateCompositeFiles.filePathSymbol + countryName + "Quantile"
+									+ getQuantileName((int) (quantileValues[i] * 100)) + dayWindow + "days.csv");
+				}
 				addToTable(quantileTable, sorted, dayWindow);
-				if (dayWindow == CreateCompositeFiles.windows[CreateCompositeFiles.windows.length - 1]) {
-					System.out.println("Save Path: " + d3savePath + "Composite"
-							+ getQuantileName((int) (quantileValues[i] * 100)) + CreateCompositeFiles.filePathSymbol
-							+ countryName + CreateCompositeFiles.filePathSymbol + countryName + ".tsv");
+				if (dayWindow == 10080) {
+					d3FileWritten = true;
+
 					new File(d3savePath + "Composite" + getQuantileName((int) (quantileValues[i] * 100))
 							+ CreateCompositeFiles.filePathSymbol + countryName + CreateCompositeFiles.filePathSymbol)
 									.mkdirs();
@@ -149,7 +153,7 @@ public class CompositeIndex {
 							d3savePath + "Composite" + getQuantileName((int) (quantileValues[i] * 100))
 									+ CreateCompositeFiles.filePathSymbol + countryName
 									+ CreateCompositeFiles.filePathSymbol + countryName + ".tsv");
-				} else {
+				} else if (!d3FileWritten) {
 					d3Tables.put(quantileString, quantileTable);
 				}
 			} catch (final IOException ex) {
