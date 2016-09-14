@@ -166,9 +166,7 @@ public class BubbleIndex {
 					}
 					results.clear();
 				}
-			}
-
-			else {
+			} else {
 				try {
 					Logs.myLogger.info("Executing CPU Run. Category Name = {}, Selection Name = {}", categoryName,
 							selectionName);

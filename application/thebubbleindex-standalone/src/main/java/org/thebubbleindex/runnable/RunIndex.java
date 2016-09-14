@@ -109,19 +109,19 @@ public class RunIndex {
 		final int START_INDEX;
 
 		if (new File(previousFilePath).exists()) {
-
 			Utilities.ReadValues(previousFilePath, DataList, DateList, true, true);
+		}
 
-			if (DataList.size() == 0 || DateList.size() == 0) {
-				Logs.myLogger.info("Previous file: {} is blank. Trying to delete it.", previousFilePath);
-				try {
-					Files.delete(new File(previousFilePath).toPath());
-					execIndexWithGPU();
-				} catch (final IOException e) {
-					Logs.myLogger.info("Previous file: {} is blank. Failed to delete it.", previousFilePath);
-				}
+		if (DataList.size() == 0 || DateList.size() == 0) {
+			Logs.myLogger.info("Previous file: {} is blank. Trying to delete it.", previousFilePath);
+			try {
+				Files.delete(new File(previousFilePath).toPath());
+			} catch (final IOException e) {
+				Logs.myLogger.info("Previous file: {} is blank. Failed to delete it.", previousFilePath);
 			}
+		}
 
+		if (new File(previousFilePath).exists()) {
 			int UpdateLength = 0;
 			try {
 				UpdateLength = dailyPriceDate.size() - updateDateMatch(DateList) - 1;
@@ -133,9 +133,7 @@ public class RunIndex {
 			}
 
 			START_INDEX = dataSize - window - UpdateLength;
-		}
-
-		else {
+		} else {
 			START_INDEX = 0;
 		}
 
@@ -246,20 +244,22 @@ public class RunIndex {
 		}
 
 		final int START_INDEX;
+
 		if (new File(previousFilePath).exists()) {
-
 			Utilities.ReadValues(previousFilePath, DataList, DateList, true, true);
+		}
 
-			if (DataList.size() == 0 || DateList.size() == 0) {
-				Logs.myLogger.info("Previous file: {} is blank. Trying to delete it.", previousFilePath);
-				try {
-					Files.delete(new File(previousFilePath).toPath());
-					execIndexWithCPU();
-				} catch (final IOException e) {
-					Logs.myLogger.info("Previous file: {} is blank. Failed to delete it.", previousFilePath);
-				}
+		if (DataList.size() == 0 || DateList.size() == 0) {
+			Logs.myLogger.info("Previous file: {} is blank. Trying to delete it.", previousFilePath);
+			try {
+				Files.delete(new File(previousFilePath).toPath());
+				execIndexWithCPU();
+			} catch (final IOException e) {
+				Logs.myLogger.info("Previous file: {} is blank. Failed to delete it.", previousFilePath);
 			}
+		}
 
+		if (new File(previousFilePath).exists()) {
 			int UpdateLength = 0;
 
 			try {
@@ -272,9 +272,7 @@ public class RunIndex {
 			}
 
 			START_INDEX = dataSize - window - UpdateLength;
-		}
-
-		else {
+		} else {
 			START_INDEX = 0;
 		}
 		final int numBatches = (int) Math.ceil((dataSize - window - START_INDEX) / 500.0);
