@@ -39,7 +39,7 @@ for (i in 1:length(Types)) {
   
   for (p in 1:length(daylength)) {
     standardvalue<-exp(-9.746393+3.613444*log(daylength[p]))*2+550
-    filename<-paste(InputPath,Types[i],"Quantile",InputNames[l],"/",Types[i],"Quantile",InputNames[l],daylength[p],"days.csv",sep="")
+    filename<-paste(InputPath,Types[i],"Quantile","/",Types[i],"Quantile",InputNames[l],"/",Types[i],"Quantile",InputNames[l],daylength[p],"days.csv",sep="")
     if (file.exists(filename)) {
 		DaysWindow<-read.csv(filename,header=FALSE)
 		DaysWindow[DaysWindow == 0] <- NA

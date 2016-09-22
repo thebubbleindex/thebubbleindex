@@ -65,7 +65,7 @@ public class CompositeIndex {
 
 			}
 			final String savePath = CreateCompositeFiles.userDir + CreateCompositeFiles.filePathSymbol + "Composite"
-					+ CreateCompositeFiles.filePathSymbol + countryName;
+					+ CreateCompositeFiles.filePathSymbol + countryName + "Quantile" + CreateCompositeFiles.filePathSymbol + countryName;
 			new File(CreateCompositeFiles.userDir + CreateCompositeFiles.filePathSymbol + "Composite").mkdirs();
 			new File(CreateCompositeFiles.outputFolder).mkdirs();
 			calculateQuantileValues(dayWindow[i], savePath, CreateCompositeFiles.outputFolder);
