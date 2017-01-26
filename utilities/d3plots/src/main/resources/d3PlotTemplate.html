@@ -1,0 +1,286 @@
+<!doctype html>
+<html class="" lang="en">
+
+	<head>
+
+		<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+	background: #FFFFFF !important
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.legend {
+    font-size: 16px;
+    font-weight: bold;
+    text-anchor: middle;
+    cursor:pointer;
+} 
+
+.legend-clicked {
+    font-size: 16px;
+    font-weight: bold;
+    text-anchor: middle;
+		text-decoration: line-through;
+    cursor:pointer;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: none;
+  stroke: steelblue;
+}
+
+#svgMain {margin-left:auto; margin-right: auto; display:block;}
+	
+</style>
+		<title>The Bubble Index - Plot $NAME</title>
+
+
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="https://thebubbleindex.com/public/css/allCss.css" />
+
+
+		<!--[if lt IE 9]>
+			<link rel="stylesheet" href="//streamone-thebubbleindex.netdna-ssl.com/public/css/styles-ie8-and-down.css" />
+		<link rel="stylesheet" href="//streamone-thebubbleindex.netdna-ssl.com/public/css/colorbox.css" />
+		<script type="text/javascript" src="//streamone-thebubbleindex.netdna-ssl.com/public/scripts/jquery-1.10.2.min.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+
+		<header class="section">
+			<div class="header-wrapper">
+				<div class="zone-header zone clearfix">
+
+					<div class="header-left container-24">
+
+						<div class="logo block">
+							<a href="https://thebubbleindex.com">
+								<img src="https://thebubbleindex.com/public/images/logo.png" alt="" height="80" width="680"/>
+							</a>
+						</div>
+
+					</div>
+
+				</div><!-- end of .zone-header -->
+			</div><!-- end of .header-wrapper -->
+			<div class="main-menu-wrapper">
+				<div class="zone-main-menu zone clearfix">
+
+					<div class="main-menu-container container-24">
+
+						<div class="main-menu block">
+							<ul id="sf-menu">
+								<li class="empty">
+									<div></div>
+								</li>
+																<li class="first">
+									<a href="https://thebubbleindex.com">HOME</a>
+
+								</li>
+								<li class="">
+									<a href="https://thebubbleindex.com/pages/method">ABOUT</a>
+								</li>
+								<li class="">
+									<a href="https://thebubbleindex.com/pages/examples">EXAMPLES</a>
+								</li>
+								<li class="">
+									<a href="https://thebubbleindex.com/pages/links">LINKS</a>
+								</li>
+
+								<li class="">
+									<a href="https://thebubbleindex.com/pages/contact">CONTACT</a>
+								</li>
+								<li class="">
+									<a href="https://thebubbleindex.com/application/browse">BROWSE</a>
+								</li>
+								<li class="neighbour-left">
+									<a href="https://thebubbleindex.com/pages/search">SEARCH</a>
+								</li>
+								<li class="active last">
+									<a href="#">PLOT</a>
+								</li>
+								<li class="empty">
+									<div></div>
+								</li>
+							</ul>
+						</div>
+
+					</div>
+
+				</div><!-- end of .zone-main-menu -->
+			</div><!-- end of .main-menu-wrapper -->
+
+		</header>
+
+		<section class="section content">
+
+	<div class="content-wrapper">
+		<div class="zone-content equalize clearfix">
+			<div class="content-container container-24">
+		<div class="block-title">
+			<h1>The Bubble Index: $NAME</h1>
+		</div>
+		<div class="project-header block" align="center">
+			<a href="$PDFLINK" target="_blank">Download PDF</a>
+&nbsp;&nbsp;
+			<a href="fullPlot.html" target="_blank">Fullscreen Plot</a>
+&nbsp;&nbsp;
+			<a href="$WEBGLLINK" target="_blank">View 3D Contour</a>
+		</div>
+		<div class="project-image" id="plotarea" width="100%">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" ></script>
+		<script type="text/javascript" src="https://thebubbleindex.com/public/scripts/jquery-ui-1.10.3.custom.min.js"></script>
+		<script src="https://thebubbleindex.com/public/scripts/d3.min.js" charset="utf-8"></script>
+<script>$JSSCRIPT</script>
+	</div>
+		<div class="project-description" align="center"><p>All Currencies, Indices, Commodities, and Stocks are standardized with median values equal to 50.</p>
+		</div>
+	</div>
+	</div>
+</div>
+		</section>
+
+		<footer class="section">
+
+			<div class="footer-wrapper">
+				<div class="zone-footer zone clearfix">
+
+					<div class="footer-container container-24">
+						<div class="website-short-description block">
+							<i class="sprite sprite-logo-small"></i>
+							<div class="description-text">
+								The Bubble Index is a non-profit, open-source tool designed to help investors, economists, and social scientists identify and diagnose asset bubbles in real time.
+							</div>
+						</div>
+
+						<div class="twitter-feed block">
+							<h3 class="title">Recent Headlines</h3>
+								<ul>
+									<li class="first">
+										<a href="http://thebubbleindex.lefora.com" class="text-colorful">Forum</a>
+									</li>
+
+<li>
+									<a href="https://github.com/bigttrott/thebubbleindex" class="text-colorful">Source Code</a>
+								</li>
+	
+<li>
+									<a href="http://lpplmarketwatch.com" class="text-colorful">Blog</a>
+								</li>
+<li>
+<a href="https://thebubbleindex.com/pages/legal">Legal</a>
+</li>
+							</ul>
+						</div>
+
+						<div class="recent-posts block">
+							<h3 class="title">Recent Posts</h3>
+							<ul>
+								<li class="first">
+									<a href="https://gateway.ipfs.io/ipns/QmPC1xcsMTDKFTWHLrGEaNTCEdceUf4wWRJhM5P4kDeUsv/post/2016/06/Mean Value Window Plot/" class="text-colorful">Mean Value vs. Window</a>
+								</li>
+								<li>
+									<a href="https://gateway.ipfs.io/ipns/QmPC1xcsMTDKFTWHLrGEaNTCEdceUf4wWRJhM5P4kDeUsv/page/3dcontourexamples/" class="text-colorful">3D Contour Examples</a>
+								</li>
+								<li>
+									<a href="https://www.scribd.com/user/224680756/thebubbleindex" class="text-colorful">Documents</a>
+								</li>
+							</ul>
+						</div>
+
+						<div class="flickr-feed block">
+							<h3 class="title">Flickr Feed</h3>
+							<div id="flickr-feed"></div>
+						</div>
+
+						</div>
+
+				</div><!-- end of .zone-footer -->
+			</div><!-- end of .footer-wrapper -->
+
+			<div class="copyright-wrapper">
+				<div class="zone-copyright zone clearfix">
+
+					<div class="copyright-left-container container-12">
+
+						<div class="copyright block">&copy; The Bubble Index. All Rights Reserved.</div>
+
+					</div>
+
+					<div class="copyright-right-container container-12">
+
+						<div class="social-links block">
+								<a href="https://www.facebook.com/thebubbleindex">
+								<i class="sprite sprite-facebook-icon"></i>
+							</a>
+							<a href="https://twitter.com/TheBubbleIndex">
+								<i class="sprite sprite-twitter-icon"></i>
+							</a>
+							<a href="http://lpplmarketwatch.com">
+								<i class="sprite sprite-google-icon"></i>
+							</a>
+							<a href="https://anautonomousagent.com">
+								<i class="sprite sprite-linkedin-icon"></i>
+							</a>
+							<a href="https://github.com/bigttrott/thebubbleindex">
+								<i class="sprite sprite-pinterest-icon"></i>
+							</a>
+							<a href="http://thebubbleindex.lefora.com">
+								<i class="sprite sprite-dribbble-icon"></i>
+							</a>
+						</div>
+
+					</div>
+
+				</div><!-- end of .zone-copyright -->
+			</div><!-- end of .copyright-wrapper -->
+
+		</footer>
+		<!--<script>
+		var aspect = 1.92,
+    	chart = $("#svgMain");
+		$(window).on("resize", function() {
+    	var targetWidth = chart.parent().width();
+    	chart.attr("width", targetWidth);
+    	chart.attr("height", Math.round(targetWidth / aspect));
+		});
+		</script>-->
+
+<script type="text/javascript" src="https://thebubbleindex.com/public/scripts/jquery.colorbox.js"></script>
+		<script type="text/javascript" src="https://thebubbleindex.com/public/scripts/jquery.selectbox-0.6.1.js"></script>
+		<script type="text/javascript" src="https://thebubbleindex.com/public/scripts/superfish.js"></script>
+		<script type="text/javascript" src="https://thebubbleindex.com/public/scripts/jflickrfeed.min.js"></script>
+
+		<script type="text/javascript" src="https://thebubbleindex.com/public/scripts/jquery.mobilemenu.min.js"></script>
+		<script type="text/javascript" src="https://thebubbleindex.com/public/scripts/jquery.placeholder.min.js"></script>
+		<script type="text/javascript" src="https://thebubbleindex.com/public/scripts/scripts.js"></script>
+
+	</body>
+
+</html>
