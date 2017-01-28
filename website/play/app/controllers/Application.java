@@ -1070,7 +1070,7 @@ public class Application extends Controller {
 			index.findLocation();
 			index.findPlotLocation();
 
-			render("Application/plot.html", index);
+			plot(index.type, index.name, index.symbol);
 		}
 
 		else {
@@ -1086,24 +1086,12 @@ public class Application extends Controller {
 	}
 
 	public static void plot(String type, String name, String symbol) {
-		BubbleIndex index = new BubbleIndex();
-		index.type = type;
-		index.symbol = symbol;
-		index.name = name;
-		index.findLocation();
-		index.findPlotLocation();
-		render(index);
-	}
+		redirect("https://bigttrott-thebubbleindex.netdna-ssl.com/TheBubbleIndex/" + type + "/" + symbol + "/" + "plot.html");
+    }
 
-	public static void fullPlot(String type, String name, String symbol) {
-		BubbleIndex index = new BubbleIndex();
-		index.type = type;
-		index.symbol = symbol;
-		index.name = name;
-		index.findLocation();
-		index.findPlotLocation();
-		render(index);
-	}
+    public static void fullPlot(String type, String name, String symbol) {
+    	redirect("https://bigttrott-thebubbleindex.netdna-ssl.com/TheBubbleIndex/" + type + "/" + symbol + "/" + "fullPlot.html");
+    }
 
 	public static void noResults() {
 		render();
