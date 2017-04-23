@@ -65,7 +65,7 @@ public class URLS {
 	 */
 	public void setYahooUrl() {
 		final String yahooSymbol = isYahooIndex ? "%5E" : "";
-		url = "http://ichart.yahoo.com/table.csv?s=" + yahooSymbol + dataName + "&a=0&b=1&c=" + startYear
+		url = "https://ichart.yahoo.com/table.csv?s=" + yahooSymbol + dataName + "&a=0&b=1&c=" + startYear
 				+ "&d=11&e=31&f=" + todaysYear + "&g=d&ignore=.csv";
 	}
 
