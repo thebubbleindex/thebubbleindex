@@ -38,7 +38,7 @@
 		</div>
 <script type="text/javascript" src="https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/typeface-0.15.js"></script>
 
-<script type="text/javascript" src="https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/three.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>
 
 <script type="text/javascript" src="https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/OrbitControls.js"></script>
 <script type="text/javascript" src="https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/Detector.js"></script>
@@ -248,70 +248,83 @@ function init() {
 	
 	axes = new THREE.AxisHelper( $SIZECONSTANT );
 	scene.add( axes );
-
-	 var  textGeo1 = new THREE.TextGeometry('Date', {
-		size: 1,
-		height: 0,
-		curveSegments: 1,
-		font: "helvetiker",
-		style: "normal"
-
-	});
 	
-	var  color1 = new THREE.Color();
-	color1.setRGB(255, 0, 0);
-	var  textMaterial1 = new THREE.MeshBasicMaterial({ color: color1 });
-	var  text1 = new THREE.Mesh(textGeo1 , textMaterial1);
-
-	text1.position.x = $XTEXTPOSITION;
-	text1.position.y = 0;
-	text1.position.z = 0
-	text1.rotation.x = Math.PI / 2;
-	text1.rotation.y = 0;
-	text1.rotation.z = 0;
-	scene.add(text1);
-
-	var  textGeo2 = new THREE.TextGeometry('Window', {
-			size: 1,
-			height: 0,
+	  //// Start of TextGeometry
+	var loader = new THREE.FontLoader();
+	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
+		var textGeo1 = new THREE.TextGeometry( "Date", {
+			font: font,
+			size: 1, // font size
+			height: 0, // how much extrusion (how thick / deep are the letters)
 			curveSegments: 1,
-			font: "helvetiker",
 			style: "normal"
-
 		});
-	var  color2 = new THREE.Color();
-	color2.setRGB(0, 255, 0);
-	var  textMaterial2 = new THREE.MeshBasicMaterial({ color: color2 });
-	var  text2 = new THREE.Mesh(textGeo2 , textMaterial2);
 
-	text2.position.x = 0;
-	text2.position.y = $YTEXTPOSITION;
-	text2.position.z = 0
-	text2.rotation.x = Math.PI / 2;
-	text2.rotation.y = Math.PI / 2;
-	text2.rotation.z = 0;
-	scene.add(text2);
+		var  color1 = new THREE.Color();
+		color1.setRGB(255, 0, 0);
+		var  textMaterial1 = new THREE.MeshBasicMaterial({ color: color1 });
+		var  text1 = new THREE.Mesh(textGeo1 , textMaterial1);
 
-	var  textGeo3 = new THREE.TextGeometry('Value', {
-			size: 1,
-			height: 0,
+		text1.position.x = 10;
+		text1.position.y = 0;
+		text1.position.z = 0
+		text1.rotation.x = Math.PI / 2;
+		text1.rotation.y = 0;
+		text1.rotation.z = 0;
+		scene.add(text1);
+	});
+	// End TextGeometry
+
+	//// Start of TextGeometry
+	var loader = new THREE.FontLoader();
+	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
+		var textGeo2 = new THREE.TextGeometry( "Window", {
+			font: font,
+			size: 1, // font size
+			height: 0, // how much extrusion (how thick / deep are the letters)
 			curveSegments: 1,
-			font: "helvetiker",
 			style: "normal"
-
 		});
-	var  color3 = new THREE.Color();
-	color3.setRGB(0, 0, 255);
-	var  textMaterial3 = new THREE.MeshBasicMaterial({ color: color3 });
-	var  text3 = new THREE.Mesh(textGeo3 , textMaterial3);
 
-	text3.position.x = 0;
-	text3.position.y = 0;
-	text3.position.z = $ZTEXTPOSITION;
-	text3.rotation.x = Math.PI / 2;
-	text3.rotation.y = Math.PI / 2;
-	text3.rotation.z = Math.PI / 2;
-	scene.add(text3);
+		var  color2 = new THREE.Color();
+		color2.setRGB(0, 255, 0);
+		var  textMaterial2 = new THREE.MeshBasicMaterial({ color: color2 });
+		var  text2 = new THREE.Mesh(textGeo2 , textMaterial2);
+
+		text2.position.x = 0;
+		text2.position.y = 10;
+		text2.position.z = 0
+		text2.rotation.x = Math.PI / 2;
+		text2.rotation.y = Math.PI / 2;
+		text2.rotation.z = 0;
+		scene.add(text2);
+	});
+	// End TextGeometry
+
+  //// Start of TextGeometry
+	var loader = new THREE.FontLoader();
+	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
+		var textGeo3 = new THREE.TextGeometry( "Value", {
+			font: font,
+			size: 1, // font size
+			height: 0, // how much extrusion (how thick / deep are the letters)
+			curveSegments: 1,
+			style: "normal"
+		});
+
+		var  color3 = new THREE.Color();
+		color3.setRGB(0, 0, 255);
+		var  textMaterial3 = new THREE.MeshBasicMaterial({ color: color3 });
+		var  text3 = new THREE.Mesh(textGeo3 , textMaterial3);
+
+		text3.position.x = 0;
+		text3.position.y = 0;
+		text3.position.z = 10;
+		text3.rotation.x = Math.PI / 2;
+		text3.rotation.y = Math.PI / 2;
+		text3.rotation.z = Math.PI / 2;
+		scene.add(text3);
+	});
 }
 
 function addTicks() {
@@ -342,98 +355,106 @@ function addTicks() {
     		var line = new THREE.Line(geometry, materialRed);
 				scene.add( line );
     }
+
+	var loader = new THREE.FontLoader();
+	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
 		for (var i = 0; i <= 15; i++) {
-        var dateTick = new Date(startDate.getTime() + dateDiffIntervalLength * i);
+			var dateTick = new Date(startDate.getTime() + dateDiffIntervalLength * i);
 
-        var dateMonth = (dateTick.getMonth() + 1) > 9 ? (dateTick.getMonth() + 1).toString() : ("0" + (dateTick.getMonth() + 1));
-        var dateDay = dateTick.getDate() > 9 ? dateTick.getDate().toString() : ("0" + dateTick.getDate());
-        var dateString = dateTick.getFullYear() + "-" + dateMonth + "-" + dateDay;
+			var dateMonth = (dateTick.getMonth() + 1) > 9 ? (dateTick.getMonth() + 1).toString() : ("0" + (dateTick.getMonth() + 1));
+			var dateDay = dateTick.getDate() > 9 ? dateTick.getDate().toString() : ("0" + dateTick.getDate());
+			var dateString = dateTick.getFullYear() + "-" + dateMonth + "-" + dateDay;
 
-				var  textGeo1 = new THREE.TextGeometry(dateString, {
-						size: 1,
-						height: 0,
-						curveSegments: 1,
-						font: "helvetiker",
-						style: "normal"
+			var textGeo1 = new THREE.TextGeometry( dateString, {
+				font: font,
+				size: 1, // font size
+				height: 0, // how much extrusion (how thick / deep are the letters)
+				curveSegments: 1,
+				style: "normal"
+			});
 
-					});
-	
-					var  color1 = new THREE.Color();
-					color1.setRGB(255, 0, 0);
-					var  textMaterial1 = new THREE.MeshBasicMaterial({ color: color1 });
-					var  text1 = new THREE.Mesh(textGeo1 , materialRed);
+			var  color1 = new THREE.Color();
+			color1.setRGB(255, 0, 0);
+			var  textMaterial1 = new THREE.MeshBasicMaterial({ color: color1 });
+			var  text1 = new THREE.Mesh(textGeo1 , materialRed);
 
-					text1.position.x = i*2;
-					text1.position.y = -10;
-					text1.position.z = 0;
-					text1.rotation.x = 0;
-					text1.rotation.y = 0;
-					text1.rotation.z = Math.PI / 2;
-					scene.add(text1);
+			text1.position.x = i*2;
+			text1.position.y = -10;
+			text1.position.z = 0;
+			text1.rotation.x = 0;
+			text1.rotation.y = 0;
+			text1.rotation.z = Math.PI / 2;
+			scene.add(text1);
 		}
+	});
 
-	  //window axis ticks
+	var loader = new THREE.FontLoader();
+	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
+	//window axis ticks
 		for (var i = 0; i <= numTicks; i = i + 2) {
-			   var geometry = new THREE.Geometry();
+			var geometry = new THREE.Geometry();
     		geometry.vertices.push(new THREE.Vector3(0, i, 0));
     		geometry.vertices.push(new THREE.Vector3(-1, i, 0));
     		var line = new THREE.Line(geometry, materialGreen);
-				scene.add( line );
+			scene.add( line );
 
-				var windowValue = Math.round( maxWindow / 30 * i );
+			var windowValue = Math.round( maxWindow / 30 * i );
 
-				var  textGeo2 = new THREE.TextGeometry(windowValue.toString(), {
-							size: 1,
-							height: 0,
-							curveSegments: 1,
-							font: "helvetiker",
-							style: "normal"
+			var textGeo2 = new THREE.TextGeometry( windowValue.toString(), {
+				font: font,
+				size: 1, // font size
+				height: 0, // how much extrusion (how thick / deep are the letters)
+				curveSegments: 1,
+				style: "normal"
+			});
 
-						});
-					var  color2 = new THREE.Color();
-					color2.setRGB(0, 255, 0);
-					var  textMaterial2 = new THREE.MeshBasicMaterial({ color: color2 });
-					var  text2 = new THREE.Mesh(textGeo2 , materialGreen);
+			var  color2 = new THREE.Color();
+			color2.setRGB(0, 255, 0);
+			var  textMaterial2 = new THREE.MeshBasicMaterial({ color: color2 });
+			var  text2 = new THREE.Mesh(textGeo2 , materialGreen);
 
-					text2.position.x = -5;
-					text2.position.y = i;
-					text2.position.z = 0
-					text2.rotation.x = 0;
-					text2.rotation.y = 0;
-					text2.rotation.z = Math.PI * 2;
-					scene.add(text2);
-
+			text2.position.x = -5;
+			text2.position.y = i;
+			text2.position.z = 0
+			text2.rotation.x = 0;
+			text2.rotation.y = 0;
+			text2.rotation.z = Math.PI * 2;
+			scene.add(text2);
 		}
+	});
 
-		//value axis ticks
+	var loader = new THREE.FontLoader();
+	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
+	//value axis ticks
 		for (var i = 0; i <= numTicks; i = i + 2) {
-			   var geometry = new THREE.Geometry();
+			var geometry = new THREE.Geometry();
     		geometry.vertices.push(new THREE.Vector3(-1, -1, i));
     		geometry.vertices.push(new THREE.Vector3(0, 0, i));
     		var line = new THREE.Line(geometry, materialBlue);
-				scene.add( line );
-				var value = maxZValue / 30.0 * i;
-				var  textGeo3 = new THREE.TextGeometry(parseFloat(value).toFixed(1), {
-						size: 1,
-						height: 0,
-						curveSegments: 1,
-						font: "helvetiker",
-						style: "normal"
+			scene.add( line );
+			var value = maxZValue / 30.0 * i;
+			var textGeo3 = new THREE.TextGeometry( parseFloat(value).toFixed(1), {
+				font: font,
+				size: 1, // font size
+				height: 0, // how much extrusion (how thick / deep are the letters)
+				curveSegments: 1,
+				style: "normal"
+			});
 
-					});
-				var  color3 = new THREE.Color();
-				color3.setRGB(0, 0, 255);
-				var  textMaterial3 = new THREE.MeshBasicMaterial({ color: color3 });
-				var  text3 = new THREE.Mesh(textGeo3 , textMaterial3);
+			var  color3 = new THREE.Color();
+			color3.setRGB(0, 0, 255);
+			var  textMaterial3 = new THREE.MeshBasicMaterial({ color: color3 });
+			var  text3 = new THREE.Mesh(textGeo3 , textMaterial3);
 
-				text3.position.x = -5;
-				text3.position.y = -5;
-				text3.position.z = i;
-				text3.rotation.x = Math.PI / 2;
-				text3.rotation.y = Math.PI / 4;
-				text3.rotation.z = 0;
-				scene.add(text3);
+			text3.position.x = -5;
+			text3.position.y = -5;
+			text3.position.z = i;
+			text3.rotation.x = Math.PI / 2;
+			text3.rotation.y = Math.PI / 4;
+			text3.rotation.z = 0;
+			scene.add(text3);
 		}
+	});
 }
 </script>
 </body>
