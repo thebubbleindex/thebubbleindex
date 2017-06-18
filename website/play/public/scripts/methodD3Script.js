@@ -32,24 +32,22 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
 	width = areawidth - margin.left - margin.right,
     height = Math.round(areawidth / aspect) - margin.top - margin.bottom;
 
-var x = d3.scale.linear()
+var x = d3.scaleLinear()
     .range([0, width]);
 
-var y = d3.scale.linear()
+var y = d3.scaleLinear()
     .range([height, 0]);
 
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
+var xAxis = d3.axisBottom()
+    .scale(x);
 
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
+var yAxis = d3.axisLeft()
+    .scale(y);
 
-var line = d3.svg.line()
+var line = d3.line()
     .x(function(d) { return x(d.x); })
     .y(function(d) { return y(d.y); })
-	.interpolate("basis");
+	.curve(d3.curveBasis);
 
 var svg = d3.select("#plotarea").append("svg")
     .attr("width", width + margin.left + margin.right)
