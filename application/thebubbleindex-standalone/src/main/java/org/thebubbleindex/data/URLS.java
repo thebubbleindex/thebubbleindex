@@ -16,13 +16,18 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
-
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.runnable.RunContext;
@@ -33,20 +38,20 @@ import org.thebubbleindex.swing.UpdateWorker;
  * @author bigttrott
  */
 public class URLS {
-	private static final String todaysYear = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
 	public static final String dailyDataFile = "dailydata.csv";
 
 	private String dataName;
 	private String url;
 	private String dataType;
 	private String source;
-	private final int startYear = 1900;
 	private boolean isYahooIndex;
 	private String quandlDataset;
 	private String quandlName;
 	private int quandlColumn;
 	private UpdateWorker updateWorker;
 	private boolean overwrite;
+	private String yahooCrumb = null;
+	private String yahooCookie = null;
 
 	public void setUpdateWorker(final UpdateWorker updateWorker) {
 		this.updateWorker = updateWorker;
@@ -64,9 +69,72 @@ public class URLS {
 	 * 
 	 */
 	public void setYahooUrl() {
+
 		final String yahooSymbol = isYahooIndex ? "%5E" : "";
-		url = "https://ichart.yahoo.com/table.csv?s=" + yahooSymbol + dataName + "&a=0&b=1&c=" + startYear
-				+ "&d=11&e=31&f=" + todaysYear + "&g=d&ignore=.csv";
+		final int maxRetry = 7;
+		final HttpGet httpRequest = new HttpGet("https://finance.yahoo.com/lookup?s=rubbish");
+		httpRequest.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+		// Example:
+		// ..."CrumbStore":{"crumb":"993z4JVU9XQ"},"MarketSummaryStore"...
+		final String crumbSearchString = "\"CrumbStore\":{\"crumb\":\"";
+
+		if (yahooCookie == null || yahooCrumb == null) {
+
+			for (int i = 0; i < maxRetry; i++) {
+				final HttpClient client = HttpClientBuilder.create().build();
+
+				HttpResponse response = null;
+				try {
+					response = client.execute(httpRequest);
+				} catch (final IOException ex) {
+					Logs.myLogger.error(ex);
+					continue;
+				}
+
+				String result = null;
+				try {
+					result = EntityUtils.toString(response.getEntity());
+				} catch (final ParseException | IOException ex) {
+					Logs.myLogger.error(ex);
+					continue;
+				}
+
+				yahooCookie = response.getFirstHeader("Set-Cookie").getValue().split(";")[0];
+
+				final int crumbStartPosition = result.indexOf(crumbSearchString) + crumbSearchString.length();
+				final int crumbEndPosition = result.substring(crumbStartPosition).indexOf("\"") + crumbStartPosition;
+
+				yahooCrumb = result.substring(crumbStartPosition, crumbEndPosition);
+
+				if (yahooCrumb.length() == 11) {
+					break;
+				} else {
+					yahooCrumb = null;
+				}
+			}
+
+			if (yahooCrumb == null) {
+				Logs.myLogger.error("Failed to obtain valid crumb after " + maxRetry + " retries.");
+				url = "";
+				return;
+			}
+		}
+
+		if (yahooCookie == null || yahooCrumb == null) {
+			Logs.myLogger.error("Failed to find valid cookie or crumb.");
+			url = "";
+			return;
+		}
+
+		final String unixStartDate = "0"; // 1/1/1970
+		final String unixEndDate = String.valueOf(new Date().getTime()); // Today's
+																			// date
+		final String urlInterval = "1d";
+		final String urlEvents = "history";
+		url = "https://query1.finance.yahoo.com/v7/finance/download/" + yahooSymbol + dataName + "?period1="
+				+ unixStartDate + "&period2=" + unixEndDate + "&interval=" + urlInterval + "&events=" + urlEvents
+				+ "&crumb=" + yahooCrumb;
 	}
 
 	@Override
@@ -161,12 +229,29 @@ public class URLS {
 		} else {
 			System.out.println("Downloading file: " + dataName + ". Connecting to: " + url + " ...");
 		}
-		final URL urlFile = new URL(url);
-		final ReadableByteChannel rbc = Channels.newChannel(urlFile.openStream());
-		final WritableByteChannel outputChannel = Channels.newChannel(outputstream);
-		fastChannelCopy(rbc, outputChannel);
-		rbc.close();
-		outputChannel.close();
+
+		if (source.equalsIgnoreCase("Yahoo")) {
+			final HttpGet httpGet = new HttpGet(url);
+			httpGet.addHeader("Cookie", yahooCookie);
+			final HttpClient client = HttpClientBuilder.create().build();
+
+			// Execute the request
+			final HttpResponse response = client.execute(httpGet);
+
+			final byte[] result = EntityUtils.toByteArray(response.getEntity());
+			final ReadableByteChannel rbc = Channels.newChannel(new ByteArrayInputStream(result));
+			final WritableByteChannel outputChannel = Channels.newChannel(outputstream);
+			fastChannelCopy(rbc, outputChannel);
+			rbc.close();
+			outputChannel.close();
+		} else {
+			final URL urlFile = new URL(url);
+			final ReadableByteChannel rbc = Channels.newChannel(urlFile.openStream());
+			final WritableByteChannel outputChannel = Channels.newChannel(outputstream);
+			fastChannelCopy(rbc, outputChannel);
+			rbc.close();
+			outputChannel.close();
+		}
 	}
 
 	/**
@@ -221,31 +306,33 @@ public class URLS {
 			try (final BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
 
 				// ignore the lines with the date repeats (common in yahoo data)
-				final Set<String> dateSet = new HashSet<String>(1000);
+				final TreeMap<LocalDate, Double> dateValueMap = new TreeMap<LocalDate, Double>();
 
 				// Ignore header is True for Yahoo, FED, and QUANDL
 				String line = reader.readLine();
 
 				while ((line = reader.readLine()) != null) {
 					final String[] splits = line.split(",|\\t");
-					// TODO : check if a date is out of order
-					if (splits.length > 0 && dateSet.contains(splits[0])) {
+					if (splits == null || splits.length <= 0) {
 						continue;
 					}
+					
+					final LocalDate date = LocalDate.parse(splits[0]);
+					
+					if (dateValueMap.containsKey(date)) {
+						continue;
+					}
+					
 					if (YAHOO && splits.length > 6) {
 						try {
-							priceData.add(String.valueOf(Double.parseDouble(splits[6])));
-							dateData.add(splits[0]);
-							dateSet.add(splits[0]);
+							dateValueMap.put(date, Double.parseDouble(splits[5]));
 						} catch (final NumberFormatException ex) {
 							Logs.myLogger.error("Failed to write line: {}. Category Name = {}. Selection Name = {}.",
 									line, dataType, dataName);
 						}
 					} else if (QUANDL && splits.length > quandlColumn - 1) {
 						try {
-							priceData.add(String.valueOf(Double.parseDouble(splits[quandlColumn - 1])));
-							dateData.add(splits[0]);
-							dateSet.add(splits[0]);
+							dateValueMap.put(date, Double.parseDouble(splits[quandlColumn - 1]));
 						} catch (final NumberFormatException ex) {
 							Logs.myLogger.error("Failed to write line: {}. Category Name = {}. Selection Name = {}.",
 									line, dataType, dataName);
@@ -253,9 +340,7 @@ public class URLS {
 					} else {
 						if (splits.length > 1 && !splits[1].equals(".")) {
 							try {
-								priceData.add(String.valueOf(Double.parseDouble(splits[1])));
-								dateData.add(splits[0]);
-								dateSet.add(splits[0]);
+								dateValueMap.put(date, Double.parseDouble(splits[1]));
 							} catch (final NumberFormatException ex) {
 								Logs.myLogger.error(
 										"Failed to write line: {}. Category Name = {}. Selection Name = {}.", line,
@@ -264,13 +349,17 @@ public class URLS {
 						}
 					}
 				}
-
+				
+				for (final Entry<LocalDate, Double> entry : dateValueMap.entrySet()) { 
+					priceData.add(String.valueOf(entry.getValue()));
+					dateData.add(entry.getKey().toString());
+				}
+ 
+				/*	Reverse Yahoo Data - No longer need to reverse the order as of new Yahoo Crumb API - July 2017
 				if (YAHOO) {
-					// Reverse Yahoo Data
 					Collections.reverse(dateData);
 					Collections.reverse(priceData);
-				}
-				// write data
+				}*/
 			}
 		} catch (final IOException x) {
 			Logs.myLogger.error("Failed to write CSV file. Category Name = {}, Selection Name = {}. {}", dataType,

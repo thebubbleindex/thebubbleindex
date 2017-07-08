@@ -2,6 +2,8 @@ package org.thebubbleindex.data.test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 
 import org.apache.http.Header;
@@ -14,7 +16,7 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 public class YahooCrumbTest {
-	
+
 	/*
 	 * Converting VBA logic from:
 	 * http://www.signalsolver.com/wp-content/uploads/2017/06/EmulateURL-V1.0b.
@@ -28,7 +30,7 @@ public class YahooCrumbTest {
 		final int maxRetry = 7;
 		String crumb = null;
 		String cookie = null;
-		
+
 		// Example:
 		// ..."CrumbStore":{"crumb":"993z4JVU9XQ"},"MarketSummaryStore"...
 		final String crumbSearchString = "\"CrumbStore\":{\"crumb\":\"";
@@ -65,30 +67,35 @@ public class YahooCrumbTest {
 				crumb = null;
 			}
 		}
-		
+
 		if (crumb == null) {
 			System.out.println("Failed to obtain valid crumb after " + maxRetry + " retries.");
 			return;
 		}
-		
+
 		final String stockSymbol = "TSLA";
-		final String unixStartDate = "0"; //1/1/1970
-		final String unixEndDate = String.valueOf(new Date().getTime()); //Today's date
+		final String unixStartDate = "0"; // 1/1/1970
+		final String unixEndDate = String.valueOf(new Date().getTime()); // Today's
+																			// date
 		final String urlInterval = "1d";
 		final String urlEvents = "history";
-		final String webRequestURL = "https://query1.finance.yahoo.com/v7/finance/download/" + stockSymbol + "?period1=" + unixStartDate + "&period2=" + unixEndDate + "&interval=" + urlInterval + "&events=" + urlEvents + "&crumb=" + crumb;
-	
-		System.out.println("Web Request URL: " + webRequestURL);	    
+		final String webRequestURL = "https://query1.finance.yahoo.com/v7/finance/download/" + stockSymbol + "?period1="
+				+ unixStartDate + "&period2=" + unixEndDate + "&interval=" + urlInterval + "&events=" + urlEvents
+				+ "&crumb=" + crumb;
+
+		System.out.println("Web Request URL: " + webRequestURL);
 
 		final HttpGet httpGet = new HttpGet(webRequestURL);
-	    httpGet.addHeader("Cookie", cookie);
+		httpGet.addHeader("Cookie", cookie);
 		final HttpClient client = HttpClientBuilder.create().build();
 
-	    // Execute the request
+		// Execute the request
 		final HttpResponse response = client.execute(httpGet);
 
 		final String result = EntityUtils.toString(response.getEntity());
 		System.out.println(result);
+		final Path path = Files.createTempFile(stockSymbol, ".csv");
+		Files.write(path, result.getBytes());
 	}
 
 }

@@ -67,7 +67,7 @@ public class UpdateDataTest {
 				+ category + Indices.filePathSymbol + entry + Indices.filePathSymbol + dailyDataFile);
 		final List<String> lines = Files.readAllLines(entryFile.toPath());
 		assertTrue(lines.size() > 0);
-		assertEquals(lines.get(0), String.format("2010-06-29\t23.889999"));
+		assertEquals(String.format("2010-06-29\t23.889999"), lines.get(0));
 	}
 
 	@Test
@@ -107,7 +107,7 @@ public class UpdateDataTest {
 				+ category + Indices.filePathSymbol + entry + Indices.filePathSymbol + dailyDataFile);
 		final List<String> lines = Files.readAllLines(entryFile.toPath());
 		assertTrue(lines.size() > 0);
-		assertEquals(lines.get(0), String.format("1971-02-05\t100.0"));
+		assertEquals(String.format("1971-02-05\t100.0"), lines.get(0));
 	}
 
 	@Test
@@ -146,27 +146,27 @@ public class UpdateDataTest {
 		selection.setYahooUrl();
 		selection.setOverwrite(false);
 
-		// Yahoo data is standard with most recent at "top" and has 7 columns,
+		// Yahoo data is standard with most recent at "bottom" and has 7 columns,
 		// and has a header
-		String inputString = String.format("Date,Low,High,Avg,Vol,Price,AdjPrice%n");
-		inputString += String.format("2016-08-24,0,0,0,0,0\t5217.689941%n");
-		inputString += String.format("2016-08-23,0,0,0,0,0\t5260.080078%n");
-		inputString += String.format("2016-08-22,0,0,0,0,0\t5244.600098%n");
-		inputString += String.format("2016-08-19,0,0,0,0,0\t5238.379883%n");
-		inputString += String.format("2016-08-18,0,0,0,0,0\t5240.149902%n");
-		inputString += String.format("2016-08-17,0,0,0,0,0\t5228.660156%n");
-		inputString += String.format("2016-08-16,0,0,0,0,0\t5555555555555.109863%n");// deliberate
-		inputString += String.format("2016-08-15,0,0,0,0,0\t5262.02002%n");
-		inputString += String.format("2016-08-12,0,0,0,0,0\t5232.890137%n");
-		inputString += String.format("2016-08-11,0,0,0,0,0\t5228.399902%n");
-		inputString += String.format("2016-08-10,0,0,0,0,0\t5204.580078%n");
-		inputString += String.format("2016-08-09,0,0,0,0,0\t5225.47998%n");
-		inputString += String.format("2016-08-08,0,0,0,0,0\t5213.140137%n");
-		inputString += String.format("2016-08-05,0,0,0,0,0\t5221.120117%n");
-		inputString += String.format("2016-08-04,0,0,0,0,0\t5166.25%n");
-		inputString += String.format("2016-08-03,0,0,0,0,0\t5159.740234%n");
-		inputString += String.format("2016-08-02,0,0,0,0,0\t5137.72998%n");
-		inputString += String.format("2016-08-01,0,0,0,0,0\t5184.200195%n");
+		String inputString = String.format("Date,Open,High,Low,Close,Adj Close,Volume%n");
+		inputString += String.format("2016-08-01,0,0,0,0,5184.200195,0%n");
+		inputString += String.format("2016-08-02,0,0,0,0,5137.72998,0%n");
+		inputString += String.format("2016-08-03,0,0,0,0,5159.740234,0%n");
+		inputString += String.format("2016-08-04,0,0,0,0,5166.25,0%n");
+		inputString += String.format("2016-08-05,0,0,0,0,5221.120117,0%n");
+		inputString += String.format("2016-08-08,0,0,0,0,5213.140137,0%n");
+		inputString += String.format("2016-08-09,0,0,0,0,5225.47998,0%n");
+		inputString += String.format("2016-08-10,0,0,0,0,5204.580078,0%n");
+		inputString += String.format("2016-08-11,0,0,0,0,5228.399902,0%n");
+		inputString += String.format("2016-08-12,0,0,0,0,5232.890137,0%n");
+		inputString += String.format("2016-08-15,0,0,0,0,5262.02002,0%n");
+		inputString += String.format("2016-08-16,0,0,0,0,5555555555555.109863,0%n");// deliberate
+		inputString += String.format("2016-08-17,0,0,0,0,5228.660156,0%n");
+		inputString += String.format("2016-08-18,0,0,0,0,5240.149902,0%n");
+		inputString += String.format("2016-08-19,0,0,0,0,5238.379883,0%n");
+		inputString += String.format("2016-08-22,0,0,0,0,5244.600098,0%n");
+		inputString += String.format("2016-08-23,0,0,0,0,5260.080078,0%n");
+		inputString += String.format("2016-08-24,0,0,0,0\t5217.689941\t0%n");
 
 		final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(inputString.getBytes());
 		final ByteArrayOutputStream outputstream = new ByteArrayOutputStream();
@@ -212,48 +212,49 @@ public class UpdateDataTest {
 
 		Files.deleteIfExists(previousDailyData.toPath());
 
-		// Yahoo data is standard with most recent at "top" and has 7 columns,
+		// Yahoo data is standard with most recent at "bottom" and has 7 columns,
 		// and has a header
-		String inputString = String.format("Date,Low,High,Avg,Vol,Price,AdjPrice%n");
-		inputString += String.format("2016-08-24,0,0,0,0,0\t5217.689941%n");
-		inputString += String.format("2016-08-23,0,0,0,0,0\t5260.080078%n");
-		inputString += String.format("2016-08-22,0,0,0,0,0\t5244.600098%n");
-		inputString += String.format("2016-08-19,0,0,0,0,0\t5238.379883%n");
-		inputString += String.format("2016-08-18,0,0,0,0,0\t5240.149902%n");
-		inputString += String.format("2016-08-17,0,0,0,0,0\t5228.660156%n");
-		inputString += String.format("2016-08-16,0,0,0,0,0\t5227.109863%n");// deliberate
-		inputString += String.format("2016-08-15,0,0,0,0,0\t5262.02002%n");
-		inputString += String.format("2016-08-12,0,0,0,0,0\t5232.890137%n");
-		inputString += String.format("2016-08-11,0,0,0,0,0\t5228.399902%n");
-		inputString += String.format("2016-08-10,0,0,0,0,0\t5204.580078%n");
-		inputString += String.format("2016-08-09,0,0,0,0,0\t5225.47998%n");
-		inputString += String.format("2016-08-08,0,0,0,0,0\t5213.140137%n");
-		inputString += String.format("2016-08-05,0,0,0,0,0\t5221.120117%n");
-		inputString += String.format("2016-08-04,0,0,0,0,0\t5166.25%n");
-		inputString += String.format("2016-08-03,0,0,0,0,0\t5159.740234%n");
-		inputString += String.format("2016-08-02,0,0,0,0,0\t5137.72998%n");
-		inputString += String.format("2016-08-01,0,0,0,0,0\t5184.200195%n");
+		String inputString = String.format("Date,Open,High,Low,Close,Adj Close,Volume%n");
+		inputString += String.format("2016-08-01,0,0,0,0,5184.200195,0%n");
+		inputString += String.format("2016-08-02,0,0,0,0,5137.72998,0%n");
+		inputString += String.format("2016-08-03,0,0,0,0,5159.740234,0%n");
+		inputString += String.format("2016-08-04,0,0,0,0,5166.25,0%n");
+		inputString += String.format("2016-08-05,0,0,0,0,5221.120117,0%n");
+		inputString += String.format("2016-08-08,0,0,0,0,5213.140137,0%n");
+		inputString += String.format("2016-08-09,0,0,0,0,5225.47998,0%n");
+		inputString += String.format("2016-08-10,0,0,0,0,5204.580078,0%n");
+		inputString += String.format("2016-08-11,0,0,0,0,5228.399902,0%n");
+		inputString += String.format("2016-08-12,0,0,0,0,5232.890137,0%n");
+		inputString += String.format("2016-08-15,0,0,0,0,5262.02002,0%n");
+		inputString += String.format("2016-08-16,0,0,0,0,5227.109863,0%n");// deliberate
+		inputString += String.format("2016-08-17,0,0,0,0,5228.660156,0%n");
+		inputString += String.format("2016-08-18,0,0,0,0,5240.149902,0%n");
+		inputString += String.format("2016-08-19,0,0,0,0,5238.379883,0%n");
+		inputString += String.format("2016-08-22,0,0,0,0,5244.600098,0%n");
+		inputString += String.format("2016-08-23,0,0,0,0,5260.080078,0%n");
+		inputString += String.format("2016-08-24,0,0,0,0,5217.689941,0%n");
+
 		// what I have seen is that some yahoo data has entire chucks repeated
-		inputString += String.format("2016-08-24,0,0,0,0,0\t5217.689941%n");
-		inputString += String.format("2016-08-23,0,0,0,0,0\t5260.080078%n");
-		inputString += String.format("2016-08-22,0,0,0,0,0\t5244.600098%n");
-		inputString += String.format("2016-08-19,0,0,0,0,0\t5238.379883%n");
-		inputString += String.format("2016-08-18,0,0,0,0,0\t5240.149902%n");
-		inputString += String.format("2016-08-17,0,0,0,0,0\t5228.660156%n");
-		inputString += String.format("2016-08-16,0,0,0,0,0\t565418681681227.109863%n");// deliberate
-		inputString += String.format("2016-08-15,0,0,0,0,0\t5262.02002%n");
-		inputString += String.format("2016-08-12,0,0,0,0,0\t5232.890137%n");
-		inputString += String.format("2016-08-11,0,0,0,0,0\t5228.399902%n");
-		inputString += String.format("2016-08-10,0,0,0,0,0\t5204.580078%n");
-		inputString += String.format("2016-08-09,0,0,0,0,0\t5225.47998%n");
-		inputString += String.format("2016-08-08,0,0,0,0,0\t5213.140137%n");
-		inputString += String.format("2016-08-05,0,0,0,0,0\t5221.120117%n");
-		inputString += String.format("2016-08-04,0,0,0,0,0\t5166.25%n");
-		inputString += String.format("2016-08-03,0,0,0,0,0\t5159.740234%n");
-		inputString += String.format("2016-08-02,0,0,0,0,0\t5137.72998%n");
-		inputString += String.format("2016-08-01,0,0,0,0,0\t5184.200195%n");
-		inputString += String.format("2016-07-29,0,0,0,0,0\t5000.195%n");
-		inputString += String.format("2016-07-28,0,0,0,0,0\t5100.295%n");
+		inputString += String.format("2016-07-28,0,0,0,0,5100.295,0%n");
+		inputString += String.format("2016-07-29,0,0,0,0,5000.195,0%n");
+		inputString += String.format("2016-08-01,0,0,0,0,5184.200195,0%n");
+		inputString += String.format("2016-08-02,0,0,0,0,5137.72998,0%n");
+		inputString += String.format("2016-08-03,0,0,0,0,5159.740234,0%n");
+		inputString += String.format("2016-08-04,0,0,0,0,5166.25,0%n");
+		inputString += String.format("2016-08-05,0,0,0,0,5221.120117,0%n");
+		inputString += String.format("2016-08-08,0,0,0,0,5213.140137,0%n");
+		inputString += String.format("2016-08-09,0,0,0,0,5225.47998,0%n");
+		inputString += String.format("2016-08-10,0,0,0,0,5204.580078,0%n");
+		inputString += String.format("2016-08-11,0,0,0,0,5228.399902,0%n");
+		inputString += String.format("2016-08-12,0,0,0,0,5232.890137,0%n");
+		inputString += String.format("2016-08-15,0,0,0,0,5262.02002,0%n");
+		inputString += String.format("2016-08-16,0,0,0,0,565418681681227.109863,0%n");// deliberate
+		inputString += String.format("2016-08-17,0,0,0,0,5228.660156,0%n");
+		inputString += String.format("2016-08-18,0,0,0,0,5240.149902,0%n");
+		inputString += String.format("2016-08-19,0,0,0,0,5238.379883,0%n");
+		inputString += String.format("2016-08-22,0,0,0,0,5244.600098,0%n");
+		inputString += String.format("2016-08-23,0,0,0,0,5260.080078,0%n");
+		inputString += String.format("2016-08-24,0,0,0,0,5217.689941,0%n");
 
 		final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(inputString.getBytes());
 		final ByteArrayOutputStream outputstream = new ByteArrayOutputStream();
