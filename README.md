@@ -271,7 +271,7 @@ mvn install:install-file -Dfile=${project.basedir}/src/main/resources/yeppp-bund
 mvn clean compile assembly:single
 ```
 
-###*License*
+### *License*
 
 The Bubble Index is released under the [GNU GENERAL PUBLIC LICENSE](LICENSE).
 
