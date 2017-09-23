@@ -1,0 +1,1 @@
+$$D_q^H f(x) \triangleq {f(x) - f(qx) \over \lbrack(1-q)x\rbrack^H}.$$

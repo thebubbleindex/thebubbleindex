@@ -1,0 +1,1 @@
+$$D_q^Hy(t) = {t^{m-H}\lbrack B^\prime + C^\prime g(t)\rbrack}.$$

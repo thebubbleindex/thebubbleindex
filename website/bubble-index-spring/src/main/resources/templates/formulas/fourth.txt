@@ -1,0 +1,1 @@
+$$g(t) = {C_1\cos\left(\omega\ln t\right)+C_2\sin\left(\omega\ln t\right)}.$$

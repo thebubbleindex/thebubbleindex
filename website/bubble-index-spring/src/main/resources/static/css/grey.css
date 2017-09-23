@@ -1,0 +1,76 @@
+a:hover,
+.languages a.current,
+.text-colorful,
+.main-menu ul li a:hover,
+.main-menu ul li ul li a,
+.main-menu ul li.active ul li a,
+.main-menu ul li.neighbour-left ul li a,
+.main-menu ul li.neighbour-right ul li a,
+.jquery-selectbox .jquery-selectbox-list {
+	color: #434343;
+}
+
+.main-menu ul li.active a,
+.main-menu ul li.active a:hover,
+.main-menu ul,
+.main-menu ul li.neighbour-left,
+.main-menu ul li.neighbour-right,
+.search .advanced-search .slider .ui-slider-range,
+.boxed-switch,
+.specialisations .specialisation .specialisation-progressbar div,
+.blog .blog-post-preview .blog-post-preview-left .blog-post-date .day,
+.blog .blog-post-preview .blog-post-preview-left .blog-post-date .month,
+.blog .blog-post-preview .blog-post-preview-left .blog-post-date .year,
+.events-calendar table tr td.event-day div {
+	background-color: #434343;
+}
+
+.main-menu ul li.active {
+	border-top: 3px solid #434343;
+}
+
+.button-colorful,
+.button-2-colorful,
+.header-2 .main-menu ul li.active,
+.pagination .pagination-buttons a {
+	border-bottom: 3px solid #434343;
+}
+
+.company-tabs-wrapper .company-tabs-container,
+.main-menu-wrapper,
+.header-2 .header-wrapper,
+ul.event-tabs {
+	border-bottom: 5px solid #434343;
+}
+
+.industries-tabs-wrapper {
+	border-top: 5px solid #434343;
+}
+
+.blog .blog-post-preview .blog-post-preview-right {
+	border-left: 5px solid #434343;
+}
+
+ul.company-tabs li.active,
+ul.event-tabs li.active {
+	background-color: #434343;
+	border-top: 1px solid #434343;
+	border-left: 1px solid #434343;
+	border-right: 1px solid #434343;
+}
+
+.main-menu ul li a:hover {
+	background: url(../images/hover-arrow-up.png) no-repeat center bottom #434343;
+}
+
+.search .default-search .submit {
+	background: url("../images/search-button-background.png") no-repeat left #434343;
+}
+
+.submitspecial {
+	background: url("../images/search-button-background.png") no-repeat left #434343;
+}
+
+.search .advanced-search .submit {
+	background: url("../images/search-button-background.png") no-repeat left #434343;
+}

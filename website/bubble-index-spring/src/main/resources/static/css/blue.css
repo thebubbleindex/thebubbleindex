@@ -1,0 +1,76 @@
+a:hover,
+.languages a.current,
+.text-colorful,
+.main-menu ul li a:hover,
+.main-menu ul li ul li a,
+.main-menu ul li.active ul li a,
+.main-menu ul li.neighbour-left ul li a,
+.main-menu ul li.neighbour-right ul li a,
+.jquery-selectbox .jquery-selectbox-list {
+	color: #0C87DD;
+}
+
+.main-menu ul li.active a,
+.main-menu ul li.active a:hover,
+.main-menu ul,
+.main-menu ul li.neighbour-left,
+.main-menu ul li.neighbour-right,
+.search .advanced-search .slider .ui-slider-range,
+.boxed-switch,
+.specialisations .specialisation .specialisation-progressbar div,
+.blog .blog-post-preview .blog-post-preview-left .blog-post-date .day,
+.blog .blog-post-preview .blog-post-preview-left .blog-post-date .month,
+.blog .blog-post-preview .blog-post-preview-left .blog-post-date .year,
+.events-calendar table tr td.event-day div {
+	background-color: #0C87DD;
+}
+
+.main-menu ul li.active {
+	border-top: 3px solid #0C87DD;
+}
+
+.button-colorful,
+.button-2-colorful,
+.header-2 .main-menu ul li.active,
+.pagination .pagination-buttons a {
+	border-bottom: 3px solid #0C87DD;
+}
+
+.company-tabs-wrapper .company-tabs-container,
+.main-menu-wrapper,
+.header-2 .header-wrapper,
+ul.event-tabs {
+	border-bottom: 5px solid #0C87DD;
+}
+
+.industries-tabs-wrapper {
+	border-top: 5px solid #0C87DD;
+}
+
+.blog .blog-post-preview .blog-post-preview-right {
+	border-left: 5px solid #0C87DD;
+}
+
+ul.company-tabs li.active,
+ul.event-tabs li.active {
+	background-color: #0C87DD;
+	border-top: 1px solid #0C87DD;
+	border-left: 1px solid #0C87DD;
+	border-right: 1px solid #0C87DD;
+}
+
+.main-menu ul li a:hover {
+	background: url(../images/hover-arrow-up.png) no-repeat center bottom #0C87DD;
+}
+
+.search .default-search .submit {
+	background: url("../images/search-button-background.png") no-repeat left #0C87DD;
+}
+
+.submitspecial {
+	background: url("../images/search-button-background.png") no-repeat left #0C87DD;
+}
+
+.search .advanced-search .submit {
+	background: url("../images/search-button-background.png") no-repeat left #0C87DD;
+}

@@ -1,0 +1,12 @@
+$$y(t) = {A - Bt^m\tau^m + Ct^m\tau^m\cos\left(\omega\ln t\right)},\qquad \omega = {2\pi f},\: t = {\left(t_c-t\right)\over\tau}.$$
+<p>where t<sub>c</sub> is the Critical Time.</p>
+<p>The H,Q derivative of this function provides a useful way to search for LPPL oscillations in a time series. The H,Q derivative is defined in their paper:</p>
+$$D_q^H f(x) \triangleq {f(x) - f(qx) \over \lbrack(1-q)x\rbrack^H}.$$
+<p>Thus, the H,Q derivative of the LPPL function is:</p>
+$$D_q^Hy(t) = {t^{m-H}\lbrack B^\prime + C^\prime g(t)\rbrack}.$$
+<p>where</p>
+$$B^\prime = {-B\tau^m\left(1-q^m\right)\over\left(1-q\right)^H},\qquad C^\prime = {C\tau^m\over\left(1-q\right)^H}.$$
+<p>and</p>
+$$g(t) = {C_1\cos\left(\omega\ln t\right)+C_2\sin\left(\omega\ln t\right)}.$$
+<p>with</p>
+$$C_1 = {1-q^m\cos\left(\omega\ln q\right)},\qquad C_2 = {\sin\left(\omega\ln t\right)}.$$

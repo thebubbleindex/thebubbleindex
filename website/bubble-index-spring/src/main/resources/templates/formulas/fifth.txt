@@ -1,0 +1,1 @@
+$$C_1 = {1-q^m\cos\left(\omega\ln q\right)},\qquad C_2 = {\sin\left(\omega\ln t\right)}.$$

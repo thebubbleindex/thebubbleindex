@@ -1,0 +1,155 @@
+<!doctype html>
+<html class="" lang="en">
+
+	<head>
+
+		<meta charset="utf-8">
+		<title>The Bubble Index - Method</title>
+
+#{header /}
+			<div class="main-menu-wrapper">
+				<div class="zone-main-menu zone clearfix">
+
+					<div class="main-menu-container container-24">
+
+						<div class="main-menu block">
+							<ul id="sf-menu">
+								<li class="empty">
+									<div></div>
+								</li>
+																<li class="first neighbour-left">
+									<a href="@{Application.index()}">HOME</a>
+									<!--<ul>
+										<li class="first">
+											<a href="#">Home (Street View)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Slideshow)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 2)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 3)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 4)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 5)</a>
+										</li>
+										<li class="">
+											<a href="#">Home (Header 6)</a>
+										</li>
+										<li class="last">
+											<a href="#">Home (Header 7)</a>
+										</li>
+									</ul>-->
+								</li>
+								<li class="active">
+									<a href="@{Pages.method()}">METHOD</a>
+								</li>
+								<li class="neighbour-right">
+									<a href="@{Pages.examples()}">EXAMPLES</a>
+								</li>
+								<li class="">
+									<a href="@{Pages.links()}">LINKS</a>
+								</li>
+
+								<li class="">
+									<a href="@{Pages.contact()}">CONTACT</a>
+								</li>
+								<li class="">
+									<a href="@{Application.browse()}">BROWSE</a>
+								</li>
+								<li class="last">
+									<a href="@{Pages.search()}">SEARCH</a>
+								</li>
+								<li class="empty">
+									<div></div>
+								</li>
+							</ul>
+						</div>
+
+					</div>
+
+				</div><!-- end of .zone-main-menu -->
+			</div><!-- end of .main-menu-wrapper -->
+
+		</header>
+
+		<section class="section content">
+
+			<div class="content-wrapper">
+				<div class="zone-content zone clearfix">
+
+					<div class="project-header-container container-24">
+
+						<div class="project-header block">
+							<div class="block-title">
+								<h1>Method</h1>
+							</div>
+							<div class="project-image">
+								<img src="@{'/public/images/content/map.jpg'}" alt="" />
+							</div>
+						</div>
+
+					</div>
+
+					<div class="project-body-container container-16">
+
+						<div class="project-body block">
+							<div class="project-short-description">
+								To help understand The Bubble Index, a brief summary of the methodology is given:
+							</div>
+							<div class="project-description">
+		
+<p>
+The Bubble Index began as a project to convert the findings of academic research into a financial tool. The index is still in its development phase and undergoing testing.</p>
+
+						<p>
+								 While the future of a market may forever be unpredictable, financial bubbles have been show to exhibit unique precursory patterns before their collapse. The goal of The Bubble Index is to identify these bubbles and allow investors time to prepare. Up until now, a practical and quantitative measure of market instability has not existed. Previously, to determine the stability of the market on any given day, one may look at a number of technical indicators; one example being the volatility index. However, the volatility index does not provide a leading indication of market crashes like that of 1929, 1987, 2000, and others. In other words, the volatility will tell you the crash has occurred shortly after it has occurred. Other models, such as GARCH, also fail in warning investors about extreme market events.
+								</p><p>
+										 The Bubble Index, based on the ideas and research of Didier Sornette and colleagues, treats financial markets as a complex network of interacting traders. Central to this idea is the role of networks and self-organization. Under this perspective the aggregate behavior of all traders and investors can be modeled as a network. During “normal” times, when traders are highly idiosyncratic and random, returns are well fitted by the Gaussian distribution. Here, the market can be considered as existing in a “stable phase.” This is where the market spends most of its time. As time progresses, the network of traders may become less idiosyncratic and more correlated. This causes the creation of the fat tails in the return distributions.
+								</p><p>
+										 Eventually, this network of traders transitions between the state of idiosyncratic behavior and “herd” behavior. The switch to “herd” behavior is analogous to raising a pencil on its eraser. The pencil's position is now highly unstable. Any exogenous shock will send the pencil crashing down. This same sensitivity to exogenous variables exists in financial markets while in this phase. The market enters this position through self-organization. “Standing the market” upon its “eraser” is equivalent to “forming a network of traders” who “act as a herd.” In this state, most exogenous shocks will cause the entire system to “fall over,” i.e., “return to normal.” As the market self-organizes, oscillations occur and can be detected in the time series data. Measuring the strength of these oscillations through time, the Bubble Index allows one to quantify systemic risk. Thus, The Bubble Index is truly a fundamental measure of market instability.
+								</p><p>
+										 The Financial Crisis Observatory has been reporting bubbles and predicting crashes for at least a year. However, the number of assets display are few. The Bubble Index seeks to display similar information, but for all traded assets.
+								</p><p>
+										 The Bubble Index measures the instability of a financial market. Taking a time series of daily price data, The Bubble Index can be easily created. For example, consider a time series of daily data for the Dow Jones Industrial Average. This can be used to create The Bubble Index which predicts, weeks in advance, all of the largest single day % declines. As another example, consider The Bubble Index for the DJIA (see Interpretation). Each of the red vertical lines corresponds to the largest single day % declines. There is a clear and rapid rise in the Bubble Index in the days before these major declines.
+								</p><p>
+										 Once the daily data has been stored, an algorithm determines the strength of the log-periodic power law (LPPL) oscillations in the time series data. The algorithm needs to look at the past 200 or more days to determine the level of instability. Depending on the number of days chosen, for example 264, 504, or 1764 days, a level instability is obtained. 
+								</p><p>
+										 Consider, as another analogy, the rupture of a container. In many ways, the build-up of material stress and eventual cracking parallels the growth of a market bubble and eventual crash. As shown in Sornette's paper, the build-up of material stress follows an exponential curve. However, the exponential shape does not perfectly capture the growing amount of material stress. The level of material stress oscillates around this exponential curve. At first, the oscillation's frequency remains low. As the material stress grows in strength, the oscillation frequency increases. Once the stress has reached a critical level, the material ruptures. Thus, there are two important factors in Sornette's model which occur before a rupture– the exponential growth and the periodic oscillations around this exponential growth.
+								</p><p>
+										 While financial markets display exponential growth, they do not always display periodic oscillations of increasing frequency. Just as in the rupture of a container, these increasing periodic patterns only occur shortly before the rupture, or market crash. And it is the goal of the Bubble Index to warn investors should these periodic oscillations occur in a financial market. The Bubble Index should remain close to the zero level when there are no signs of these periodic oscillations. And as The Bubble Index rises to higher levels, investors should realize that there are growing signs of a rupture, or crash. In financial and economic terms, as The Bubble Index rises, herd behavior among investors and traders is growing. And based on the analysis of past crashes, the Bubble Index tends to reverse direction and decline after a huge single day loss. Thus, a single large decline in the market acts as the rupture which breaks these periodic patterns.
+								</p><p>
+											The algorithm merges ideas found in papers by Sornette. However, in most of these papers the time series is instead fitted with the following general formula:
+								</p><p>
+										 log( P(t) ) = A + B (tc – t)m + C (tc – t)m cos[ log(tc -t) ] +εt where εt is N(0,1)
+								</p><p>
+								This formula requires a tc, or critical time, which must be estimated through statistical methods. If the fit's statistical properties fit certain criteria, then a bubble is predicted with a most probable time of crash, tc. However, this requires large amounts of computation and does not provide an easy way to asses market instability.
+								</p><p>
+										 An easier and more practical approach takes the (H,Q)–Derivative of the previous formula. Now, instead of estimating the critical time, the critical time is now assumed to be one month in the future. With this assumption, the derivative and its properties allow one to measure the instability of the market. The Bubble Index is based on the analysis of this derivative. To overview, the algorithm of The Bubble Index analyzes past data, measuring the strength of any LPPL oscillations, the characteristic signature of “herd” behavior, and presents this information in the clear and easy to understand format of a daily index.
+								</p><p>
+										 There are a few caveats with The Bubble Index - the size and timing of the future crash can not be accurately determined. Also, crashes may occur with no previous increase in the index (see Interpretation). The Bubble Index is a measure of inherent instability and systemic risk. It does not predict events such as a tsunami, volcano eruption, or meteor explosion, etc. However, there does appear to be indication that the magnitude of the index gives some hint as to the severity of the future crash. Another possible issue is that the characteristic signal parameters of the bubble may change through time. However, the solution is a simple change of computer code. With regards to the models parameters, no change is needed throughout time. To measure the strength of a bubble in 1929 one uses the same parameters as the 2000 bubble.
+								</p><p>
+										 Trading strategies based on The Bubble Index are numerous. Studying the properties of The Bubble Index will be an area of future research. However, The Bubble Index, as a measure of market instability, should be thought of as a signal to buy downside protection. While an Anti-Bubble Index should be thought of as a signal to go long. There are also questions which still need to be answered, such as should an investor be more cautious of a rapid rise in the index or a gradual rise? However, the most powerful insight obtained from The Bubble Index is the measure of systemic risk currently in the market. </p>
+							</div>
+						</div>
+
+					</div>
+
+				#{sidebar /}
+				</div><!-- end of .zone-content -->
+			</div><!-- end of .content-wrapper -->
+
+		</section>
+
+#{footer /}
+		<div id="boxed-switch" class="boxed-switch">SWITCH TO BOXED VERSION</div>
+
+		#{scripts /}
+	</body>
+
+</html>

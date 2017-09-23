@@ -1,0 +1,40 @@
+.container {
+	width: 300px;
+	clear: both;
+	display:block;
+	margin: 0 auto;
+	}
+	.container input {
+	width: 50%;
+	display:inline;
+	float:right;
+	}
+	.container label {
+	float:left;
+	}
+	.plot plotarea{
+	display:block;
+	}
+
+	.line {
+	  fill: none;
+	  stroke: steelblue;
+	  stroke-width: 1.5px;
+	}
+
+	.axis--x text {
+	  font: 10px sans-serif;
+	}
+
+	.axis--y text {
+	  font: oblique 15px Georgia, serif;
+	}
+
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+
+	#svgMain {margin-left:auto; margin-right: auto; display:block;}

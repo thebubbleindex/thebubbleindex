@@ -1,0 +1,1 @@
+$$B^\prime = {-B\tau^m\left(1-q^m\right)\over\left(1-q\right)^H},\qquad C^\prime = {C\tau^m\over\left(1-q\right)^H}.$$

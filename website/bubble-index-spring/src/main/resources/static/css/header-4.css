@@ -1,0 +1,368 @@
+/*  Table of Contents 
+
+HEADER ELEMENTS STYLES:
+	USER LINKS STYLE
+	LANGUAGE SELECTOR STYLE
+	SOCIAL LINKS STYLE
+	LOGO STYLE
+	ADVERTISEMENT BANNER STYLE
+	MAIN MENU STYLE
+
+*/
+
+/*********************
+HEADER ELEMENTS STYLES
+*********************/
+
+.header-top-wrapper {
+	background-color: #ffffff;
+	border-bottom: 1px solid #e6e6e6;
+}
+
+.header-top-right {
+	text-align: right;
+}
+
+.main-menu-wrapper {
+	background-color: #ffffff;
+}
+
+/* USER LINKS STYLE */
+
+.user-links {
+	display: inline-block;
+	vertical-align: top;
+	font-family: "Titillium Web";
+	margin: 38px 0;
+}
+
+	.user-links .login {
+		position: relative;
+		display: inline-block;
+		vertical-align: top;
+	}
+
+		.user-links .login a.login-link {
+			display: block;
+			background: url(../images/link-arrow.png) no-repeat 5px; center;
+			padding: 5px 15px;
+		}
+
+		.user-links .login .login-form {
+			position: absolute;
+			display: none;
+			background: url(../images/login-form-background.png) no-repeat left top #ffffff;
+			width: 180px;
+			padding: 25px 20px 20px;
+			border: 1px solid #e6e6e6;
+			box-shadow: 0 0 3px #bababa;
+			z-index: 50;
+		}
+
+			.user-links .login .login-form input.text-input-grey {
+				height: 30px;
+				margin-bottom: 20px;
+			}
+
+			.user-links .login .login-form .password-restore {
+				display: inline-block;
+				width: 30%;
+				line-height: 15px;
+				background: url(../images/link-arrow.png) no-repeat 5px 5px;
+				padding-left: 15px;
+			}
+
+			.user-links .login .login-form .button-2-colorful {
+				float: right;
+				width: 45%;
+			}
+
+	.user-links .register {
+		position: relative;
+		display: inline-block;
+		vertical-align: top;
+	}
+
+		.user-links a.register-link {
+			display: block;
+			background: url(../images/link-arrow.png) no-repeat 5px center;
+			padding: 5px 15px;
+		}
+
+		.user-links .register .register-form {
+			position: absolute;
+			display: none;
+			background: url(../images/register-form-background.png) no-repeat left top #ffffff;
+			width: 180px;
+			padding: 25px 20px 20px;
+			border: 1px solid #e6e6e6;
+			box-shadow: 0 0 3px #bababa;
+			z-index: 50;
+		}
+
+			.user-links .register .register-form input.text-input-grey {
+				height: 30px;
+				margin-bottom: 20px;
+			}
+
+			.user-links .register .register-form .fields-required {
+				display: inline-block;
+				width: 45%;
+				line-height: 15px;
+			}
+
+			.user-links .register .register-form .button-2-colorful {
+				float: right;
+				width: 45%;
+			}
+
+/* LANGUAGE SELECTOR STYLE */
+
+.language-selector {
+	display: inline-block;
+	vertical-align: top;
+	margin: 38px 0;
+}
+
+	.language-selector .jquery-selectbox {
+			float: none;
+			display: inline-block;
+			width: 40px !important;
+			text-align: left;
+			background: #f2f2f2;
+			box-shadow: 0 0 10px #bababa inset;
+			padding: 5px 20px 5px 12px;
+			border: none;
+			margin: 0;
+		}
+
+			.language-selector .jquery-selectbox .jquery-selectbox-moreButton {
+				float: none;
+				position: absolute;
+				width: 34px;
+				height: 28px;
+				background: url("../images/dropdown-arrow-pager.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+				right: 1px;
+				top: 1px;
+			}
+
+			.language-selector .jquery-selectbox .jquery-selectbox-list {
+				top: 31px;
+				height: auto !important;
+				background-color: #F2F2F2;
+			}
+
+				.language-selector .jquery-selectbox .jquery-selectbox-list span {
+					color: #999999;
+					padding: 5px 0 5px 20px;
+					border: none;
+				}
+
+				.language-selector .jquery-selectbox .jquery-selectbox-list span:hover {
+					background-color: #bababa;
+					color: #fff;
+				}
+
+/* SOCIAL LINKS STYLE */
+
+.social-links {
+	display: inline-block;
+	line-height: 25px;
+	padding: 0 15px;
+	margin: 38px 0;
+}
+
+	.social-links a {
+		display: inline-block;
+		margin: 6px 3px 0;
+	}
+
+/* LOGO STYLE */
+
+.logo {
+	text-align: center;
+}
+
+	.logo img {
+		display: inline-block;
+		margin: 21px 0;
+	}
+
+/* ADVERTISEMENT BANNER STYLE */
+
+.adverisement a {
+	display: block;
+}
+
+	.adverisement a img {
+		display: block;
+		max-width: 100%;
+		height: auto;
+		margin: 10px auto;
+	}
+
+/* MAIN MENU STYLE */
+
+/* First level links */
+.main-menu ul {
+	display: table;
+	padding: 0;
+	margin: 0;
+	text-align: center;
+}
+
+	.main-menu ul li {
+		display: inline-block;
+		float: left;
+		position: relative;
+		list-style: none;
+		border-right: 1px solid #e6e6e6;
+	}
+
+		.main-menu ul li a {
+			display: block;
+			line-height: 18px;
+			font-family: "Patua One";
+			background-color: #ffffff;
+			padding: 17px 27px;
+		}
+
+		.main-menu ul li a:hover {
+			background: url(../images/hover-arrow-up.png) no-repeat center bottom #ffffff;
+		}
+
+	.main-menu ul li.first {
+		border-left: 1px solid #e6e6e6;
+	}
+
+	.main-menu ul li.active {
+		position: relative;
+		top: -3px;
+		border-left: none;
+		border-right: none;
+		border-top-left-radius: 3px;
+		border-top-right-radius: 3px;
+	}
+
+		.main-menu ul li.active a {
+			color: #ffffff;
+			padding: 17px 28px 14px;
+		}
+
+	.main-menu ul li.neighbour-left {
+		border-right: none;
+	}
+
+		.main-menu ul li.neighbour-left a,
+		.main-menu ul li.neighbour-left div {
+			background-color: #ffffff;
+			border-bottom-right-radius: 3px;
+		}
+
+	.main-menu ul li.neighbour-right {
+
+	}
+
+		.main-menu ul li.neighbour-right a,
+		.main-menu ul li.neighbour-right div {
+			background-color: #ffffff;
+			border-bottom-left-radius: 3px;
+		}
+
+	.main-menu ul li.empty {
+		border: none;
+	}
+
+		.main-menu ul li.empty div {
+			display: block;
+			height: 46px;
+			background-color: #ffffff;
+			padding: 3px;
+		}
+
+		/* Second level links */
+		.main-menu ul li ul {
+			position: absolute;
+			width: 200px;
+			top: 57px;
+			z-index: 20;
+		}
+
+			.main-menu ul li ul li {
+				width: 100%;
+				background-color: #343434;
+				border-right: none;
+			}
+
+			.main-menu ul li ul li.first {
+				border-left: none;
+			}
+
+				.main-menu ul li.active ul li a:hover {
+					background-color: #343434;
+				}
+
+				.main-menu ul li ul li a,
+				.main-menu ul li.active ul li a,
+				.main-menu ul li.neighbour-left ul li a,
+				.main-menu ul li.neighbour-right ul li a {
+					width: 100%;
+					font-family: "Titillium Web";
+					background-color: #343434;
+					text-align: left;
+					padding: 19px 20px;
+					border-top: 1px solid #434343;
+					border-bottom: 1px solid #272727;
+				}
+
+				.main-menu ul li ul li.first a {
+					border-top: none;
+				}
+
+				.main-menu ul li ul li.last a {
+					border-bottom: none;
+				}
+
+				.main-menu ul li ul li a:hover {
+					background-image: none;
+					background-color: #343434;
+					color: #ffffff;
+				}
+
+/* MOBILE MAIN MENU */
+.main-menu {
+	text-align: center;
+}
+
+	.main-menu select.mnav {
+		width: 100%;
+		padding: 10px;
+		margin: 10px 0;
+	}
+
+@media all and (max-width: 767px) {
+
+	.header-top-left {
+		text-align: center;
+	}
+
+	/* USER LINKS STYLE */
+
+	.user-links {
+		margin: 10px 0;
+	}
+
+	/* SOCIAL LINKS STYLE */
+
+	.social-links {
+		margin: 10px 0;
+		border: none !important;
+	}
+
+	/* LANGUAGE SELECTOR STYLE */
+
+	.language-selector {
+		margin: 10px 0;
+	}
+
+}

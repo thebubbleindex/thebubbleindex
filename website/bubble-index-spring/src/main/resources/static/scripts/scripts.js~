@@ -1,0 +1,244 @@
+/***
+Equal Heights function.
+***/
+
+(function($) {
+	$.fn.equalHeights = function(browserWidth, additionalHeight) {
+		// Calculating width of the scrollbar for Firefox
+		var scrollbar = 0;
+		if (typeof document.body.style.MozBoxShadow === 'string') {
+			scrollbar = window.innerWidth - jQuery('body').width();
+		} 
+		// Getting number of blocks for height correction.
+		var blocks = jQuery(this).children().length;
+		// Setting block heights to auto.
+		jQuery(this).children().css('min-height', 'auto');
+		// Initializing variables.
+		var currentBlock = 1;
+		var equalHeight = 0;
+		// Finding the highest block in the selection.
+		while (currentBlock <= blocks) {
+			var currentHeight = jQuery(this).children(':nth-child(' + currentBlock.toString() + ')').height();
+			if (equalHeight <= currentHeight) {
+				equalHeight = currentHeight;
+			}
+			currentBlock = currentBlock + 1;
+		}
+		// Equalizing heights of columns.
+		if (jQuery('body').width() > browserWidth - scrollbar) {
+			jQuery(this).children().css('min-height', equalHeight + additionalHeight);
+		} else {
+			jQuery(this).children().css('min-height', 'auto');
+		}
+	};
+})(jQuery);
+
+/* global document */
+jQuery(document).ready(function(){
+				
+	/***
+     1. Main menu jQuery plugin.
+	***/
+
+	jQuery('#sf-menu').superfish();
+
+	/***
+     2. Mobile Menu jQuery plugin.
+	***/
+
+	jQuery('#sf-menu').mobileMenu({
+		switchWidth: 767,
+		prependTo: '.main-menu',
+		combine: false
+	});
+
+	
+	/***
+     4. Calling selectbox() plugin to create custom stylable select lists.
+	***/
+
+	$('.page-selector select').selectbox({
+		animationSpeed: "fast",
+		listboxMaxSize: 400
+	});
+	$('#category-selector-default').selectbox({
+		animationSpeed: "fast",
+		listboxMaxSize: 400
+	});
+	$('#category-selector-advanced').selectbox({
+		animationSpeed: "fast",
+		listboxMaxSize: 400
+	});
+	$('#country-selector-advanced').selectbox({
+		animationSpeed: "fast",
+		listboxMaxSize: 400
+	});
+	$('.language-selector select').selectbox({
+		animationSpeed: "fast",
+		listboxMaxSize: 400
+	});
+
+	
+	/***
+     7. Adding <input> placeholders (for IE 8-9).
+	***/
+
+	jQuery('.text-input-grey, .text-input-black').placeholder();
+
+
+	/***
+     9. Colorbox for portfolio images.
+	***/
+
+	//jQuery('.portfolio-enlarge').colorbox({ maxWidth: '90%' });
+
+	
+	/***
+	11. Login & Register form bubbles.
+	***/
+
+	jQuery('#login-link').click(function() {
+		jQuery('#login-form').toggle();
+		jQuery('#register-form').hide();
+	});
+	jQuery('#register-link').click(function() {
+		jQuery('#register-form').toggle();
+		jQuery('#login-form').hide();
+	});
+
+});
+
+/* global window */
+jQuery(window).load(function(){
+
+
+	$("#flickr-feed").jflickrfeed({
+		limit: 12,
+		qstrings: {
+			id: '37074442@N00'
+		},
+		itemTemplate: 
+		'<li>' +
+			'<a class="group1" href="{{image_b}}"><img src="{{image_s}}" alt="{{title}}" /></a>' +
+		'</li>'
+	},
+	function(data) {
+	$("#flickr-feed a").colorbox({rel:'group1',maxWidth: '90%'});
+});
+
+
+	/***
+	12. Setting equal heights for required containers and elements on page load.
+	***/
+
+	jQuery('.equalize').equalHeights(767, 0);
+	jQuery('#subscription-options').equalHeights(450, 1);
+
+	/***
+	12. Adding Twitter feed to the website footer.
+	***/
+
+
+	/***
+	13. Adding Flickr feed to the website footer.
+	***/
+
+
+
+
+				
+
+
+	/***
+	14. Filter for the portfolio items
+
+
+	jQuery('#portfolio-filter input').click(function() {
+		jQuery('#portfolio-filter input').removeClass('current');
+		jQuery(this).addClass('current');
+		var filter = jQuery(this).attr('id');
+		if ( filter === 'all' ) {
+			jQuery('.portfolio-listing').slideDown('fast');
+			jQuery('.portfolio-listing-small').slideDown('fast');
+		} else {
+			jQuery('.portfolio-listing').slideUp('fast');
+			jQuery('.portfolio-listing-small').slideUp('fast');
+			jQuery('.portfolio-listing.' + filter).slideDown('fast');
+			jQuery('.portfolio-listing-small.' + filter).slideDown('fast');
+		}
+	});
+	***/
+	/***
+	15. Company tabs switchong.
+
+
+	$("#company-tabs-active li a").click(function(event) {
+		event.preventDefault();
+		$("#company-tabs-active li").removeClass('active');
+		$(this).parent().addClass('active');
+		$('.company-tabs-content').slideUp(500);
+		var tabID = $(this).attr('class');
+		window.location.hash = tabID;
+		$('#' + tabID).delay(500).slideDown(500);
+		return false;
+	});
+
+	var hash = window.location.hash;
+	console.log(hash.slice(1));
+	if ( $(hash).length ) {
+		$('.company-tabs-content').slideUp(500);
+		$(hash).delay(500).slideDown(500);
+		$("#company-tabs-active li").removeClass('active');
+		$('#company-tabs-active li .' + hash.slice(1)).parent().addClass('active');
+	}
+
+	$('.portfolio-layout-links a').click(function(event) {
+		event.preventDefault();
+		if ( $(this).hasClass('current') == false ) {
+			switch(true) {
+				case $(this).hasClass('portfolio-1'):
+					$('.company-tabs-content').slideUp(300);
+					window.location.hash = 'company-tabs-portfolio-1';
+					$('#company-tabs-portfolio-1').delay(300).slideDown(300);
+					break;
+				case $(this).hasClass('portfolio-2'):
+					$('.company-tabs-content').slideUp(300);
+					window.location.hash = 'company-tabs-portfolio-2';
+					$('#company-tabs-portfolio-2').delay(300).slideDown(300);
+					break;
+				case $(this).hasClass('portfolio-3'):
+					$('.company-tabs-content').slideUp(300);
+					window.location.hash = 'company-tabs-portfolio-3';
+					$('#company-tabs-portfolio-3').delay(300).slideDown(300);
+					break;
+				case $(this).hasClass('portfolio-4'):
+					$('.company-tabs-content').slideUp(300);
+					window.location.hash = 'company-tabs-portfolio-4';
+					$('#company-tabs-portfolio-4').delay(300).slideDown(300);
+					break;
+			}
+		}
+	});
+	***/
+	/***
+	16. Specialisations block scripts.
+	***/
+
+	$('.specialisation-progressbar').each(function() {
+		var currentValue = Number($(this).attr('value'));
+		$(this).progressbar({
+			value: currentValue
+		});
+	});
+	$('.specialisation .toggle-description-button').click(function() {
+		if ( $(this).hasClass('plus-button') == true ) {
+			$(this).toggleClass('plus-button minus-button').html('-').siblings('.specialisation-description').slideDown();
+		} else {
+			$(this).toggleClass('plus-button minus-button').html('+').siblings('.specialisation-description').slideUp();
+		}
+	});
+
+	jQuery('.zone-content.equalize').equalHeights(767, 0);
+	jQuery('#subscription-options').equalHeights(450, 1);
+
+});
