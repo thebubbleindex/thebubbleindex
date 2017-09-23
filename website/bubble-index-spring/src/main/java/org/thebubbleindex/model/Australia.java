@@ -4,9 +4,9 @@ public class Australia extends BubbleIndexTimeseries {
 	
 	protected Australia() {}
 	
-	public Australia(final String name, final String symbol, final String type, final String keywords) {
+	public Australia(final String name, final String symbol, final String dtype, final String keywords) {
 		this.symbol = symbol;
-		this.type = type;		
+		this.dtype = dtype;		
 		this.name = name;
 		this.keywords = keywords;
 	}

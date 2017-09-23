@@ -1,9 +1,10 @@
 yieldUnescaped '<!doctype html>'
-html(lang:'en') {
-	head {     
-		title('The Bubble Index - Browse')
-		link(rel: 'stylesheet', href: '/css/allCss.css')
-		script(type: 'text/javascript', src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js', integrity: 'sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=', crossorigin: 'anonymous') {}	
+html(class: '', lang: 'en') {
+	link(rel: 'stylesheet', href: '/css/allCss.css')
+	head {
+		title('The Bubble Index - Search')
+		script(type: 'text/javascript', src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js', integrity: 'sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=', crossorigin: 'anonymous') {}
+		script(type: 'text/javascript', src: '/scripts/jquery-migrate-3.0.0.js') {}
 		div(class: 'header section') {
 			div(class: 'header-wrapper') {
 				div(class: 'zone-header zone clearfix') {
@@ -36,13 +37,13 @@ html(lang:'en') {
 								li(class: '') {
 									a(href: '/pages/links', 'LINKS')
 								}							
-								li(class: 'neighbour-left') {
+								li(class: '') {
 									a(href: '/pages/contact', 'CONTACT')
 								}
-								li(class: 'active') {
+								li(class: 'neighbour-left') {
 									a(href: '/browse', 'BROWSE')
 								}
-								li(class: 'neighbour-right') {
+								li(class: 'active last') {
 									a(href: '/pages/search', 'SEARCH')
 								}
 								li(class: 'empty') {
@@ -62,24 +63,23 @@ html(lang:'en') {
 					div(class: 'project-header-container container-24') {
 						div(class: 'project-header block') {
 							div(class: 'block-title') {
-								h1() { yield 'Browse'}
+								h1() { yield 'Search'}
 							}
-							div(class: 'zone-search clearfix') {}
-						}
-						div(class: 'project-body-container container-24') {
-							div(class: 'welcome block') {
-								div(class: 'welcome-globe clearfix') {
-									img(class: 'globe', src: '/images/globe.png', height: '244', width: '244')
-									img(class: 'globe-background', src: '/images/globe-background.png', height: '201', width: '620')
-									a(class: 'left edge top', href: '/browselist/Indices', 'MARKETS')
-									a(class: 'right edge top', href: '/browselist/Currencies', 'CURRENCIES')
-									a(class: 'left middle top', href: '/browselist/Commodities', 'COMMODITIES')
-									a(class: 'right middle top', href: '/browseAmericas', 'AMERICAS')
-									a(class: 'left middle bottom', href: '/browseAsia', 'ASIA')
-									a(class: 'right middle bottom', href: '/browseEurope', 'EUROPE')
-									a(class: 'left edge bottom', href: '/browsePacific', 'PACIFIC')
-									a(class: 'right edge bottom', href: '/browseComposite', 'COMPOSITE')
+							div(class: 'zone-search clearfix') {
+								div(class: 'search-container container-24') {
+									div(class: 'search block') {
+										form(id: 'default-search', class: 'default-search clearfix', method: 'get', action: 'searchResults()') {
+											input(type: 'text', name: 'search', id: 'search-what', class: 'text-input-black input-text', placeholder: 'Keywords/Ticker...', required: '')
+										}
+									}
 								}
+							}
+						}
+					}
+					div(class: 'project-body-container container-24') {
+						div(class: 'project-body block') {
+							div(class: 'project-short-description') {
+								yield 'Enter a ticker symbol or a keyword to search.'
 							}
 						}
 					}
@@ -88,5 +88,6 @@ html(lang:'en') {
 		}
 		include template: 'tags/footer.tpl'
 		include template: 'tags/scripts.tpl'
+		script(type: 'text/javascript', src: '/scripts/autocomplete.js') {}
 	}
 }

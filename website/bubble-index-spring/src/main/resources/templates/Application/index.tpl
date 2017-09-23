@@ -31,22 +31,22 @@ html(lang:'en') {
 									a(href: '/index', 'HOME')
 								}
 								li(class: 'neighbour-right') {
-									a(href: 'pages/method', 'ABOUT')
+									a(href: '/pages/method', 'ABOUT')
 								}
 								li(class: '') {
-									a(href: 'pages/examples', 'EXAMPLES')
+									a(href: '/pages/examples', 'EXAMPLES')
 								}
 								li(class: '') {
-									a(href: 'pages/links', 'LINKS')
+									a(href: '/pages/links', 'LINKS')
 								}							
 								li(class: '') {
-									a(href: 'pages/contact', 'CONTACT')
+									a(href: '/pages/contact', 'CONTACT')
 								}
 								li(class: '') {
 									a(href: '/browse', 'BROWSE')
 								}
 								li(class: 'last') {
-									a(href: 'pages/search', 'SEARCH')
+									a(href: '/pages/search', 'SEARCH')
 								}
 								li(class: 'empty') {
 									div() {}
@@ -87,14 +87,14 @@ html(lang:'en') {
 							div(class: 'welcome-globe clearfix') {
 								img(class: 'globe', src: '/images/globe.png', height: '244', width: '244')
 								img(class: 'globe-background', src: '/images/globe-background.png', height: '201', width: '620')
-								a(class: 'left edge top', href: 'browselist(Indices)', 'MARKETS')
-								a(class: 'right edge top', href: 'browselist(Currencies)', 'CURRENCIES')
-								a(class: 'left middle top', href: 'browselist(Commodities)', 'COMMODITIES')
-								a(class: 'right middle top', href: 'browseAmericas', 'AMERICAS')
-								a(class: 'left middle bottom', href: 'browseAsia', 'ASIA')
-								a(class: 'right middle bottom', href: 'browseEurope', 'EUROPE')
-								a(class: 'left edge bottom', href: 'browsePacific', 'PACIFIC')
-								a(class: 'right edge bottom', href: 'browseComposite', 'COMPOSITE')
+								a(class: 'left edge top', href: '/browselist/Indices', 'MARKETS')
+								a(class: 'right edge top', href: '/browselist/Currencies', 'CURRENCIES')
+								a(class: 'left middle top', href: '/browselist/Commodities', 'COMMODITIES')
+								a(class: 'right middle top', href: '/browseAmericas', 'AMERICAS')
+								a(class: 'left middle bottom', href: '/browseAsia', 'ASIA')
+								a(class: 'right middle bottom', href: '/browseEurope', 'EUROPE')
+								a(class: 'left edge bottom', href: '/browsePacific', 'PACIFIC')
+								a(class: 'right edge bottom', href: '/browseComposite', 'COMPOSITE')
 							}
 						}
 					}

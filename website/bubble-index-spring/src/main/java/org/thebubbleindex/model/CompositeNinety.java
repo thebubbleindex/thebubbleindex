@@ -1,15 +1,12 @@
 package org.thebubbleindex.model;
 
-import javax.persistence.*;
-
-@Entity
 public class CompositeNinety extends BubbleIndexTimeseries {
     
 	protected CompositeNinety() {}
 	
-	public CompositeNinety(final String name, final String symbol, final String type, final String keywords) {
+	public CompositeNinety(final String name, final String symbol, final String dtype, final String keywords) {
 		this.symbol = symbol;
-		this.type = type;		
+		this.dtype = dtype;		
 		this.name = name;
 		this.keywords = keywords;
 	}

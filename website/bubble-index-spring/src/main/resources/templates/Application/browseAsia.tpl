@@ -1,7 +1,7 @@
 yieldUnescaped '<!doctype html>'
 html(lang:'en') {
 	head {     
-		title('The Bubble Index - Browse')
+		title('The Bubble Index - Browse Asia')
 		link(rel: 'stylesheet', href: '/css/allCss.css')
 		script(type: 'text/javascript', src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js', integrity: 'sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=', crossorigin: 'anonymous') {}	
 		div(class: 'header section') {
@@ -62,7 +62,7 @@ html(lang:'en') {
 					div(class: 'project-header-container container-24') {
 						div(class: 'project-header block') {
 							div(class: 'block-title') {
-								h1() { yield 'Browse'}
+								h1() { yield 'Browse Asia'}
 							}
 							div(class: 'zone-search clearfix') {}
 						}
@@ -71,14 +71,16 @@ html(lang:'en') {
 								div(class: 'welcome-globe clearfix') {
 									img(class: 'globe', src: '/images/globe.png', height: '244', width: '244')
 									img(class: 'globe-background', src: '/images/globe-background.png', height: '201', width: '620')
-									a(class: 'left edge top', href: '/browselist/Indices', 'MARKETS')
-									a(class: 'right edge top', href: '/browselist/Currencies', 'CURRENCIES')
-									a(class: 'left middle top', href: '/browselist/Commodities', 'COMMODITIES')
-									a(class: 'right middle top', href: '/browseAmericas', 'AMERICAS')
-									a(class: 'left middle bottom', href: '/browseAsia', 'ASIA')
-									a(class: 'right middle bottom', href: '/browseEurope', 'EUROPE')
-									a(class: 'left edge bottom', href: '/browsePacific', 'PACIFIC')
-									a(class: 'right edge bottom', href: '/browseComposite', 'COMPOSITE')
+									a(class: 'left edge top', href: '/browselist/China', 'CHINA')
+									a(class: 'right edge top', href: '/browselist/HongKong', 'HONG KONG')
+									a(class: 'left middle top', href: '/browselist/SouthKorea', 'SOUTH KOREA')
+									a(class: 'right middle top', href: '/browselist/India', 'INDIA')
+									a(class: 'left middle bottom', href: '/browselist/Israel', 'ISRAEL')
+									a(class: 'right middle bottom', href: '/browselist/Russia', 'RUSSIA')
+									a(class: 'left edge bottom', href: '/browselist/Singapore', 'SINGAPORE')
+									a(class: 'right edge bottom', href: '#') {
+										br()
+									}
 								}
 							}
 						}

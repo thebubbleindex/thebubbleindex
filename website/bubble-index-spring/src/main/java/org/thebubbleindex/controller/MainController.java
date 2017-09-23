@@ -1,10 +1,13 @@
 package org.thebubbleindex.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +22,11 @@ public class MainController {
 	@Autowired
 	MainRepository mainRepository;
 
+	@RequestMapping("/")
+	public ModelAndView root() {
+		return index();
+	}
+	
 	@RequestMapping("/index")
 	public ModelAndView index() {
 		return new ModelAndView("Application/index");
@@ -27,6 +35,31 @@ public class MainController {
 	@RequestMapping("/pages/method")
 	public ModelAndView about() {
 		return new ModelAndView("Pages/about");
+	}
+	
+	@RequestMapping("/pages/links")
+	public ModelAndView links() {
+		return new ModelAndView("Pages/links");
+	}
+	
+	@RequestMapping("/pages/examples")
+	public ModelAndView examples() {
+		return new ModelAndView("Pages/examples");
+	}
+	
+	@RequestMapping("/pages/contact")
+	public ModelAndView contact() {
+		return new ModelAndView("Pages/contact");
+	}
+	
+	@RequestMapping("/pages/search")
+	public ModelAndView search() {
+		return new ModelAndView("Pages/search");
+	}
+	
+	@RequestMapping("/pages/legal")
+	public ModelAndView legal() {
+		return new ModelAndView("Pages/legal");
 	}
 
 	@RequestMapping("/greeting")
@@ -55,37 +88,48 @@ public class MainController {
 	public ModelAndView browse() {
 		return new ModelAndView("Application/browse");
 	}
+	
+	@RequestMapping(value = "/browseEurope")
+	public ModelAndView browseEurope() {
+		return new ModelAndView("Application/browseEurope");
+	}
 
-	@RequestMapping(value = "/browselist")
-	public String browselist(final Model model, final String type) {
+	@RequestMapping(value = "/browseMoreEurope")
+	public ModelAndView browseMoreEurope() {
+		return new ModelAndView("Application/browseMoreEurope");
+	}
+	
+	@RequestMapping(value = "/browseAmericas")
+	public ModelAndView browseAmericas() {
+		return new ModelAndView("Application/browseAmericas");
+	}
 
+	@RequestMapping(value = "/browseAsia")
+	public ModelAndView browseAsia() {
+		return new ModelAndView("Application/browseAsia");
+	}
+
+	@RequestMapping(value = "/browsePacific")
+	public ModelAndView browsePacific() {
+		return new ModelAndView("Application/browsePacific");
+	}
+	
+	@RequestMapping(value = "/browseComposite")
+	public ModelAndView browseComposite() {
+		return new ModelAndView("Application/browseComposite");
+	}
+	
+	@RequestMapping(value = "/browselist/{type}", method = RequestMethod.GET)
+	public ModelAndView browselist(@PathVariable final String type) {
+
+		final Map<String, Object> model = new HashMap<String, Object>(2);
 		final List<BubbleIndexTimeseries> list = mainRepository.findByTypeIgnoreCase(type);
-		model.addAttribute("list", list);
-		return "browselist";
-	}
-
-	public String browseEurope() {
-		return "browseEurope";
-	}
-
-	public String browseMoreEurope() {
-		return "browseMoreEurope";
-	}
-
-	public String browseAmericas() {
-		return "browseAmericas";
-	}
-
-	public String browseAsia() {
-		return "browseAsia";
-	}
-
-	public String browsePacific() {
-		return "browsePacific";
-	}
-
-	public String browseComposite() {
-		return "browseComposite";
+		if (list != null && !list.isEmpty())
+			model.put("list", list);
+		
+		model.put("Type", type);
+		
+		return new ModelAndView("Application/browselist", model);
 	}
 
 	public String searchResults(final Model model, final String search) {

@@ -31,22 +31,22 @@ html(class: '', lang: 'en') {
 									a(href: '/index', 'HOME')
 								}
 								li(class: 'active') {
-									a(href: 'pages/method', 'ABOUT')
+									a(href: '/pages/method', 'ABOUT')
 								}
 								li(class: 'neighbour-right') {
-									a(href: 'pages/examples', 'EXAMPLES')
+									a(href: '/pages/examples', 'EXAMPLES')
 								}
 								li(class: '') {
-									a(href: 'pages/links', 'LINKS')
+									a(href: '/pages/links', 'LINKS')
 								}							
 								li(class: '') {
-									a(href: 'pages/contact', 'CONTACT')
+									a(href: '/pages/contact', 'CONTACT')
 								}
 								li(class: '') {
 									a(href: '/browse', 'BROWSE')
 								}
 								li(class: 'last') {
-									a(href: 'pages/search', 'SEARCH')
+									a(href: '/pages/search', 'SEARCH')
 								}
 								li(class: 'empty') {
 									div() {}

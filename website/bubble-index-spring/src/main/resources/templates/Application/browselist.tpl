@@ -1,9 +1,10 @@
 yieldUnescaped '<!doctype html>'
-html(lang:'en') {
-	head {     
-		title('The Bubble Index - Browse')
-		link(rel: 'stylesheet', href: '/css/allCss.css')
-		script(type: 'text/javascript', src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js', integrity: 'sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=', crossorigin: 'anonymous') {}	
+html(class: '', lang: 'en') {
+	link(rel: 'stylesheet', href: '/css/allCss.css')
+	head {
+		title("The Bubble Index - Browse ${Type}")
+		script(type: 'text/javascript', src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js', integrity: 'sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=', crossorigin: 'anonymous') {}
+		script(type: 'text/javascript', src: '/scripts/browselistScript.js') {}
 		div(class: 'header section') {
 			div(class: 'header-wrapper') {
 				div(class: 'zone-header zone clearfix') {
@@ -42,7 +43,7 @@ html(lang:'en') {
 								li(class: 'active') {
 									a(href: '/browse', 'BROWSE')
 								}
-								li(class: 'neighbour-right') {
+								li(class: 'last neighbour-right') {
 									a(href: '/pages/search', 'SEARCH')
 								}
 								li(class: 'empty') {
@@ -62,23 +63,20 @@ html(lang:'en') {
 					div(class: 'project-header-container container-24') {
 						div(class: 'project-header block') {
 							div(class: 'block-title') {
-								h1() { yield 'Browse'}
+								h1() { yield "Browse ${Type}"}
 							}
-							div(class: 'zone-search clearfix') {}
 						}
-						div(class: 'project-body-container container-24') {
-							div(class: 'welcome block') {
-								div(class: 'welcome-globe clearfix') {
-									img(class: 'globe', src: '/images/globe.png', height: '244', width: '244')
-									img(class: 'globe-background', src: '/images/globe-background.png', height: '201', width: '620')
-									a(class: 'left edge top', href: '/browselist/Indices', 'MARKETS')
-									a(class: 'right edge top', href: '/browselist/Currencies', 'CURRENCIES')
-									a(class: 'left middle top', href: '/browselist/Commodities', 'COMMODITIES')
-									a(class: 'right middle top', href: '/browseAmericas', 'AMERICAS')
-									a(class: 'left middle bottom', href: '/browseAsia', 'ASIA')
-									a(class: 'right middle bottom', href: '/browseEurope', 'EUROPE')
-									a(class: 'left edge bottom', href: '/browsePacific', 'PACIFIC')
-									a(class: 'right edge bottom', href: '/browseComposite', 'COMPOSITE')
+					}
+					div(class: 'content-wrapper') {
+						div(class: 'zone-content equalize zone clearfix') {
+							div(class: 'content-container container-16') {
+								form(name: 'myform', id: 'jquery-selectbox-list', onsubmit: 'return OnSubmitForm();', method: 'POST') {
+									select(id: 'category-selector-default') {
+										list.each {
+											option(value: it.symbol, it.name)
+										}
+									}
+									input(type: 'submit', class: 'submitspecial', value: '', name: 'submit') {}
 								}
 							}
 						}
@@ -87,6 +85,6 @@ html(lang:'en') {
 			}
 		}
 		include template: 'tags/footer.tpl'
-		include template: 'tags/scripts.tpl'
+		include template: 'tags/scripts.tpl'		
 	}
 }
