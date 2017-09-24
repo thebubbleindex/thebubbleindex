@@ -68,7 +68,7 @@ html(class: '', lang: 'en') {
 							div(class: 'zone-search clearfix') {
 								div(class: 'search-container container-24') {
 									div(class: 'search block') {
-										form(id: 'default-search', class: 'default-search clearfix', method: 'get', action: 'searchResults()') {
+										form(id: 'default-search', class: 'default-search clearfix', method: 'get', action: '/searchResults') {
 											input(type: 'text', name: 'search', id: 'search-what', class: 'text-input-black input-text', placeholder: 'Keywords/Ticker...', required: '')
 										}
 									}

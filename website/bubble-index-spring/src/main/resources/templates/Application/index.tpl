@@ -6,7 +6,7 @@ html(lang:'en') {
 		link(rel: 'stylesheet', href: '/css/mastodon.widget.css')
 		script(type: 'text/javascript', src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js', integrity: 'sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=', crossorigin: 'anonymous') {}
 		script(type: 'text/javascript', src: '/scripts/mastodon.widget.js') {}
-	
+		script(type: 'text/javascript', src: '/scripts/jquery-migrate-3.0.0.js') {}
 		div(class: 'header section') {
 			div(class: 'header-wrapper') {
 				div(class: 'zone-header zone clearfix') {

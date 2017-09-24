@@ -2,7 +2,7 @@ yieldUnescaped '<!doctype html>'
 html(class: '', lang: 'en') {
 	link(rel: 'stylesheet', href: '/css/allCss.css')
 	head {
-		title("The Bubble Index - Browse ${Type}")
+		title('The Bubble Index - Search Results')
 		script(type: 'text/javascript', src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js', integrity: 'sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=', crossorigin: 'anonymous') {}
 		div(class: 'header section') {
 			div(class: 'header-wrapper') {
@@ -36,13 +36,13 @@ html(class: '', lang: 'en') {
 								li(class: '') {
 									a(href: '/pages/links', 'LINKS')
 								}							
-								li(class: 'neighbour-left') {
+								li(class: '') {
 									a(href: '/pages/contact', 'CONTACT')
 								}
-								li(class: 'active') {
+								li(class: 'neighbour-left') {
 									a(href: '/browse', 'BROWSE')
 								}
-								li(class: 'last neighbour-right') {
+								li(class: 'last active') {
 									a(href: '/pages/search', 'SEARCH')
 								}
 								li(class: 'empty') {
@@ -58,32 +58,21 @@ html(class: '', lang: 'en') {
 	body {
 		section(class: 'section content') {
 			div(class: 'content-wrapper') {
-				div(class: 'zone-content zone clearfix') {
-					div(class: 'project-header-container container-24') {
-						div(class: 'project-header block') {
+				div(class: 'zone-content equalize zone clearfix') {
+					div(class: 'content-container container-24') {
+						div(class: 'companies-listings block') {
 							div(class: 'block-title') {
-								h1() { yield "Browse ${Type}"}
-							}
-						}
-					}
-					div(class: 'content-wrapper') {
-						div(class: 'zone-content equalize zone clearfix') {
-							div(class: 'content-container container-16') {
-								form(name: 'myform', id: 'jquery-selectbox-list', action: '/plot', method: 'get') {
-									select(id: 'category-selector-default', name: 'symbol') {
-										list.each {
-											option(value: it.symbol, it.name)
-										}
-									}
-									input(type: 'submit', class: 'submitspecial', value: "${Type}", name: "type") {}
+								h1() {
+									yield 'Search Results'
 								}
 							}
+							p('Sorry! The Bubble Index can not find your query. Go to the Forum to request your desired stock or index. Or send me an email.')
 						}
 					}
 				}
 			}
 		}
 		include template: 'tags/footer.tpl'
-		include template: 'tags/scripts.tpl'		
+		include template: 'tags/scripts.tpl'
 	}
 }
