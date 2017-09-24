@@ -6,7 +6,7 @@ div(class: 'sidebar-container container-8') {
 		ul(class: 'entries-list') {
 			li(class: 'clearfix') {
 				a(class: 'entry-title', href: '#', 'Last Update')
-				div(class: 'entry-excerpt') { yield 'July 22, 2017' }
+				div(class: 'entry-excerpt') { yield 'Sept. 24, 2017' }
 			}
 		}
 	}
