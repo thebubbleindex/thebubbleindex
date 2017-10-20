@@ -92,6 +92,9 @@ html(class: '', lang: 'en') {
 									a(href: 'http://econpapers.repec.org/article/bxrbxrceb/2013_2f80942.htm', 'Shocks, Crashes and Bubbles in Financial Markets, by Didier Sornette and Anders Johansen')
 								}
 								p() {
+									a(href: 'https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=1336040', 'Academic Papers by Vladimir Filimonov')
+								}								
+								p() {
 									a(href: '//arxiv.org/abs/cond-mat/9903321', 'Predicting Financial Crashes Using Discrete Scale Invariance, by Anders Johansen, Didier Sornette, and Olivier Ledoit')
 								}
 								p() {
@@ -141,7 +144,10 @@ html(class: '', lang: 'en') {
 								}
 								p() {
 									a(href: 'https://anautonomousagent.com', 'An Autonomous Agent')
-								}								
+								}
+								br()
+								br()
+								div(id: 'disqus_thread') {}	
 							}
 						}
 					}
@@ -150,5 +156,6 @@ html(class: '', lang: 'en') {
 		}
 		include template: 'tags/footer.tpl'
 		include template: 'tags/scripts.tpl'
+		script(type: 'text/javascript', src: '/scripts/disqusLinks.js') {}		
 	}
 }

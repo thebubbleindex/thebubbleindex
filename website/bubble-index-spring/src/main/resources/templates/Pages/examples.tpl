@@ -103,6 +103,9 @@ html(class: '', lang: 'en') {
 								br()
 								div(class: 'youtube', id: 'gfy9vJghAz0', style: 'width: 560px; height: 315px;') {}
 								div(class: 'youtube', id: 'xX4SPU1_CVg', style: 'width: 560px; height: 315px;') {}
+								br()
+								br()
+								div(id: 'disqus_thread') {}
 							}
 						}
 					}
@@ -112,5 +115,6 @@ html(class: '', lang: 'en') {
 		include template: 'tags/footer.tpl'
 		include template: 'tags/scripts.tpl'
 		script(type: 'text/javascript', src: '/scripts/youtubeScript.js') {}
+		script(type: 'text/javascript', src: '/scripts/disqusExamples.js') {}
 	}
 }

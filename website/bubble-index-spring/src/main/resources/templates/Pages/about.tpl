@@ -139,6 +139,9 @@ html(class: '', lang: 'en') {
 									}
 								}
 								div(class: 'plot', id: 'plotarea', width: '100%') {}
+								br()
+								br()
+								div(id: 'disqus_thread') {}
 							}
 						}
 					}
@@ -149,5 +152,6 @@ html(class: '', lang: 'en') {
 		include template: 'tags/scripts.tpl'
 		script(src: 'https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js', integrity: 'sha256-jJlsVPlSwQyGokYi0JgmrFRihc7ILE3Id8AB0dpr0JA=', crossorigin: 'anonymous') {}
 		script(src: '/scripts/methodD3Script.js') {}
+		script(type: 'text/javascript', src: '/scripts/disqusAbout.js') {}
 	}
 }
