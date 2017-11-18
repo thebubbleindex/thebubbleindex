@@ -90,6 +90,11 @@ public class MainController {
 		return new ModelAndView("Application/browse");
 	}
 	
+	@RequestMapping(value = "/application/browse")
+	public ModelAndView browseFix() {
+		return new ModelAndView("Application/browse");
+	}
+	
 	@RequestMapping(value = "/browseEurope")
 	public ModelAndView browseEurope() {
 		return new ModelAndView("Application/browseEurope");
