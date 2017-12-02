@@ -33,7 +33,9 @@ public class DerivativePlotTest {
 	// @Test
 	public void derivativePlotShouldDisplayCustomDate()
 			throws ParseException, URISyntaxException, IOException, InterruptedException {
-		Indices.initialize();
+		final Indices indices = new Indices();
+		indices.initialize();
+		
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final String categoryName = "Currencies";
@@ -52,7 +54,7 @@ public class DerivativePlotTest {
 		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
 
 		new DerivativePlot(null, categoryName, selectionName, windowsString, begDate, endDate, isCustomRange,
-				dailyPriceData, dailyPriceDate);
+				dailyPriceData, dailyPriceDate, indices);
 
 		for (int i = 0; i < 10; i++) {
 			// Pause for 4 seconds
@@ -68,7 +70,9 @@ public class DerivativePlotTest {
 	// @Test
 	public void derivativePlotShouldDisplayFullDates()
 			throws ParseException, URISyntaxException, IOException, InterruptedException {
-		Indices.initialize();
+		final Indices indices = new Indices();
+		indices.initialize();
+		
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final String categoryName = "Currencies";
@@ -87,7 +91,7 @@ public class DerivativePlotTest {
 		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
 
 		new DerivativePlot(null, categoryName, selectionName, windowsString, begDate, endDate, isCustomRange,
-				dailyPriceData, dailyPriceDate);
+				dailyPriceData, dailyPriceDate, indices);
 
 		for (int i = 0; i < 10; i++) {
 			// Pause for 4 seconds

@@ -77,12 +77,22 @@ public class MyCPUCallable implements Callable<Double> {
 			final double[] Coef = new double[3];
 			final double[] LogTimeValuesTemp = new double[numberOfDays];
 
+			boolean containsNonZeroDouble = false;
+
 			// Arrays used in the H,Q derivative calculation and periodogram
 			for (int k = 0; k < numberOfDays; k++) {
 				TimeValues[k] = numberOfDays + tCritDouble - k;
 				TimeValues_M_Power[k] = FastMath.pow(TimeValues[k], mCoeffDouble);
 				SelectedData[k] = dailyPriceValues[k + index + 1];
+				if (!containsNonZeroDouble && SelectedData[k] > 0)
+					containsNonZeroDouble = true;
 			}
+
+			// Return 0.0 if the timeseries === 0
+			if (!containsNonZeroDouble) {
+				return new Double(0.0);
+			}
+
 			final double[] tempFour = new double[numberOfDays];
 			final double[] tempFive = new double[numberOfDays];
 

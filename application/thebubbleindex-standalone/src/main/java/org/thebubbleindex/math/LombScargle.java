@@ -56,7 +56,7 @@ public class LombScargle {
 	 * @param mCoeffDouble
 	 */
 	public LombScargle(final int freqSize, final int qSize, final int hSize, final double omegaDouble,
-			final double mCoeffDouble) {
+			final double mCoeffDouble, final Indices indices) {
 
 		this.freqSize = freqSize;
 		this.qSize = qSize;
@@ -71,8 +71,8 @@ public class LombScargle {
 			Logs.myLogger.info("Reading lombscargle.properties file.");
 			final Properties lsProperties = new Properties();
 
-			input = new FileInputStream(Indices.userDir + Indices.filePathSymbol + Indices.programDataFolder
-					+ Indices.filePathSymbol + "lombscargle.properties");
+			input = new FileInputStream(indices.getUserDir() + indices.getFilePathSymbol()
+					+ indices.getProgramDataFolder() + indices.getFilePathSymbol() + "lombscargle.properties");
 
 			lsProperties.load(input);
 

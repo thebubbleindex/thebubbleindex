@@ -18,6 +18,8 @@ public class IndicesTest {
 
 	@Test
 	public void categoriesShouldBeReadAndConvertedToArray() throws IOException {
+		final Indices indices = new Indices();
+		
 		final List<String> lines = new ArrayList<String>();
 		lines.add(String.format("Indices"));
 		lines.add(String.format("Currencies"));
@@ -29,10 +31,10 @@ public class IndicesTest {
 			final InputCategory tempInputCategory = new InputCategory(categoryName,
 					System.getProperty("java.io.tmpdir") + categoryName + ".csv");
 			tempInputCategory.setComponents();
-			Indices.categoriesAndComponents.put(categoryName, tempInputCategory);
+			indices.getCategoriesAndComponents().put(categoryName, tempInputCategory);
 		}
 
-		final String[] categoriesAndComponentsArray = Indices.getCategoriesAsArray();
+		final String[] categoriesAndComponentsArray = indices.getCategoriesAsArray();
 		assertEquals(4, categoriesAndComponentsArray.length);
 		assertEquals("Commodities", categoriesAndComponentsArray[0]);
 		assertEquals("Currencies", categoriesAndComponentsArray[1]);
@@ -42,23 +44,25 @@ public class IndicesTest {
 
 	@Test
 	public void categoriesShouldBeReadFromDiskAndConvertedToArray() throws IOException {
+		final Indices indices = new Indices();
+		
 		final List<String> lines = new ArrayList<String>();
 		lines.add(String.format("Indices"));
 		lines.add(String.format("Currencies"));
 		lines.add(String.format("Stocks"));
 		lines.add(String.format("Commodities"));
 
-		new File(Indices.getFilePath() + Indices.programDataFolder).mkdirs();
+		new File(indices.getFilePath() + indices.getProgramDataFolder()).mkdirs();
 
 		final File tempFile = new File(
-				Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol + Indices.categoryList);
+				indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + indices.getCategoryList());
 
 		final Path tempFilePath = tempFile.toPath();
 		Files.write(tempFilePath, lines, Charset.defaultCharset());
 
-		Indices.initialize();
+		indices.initialize();
 
-		final String[] categoriesAndComponentsArray = Indices.getCategoriesAsArray();
+		final String[] categoriesAndComponentsArray = indices.getCategoriesAsArray();
 		assertEquals(4, categoriesAndComponentsArray.length);
 		assertEquals("Commodities", categoriesAndComponentsArray[0]);
 		assertEquals("Currencies", categoriesAndComponentsArray[1]);

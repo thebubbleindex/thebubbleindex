@@ -61,7 +61,8 @@ public class BubbleIndexPlot {
 	public final Date begDate;
 	public final Date endDate;
 	public final boolean isCustomRange;
-	private static final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
+	private final Indices indices;
+	private final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
 		@Override
 		protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyy-MM-dd");
@@ -88,8 +89,10 @@ public class BubbleIndexPlot {
 
 	public BubbleIndexPlot(final BubbleIndexWorker bubbleIndexWorker, final String categoryName,
 			final String selectionName, final String windowsString, final Date begDate, final Date endDate,
-			final boolean isCustomRange, final List<String> dailyPriceData, final List<String> dailyPriceDate) {
+			final boolean isCustomRange, final List<String> dailyPriceData, final List<String> dailyPriceDate,
+			final Indices indices) {
 		Logs.myLogger.info("Initializing Bubble Index Plot.");
+
 		this.bubbleIndexWorker = bubbleIndexWorker;
 		this.categoryName = categoryName;
 		this.selectionName = selectionName;
@@ -98,6 +101,8 @@ public class BubbleIndexPlot {
 		this.isCustomRange = isCustomRange;
 		this.dailyPriceData = dailyPriceData;
 		this.dailyPriceDate = dailyPriceDate;
+		this.indices = indices;
+
 		dailyPriceDataSize = dailyPriceData.size();
 		final String windowsStringArray[] = windowsString.split(",");
 		final Set<Integer> windowSet = new HashSet<Integer>(maxWindows);
@@ -323,9 +328,9 @@ public class BubbleIndexPlot {
 			final List<String> DataListString = new ArrayList<String>(dailyPriceDataSize);
 			final List<Double> DataListDouble = new ArrayList<Double>(dailyPriceDataSize);
 
-			final String previousFilePath = Indices.userDir + "ProgramData" + Indices.filePathSymbol + categoryName
-					+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName
-					+ Integer.toString(backtestDayLengths.get(i)) + "days.csv";
+			final String previousFilePath = indices.getUserDir() + "ProgramData" + indices.getFilePathSymbol()
+					+ categoryName + indices.getFilePathSymbol() + selectionName + indices.getFilePathSymbol()
+					+ selectionName + Integer.toString(backtestDayLengths.get(i)) + "days.csv";
 
 			if (new File(previousFilePath).exists()) {
 

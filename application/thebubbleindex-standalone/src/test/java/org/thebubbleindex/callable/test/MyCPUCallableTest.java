@@ -29,6 +29,8 @@ public class MyCPUCallableTest {
 
 	@Test
 	public void resultsShouldMatchBITSTAMPUSD() throws IOException, URISyntaxException {
+		final Indices indices = new Indices();
+		
 		final String selectionName = "BITSTAMPUSD";
 		final String folder = "ProgramData";
 		final String folderType = "Currencies";
@@ -66,13 +68,15 @@ public class MyCPUCallableTest {
 
 		for (final Integer window : testWindows) {
 			testWindow(pathRoot, dailyPriceValues, dataSize, window, results, dailyPriceDate, selectionName,
-					omegaDouble, mCoeffDouble, tCritDouble);
+					omegaDouble, mCoeffDouble, tCritDouble, indices, null);
 		}
 
 	}
 
 	@Test
 	public void resultsShouldMatchTSLA() throws IOException, URISyntaxException {
+		final Indices indices = new Indices();
+		
 		final String selectionName = "TSLA";
 		final String folder = "ProgramData";
 		final String folderType = "Stocks";
@@ -110,7 +114,7 @@ public class MyCPUCallableTest {
 
 		for (final Integer window : testWindows) {
 			testWindow(pathRoot, dailyPriceValues, dataSize, window, results, dailyPriceDate, selectionName,
-					omegaDouble, mCoeffDouble, tCritDouble);
+					omegaDouble, mCoeffDouble, tCritDouble, indices, null);
 		}
 
 	}
@@ -118,7 +122,9 @@ public class MyCPUCallableTest {
 	@Test
 	public void shouldUpdateExistingDataCorrectly() throws IOException, URISyntaxException {
 
-		Indices.initialize();
+		final Indices indices = new Indices();
+		indices.initialize();
+		
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> tempList = new ArrayList<String>();
 
@@ -139,7 +145,7 @@ public class MyCPUCallableTest {
 		final double omegaDouble = 6.28;
 		final double mCoeffDouble = 0.38;
 		final double tCritDouble = 21.0;
-		final String pathRoot = Indices.userDir + Indices.programDataFolder + fileSep + categoryName + fileSep
+		final String pathRoot = indices.getUserDir() + indices.getProgramDataFolder() + fileSep + categoryName + fileSep
 				+ selectionName + fileSep + selectionName;
 
 		final List<Double> priceValues = new ArrayList<Double>();
@@ -154,7 +160,7 @@ public class MyCPUCallableTest {
 			dailyPriceValues[i] = priceValues.get(i);
 		}
 
-		RunIndex.src = IOUtils.readText(RunIndex.class.getResource("/GPUKernel.cl"));
+		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
 		RunContext.threadNumber = 4;
 		RunContext.isGUI = false;
 		RunContext.forceCPU = false;
@@ -167,29 +173,29 @@ public class MyCPUCallableTest {
 
 		for (final Integer window : testWindows) {
 			testWindowUpdate(pathRoot, dailyPriceValues, dataSize, window, results, dailyPriceDate, selectionName,
-					omegaDouble, mCoeffDouble, tCritDouble);
+					omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc);
 		}
 	}
 
 	private void testWindow(final String pathRoot, double[] dailyPriceValues, int dataSize, int window,
 			List<Double> results, List<String> dailyPriceDate, String selectionName, double omegaDouble,
-			double mCoeffDouble, double tCritDouble) throws IOException, URISyntaxException {
+			double mCoeffDouble, double tCritDouble, final Indices indices, final String openCLSrc) throws IOException, URISyntaxException {
 
 		final String previousFilePath = pathRoot + String.valueOf(window) + "days.csv";
 		RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
-				previousFilePath, selectionName, omegaDouble, mCoeffDouble, tCritDouble);
+				previousFilePath, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc);
 		runIndex.execIndexWithCPU();
 		compareResults(selectionName, window, results);
 		results.clear();
 	}
 
-	private void testWindowUpdate(final String pathRoot, double[] dailyPriceValues, int dataSize, int window,
-			List<Double> results, List<String> dailyPriceDate, String selectionName, double omegaDouble,
-			double mCoeffDouble, double tCritDouble) throws IOException, URISyntaxException {
+	private void testWindowUpdate(final String pathRoot, final double[] dailyPriceValues, final int dataSize, final int window,
+			final List<Double> results, final List<String> dailyPriceDate, final String selectionName, final double omegaDouble,
+			final double mCoeffDouble, final double tCritDouble, final Indices indices, final String openCLSrc) throws IOException, URISyntaxException {
 
 		final String previousFilePath = pathRoot + String.valueOf(window) + "days.csv";
-		RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
-				previousFilePath, selectionName, omegaDouble, mCoeffDouble, tCritDouble);
+		final RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
+				previousFilePath, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc);
 		runIndex.execIndexWithCPU();
 		compareResultsUpdate(selectionName, window, results);
 		results.clear();

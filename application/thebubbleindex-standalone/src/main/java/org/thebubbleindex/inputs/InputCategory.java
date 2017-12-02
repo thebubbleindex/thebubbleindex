@@ -20,10 +20,11 @@ public class InputCategory {
 	private final ArrayList<String> components;
 	public static final String fileEnding = ".csv";
 
-	public InputCategory(final String name) {
+	public InputCategory(final String name, final Indices indices) {
 		components = new ArrayList<String>(100);
 		this.name = name;
-		this.location = Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + this.name + fileEnding;
+		this.location = indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + this.name
+				+ fileEnding;
 	}
 
 	public InputCategory(final String name, final String location) {

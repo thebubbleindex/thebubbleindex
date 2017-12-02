@@ -58,11 +58,13 @@ public class GUI extends JFrame {
 	private String selectionName;
 	private boolean GRAPH_ON;
 	private boolean isCustomRange;
-	private static Date begDate = new Date(0);
-	private static Date endDate = new Date();
+	private Date begDate = new Date(0);
+	private Date endDate = new Date();
 	private String quandlKey;
+	private final Indices indices;
+	private String openCLSrc;
 
-	private static final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
+	private final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
 		@Override
 		protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyy-MM-dd");
@@ -73,13 +75,25 @@ public class GUI extends JFrame {
 	 * Creates new form GUI
 	 */
 	public GUI() {
+		
+		try {
+			Logs.myLogger.info("Reading OpenCL source file.");
+			openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("GPUKernel.cl"));
+		} catch (final IOException ex) {
+			Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
+			Utilities.displayOutput("Error. OpenCL file missing.", false);
+		}
+		
+		indices = new Indices();
+		indices.initialize();
+
 		initComponents();
 		final Properties guiProperties = new Properties();
 		InputStream input = null;
 		try {
 			Logs.myLogger.info("Reading gui.properties.");
-			input = new FileInputStream(Indices.userDir + Indices.filePathSymbol + Indices.programDataFolder
-					+ Indices.filePathSymbol + "gui.properties");
+			input = new FileInputStream(indices.getUserDir() + indices.getFilePathSymbol()
+					+ indices.getProgramDataFolder() + indices.getFilePathSymbol() + "gui.properties");
 			guiProperties.load(input);
 			customInit(guiProperties);
 
@@ -99,7 +113,7 @@ public class GUI extends JFrame {
 			}
 		}
 
-		Utilities.displayOutput("Working Dir: " + Indices.userDir, false);
+		Utilities.displayOutput("Working Dir: " + indices.getUserDir(), false);
 	}
 
 	/**
@@ -110,13 +124,25 @@ public class GUI extends JFrame {
 	 * @param tCrit
 	 */
 	public GUI(final double omega, final double tCrit, final double mCoeff) {
+		
+		try {
+			Logs.myLogger.info("Reading OpenCL source file.");
+			openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("GPUKernel.cl"));
+		} catch (final IOException ex) {
+			Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
+			Utilities.displayOutput("Error. OpenCL file missing.", false);
+		}
+		
+		indices = new Indices();
+		indices.initialize();
+
 		initComponents();
 		final Properties guiProperties = new Properties();
 		InputStream input = null;
 		try {
 			Logs.myLogger.info("Reading gui.properties.");
-			input = new FileInputStream(Indices.userDir + Indices.filePathSymbol + "ProgramData"
-					+ Indices.filePathSymbol + "gui.properties");
+			input = new FileInputStream(indices.getUserDir() + indices.getFilePathSymbol() + "ProgramData"
+					+ indices.getFilePathSymbol() + "gui.properties");
 			guiProperties.load(input);
 			customInit(guiProperties);
 
@@ -140,7 +166,7 @@ public class GUI extends JFrame {
 		TCriticalField.setText(String.valueOf(tCrit));
 		MTextField.setText(String.valueOf(mCoeff));
 
-		Utilities.displayOutput("Working Dir: " + Indices.userDir, false);
+		Utilities.displayOutput("Working Dir: " + indices.getUserDir(), false);
 	}
 
 	/**
@@ -175,14 +201,14 @@ public class GUI extends JFrame {
 			}
 		});
 
-		DropDownCategory.setModel(new DefaultComboBoxModel<String>(Indices.getCategoriesAsArray()));
+		DropDownCategory.setModel(new DefaultComboBoxModel<String>(indices.getCategoriesAsArray()));
 		DropDownCategory.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent evt) {
 				DropDownCategoryActionPerformed(evt);
 			}
 		});
 
-		DropDownSelection.setModel(new DefaultComboBoxModel<String>(Indices.categoriesAndComponents
+		DropDownSelection.setModel(new DefaultComboBoxModel<String>(indices.getCategoriesAndComponents()
 				.get((String) DropDownCategory.getSelectedItem()).getComponentsAsArray()));
 
 		CategoryLabel.setText("Type");
@@ -454,11 +480,13 @@ public class GUI extends JFrame {
 	 *            The click action event
 	 */
 	private void RunProgramActionPerformed(final ActionEvent evt) {
-		initializeVariables();
+		final DailyDataCache dailyDataCache = new DailyDataCache();
+		initializeVariables(dailyDataCache);
 		runnableGUI();
 
 		final BubbleIndexWorker bubbleIndexWorker = new BubbleIndexWorker(RunType.Single, this, windowsInput, omega,
-				mCoeff, tCrit, categoryName, selectionName, begDate, endDate, isCustomRange, GRAPH_ON);
+				mCoeff, tCrit, categoryName, selectionName, begDate, endDate, isCustomRange, GRAPH_ON, dailyDataCache,
+				indices, openCLSrc);
 		bubbleIndexWorker.execute();
 	}
 
@@ -467,8 +495,8 @@ public class GUI extends JFrame {
 	 * Runs.
 	 * 
 	 */
-	public void initializeVariables() {
-		DailyDataCache.reset();
+	public void initializeVariables(final DailyDataCache dailyDataCache) {
+		dailyDataCache.reset();
 		RunContext.threadNumber = Integer.parseInt(ThreadNumber.getText().trim());
 		RunContext.Stop = false;
 		GRAPH_ON = GraphCheckBox.isSelected();
@@ -558,7 +586,6 @@ public class GUI extends JFrame {
 	private void StopRunningButtonActionPerformed(final ActionEvent evt) {
 		Logs.myLogger.info("Stop button clicked");
 		RunContext.Stop = true;
-		DailyDataCache.reset();
 	}
 
 	/**
@@ -570,12 +597,14 @@ public class GUI extends JFrame {
 	 *            The click action event.
 	 */
 	private void runAllNamesActionPerformed(final ActionEvent evt) {// GEN-FIRST:event_runAllNamesActionPerformed
+		final DailyDataCache dailyDataCache = new DailyDataCache();
 
-		initializeVariables();
+		initializeVariables(dailyDataCache);
 		runnableGUI();
 
 		final BubbleIndexWorker bubbleIndexWorker = new BubbleIndexWorker(RunType.Category, this, windowsInput, omega,
-				mCoeff, tCrit, categoryName, selectionName, begDate, endDate, isCustomRange, GRAPH_ON);
+				mCoeff, tCrit, categoryName, selectionName, begDate, endDate, isCustomRange, GRAPH_ON, dailyDataCache,
+				indices, openCLSrc);
 		bubbleIndexWorker.execute();
 	}
 
@@ -592,10 +621,12 @@ public class GUI extends JFrame {
 	 *            The click action event
 	 */
 	private void updateDataButtonActionPerformed(final ActionEvent evt) {
-		initializeVariables();
+		final DailyDataCache dailyDataCache = new DailyDataCache();
+
+		initializeVariables(dailyDataCache);
 		runnableGUI();
 
-		final UpdateWorker updateWorker = new UpdateWorker(this, quandlKey);
+		final UpdateWorker updateWorker = new UpdateWorker(this, quandlKey, indices);
 
 		updateWorker.execute();
 	}
@@ -609,11 +640,14 @@ public class GUI extends JFrame {
 	 *            The click action event
 	 */
 	private void runAllTypesActionPerformed(final ActionEvent evt) {
-		initializeVariables();
+		final DailyDataCache dailyDataCache = new DailyDataCache();
+
+		initializeVariables(dailyDataCache);
 		runnableGUI();
 
 		final BubbleIndexWorker bubbleIndexWorker = new BubbleIndexWorker(RunType.All, this, windowsInput, omega,
-				mCoeff, tCrit, categoryName, selectionName, begDate, endDate, isCustomRange, GRAPH_ON);
+				mCoeff, tCrit, categoryName, selectionName, begDate, endDate, isCustomRange, GRAPH_ON, dailyDataCache,
+				indices, openCLSrc);
 		bubbleIndexWorker.execute();
 
 	}
@@ -627,9 +661,9 @@ public class GUI extends JFrame {
 	 */
 	protected void updateDropDownSelection(final String name) {
 
-		for (final String category : Indices.categoriesAndComponents.keySet()) {
+		for (final String category : indices.getCategoriesAndComponents().keySet()) {
 			if (name.equalsIgnoreCase(category)) {
-				final InputCategory inputCategory = Indices.categoriesAndComponents.get(category);
+				final InputCategory inputCategory = indices.getCategoriesAndComponents().get(category);
 				DropDownCategory.setSelectedItem(name);
 				DropDownSelection.setModel(new DefaultComboBoxModel<String>(inputCategory.getComponentsAsArray()));
 			}
@@ -663,21 +697,11 @@ public class GUI extends JFrame {
 		}
 
 		Logs.myLogger.info("Initializing GUI. Loading categories.");
-		Indices.initialize();
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				new GUI().setVisible(true);
-
-				try {
-					Logs.myLogger.info("Reading OpenCL source file.");
-					RunIndex.src = IOUtils.readText(RunIndex.class.getResource("/GPUKernel.cl"));
-				} catch (final IOException ex) {
-					Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
-					Utilities.displayOutput("Error. OpenCL file missing.", false);
-				}
-
 			}
 		});
 	}
@@ -711,21 +735,11 @@ public class GUI extends JFrame {
 		}
 
 		Logs.myLogger.info("Initializing GUI. Loading categories");
-		Indices.initialize();
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				new GUI(omega, tCrit, mCoeff).setVisible(true);
-
-				try {
-					Logs.myLogger.info("Reading OpenCL source file.");
-					RunIndex.src = IOUtils.readText(RunIndex.class.getResource("GPUKernel.cl"));
-				} catch (final IOException ex) {
-					Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
-					Utilities.displayOutput("Error. OpenCL file missing.", false);
-				}
-
 			}
 		});
 	}

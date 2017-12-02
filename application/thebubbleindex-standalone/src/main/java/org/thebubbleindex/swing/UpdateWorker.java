@@ -4,6 +4,7 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import org.thebubbleindex.data.UpdateData;
+import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.util.Utilities;
 
@@ -15,16 +16,18 @@ public class UpdateWorker extends SwingWorker<Boolean, String> {
 
 	final private GUI gui;
 	final private String quandlKey;
+	final private Indices indices;
 
-	public UpdateWorker(final GUI gui, final String quandlKey) {
+	public UpdateWorker(final GUI gui, final String quandlKey, final Indices indices) {
 		this.gui = gui;
 		this.quandlKey = quandlKey;
+		this.indices = indices;
 	}
 
 	@Override
 	protected Boolean doInBackground() {
 		Logs.myLogger.info("Update button clicked");
-		final UpdateData updateData = new UpdateData(this, quandlKey);
+		final UpdateData updateData = new UpdateData(this, quandlKey, indices);
 		updateData.run();
 		return true;
 	}

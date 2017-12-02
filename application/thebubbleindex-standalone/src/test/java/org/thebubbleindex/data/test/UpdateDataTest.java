@@ -36,15 +36,17 @@ public class UpdateDataTest {
 		final String entry = "TSLA";
 		final String dailyDataFile = entry + "dailydata.csv";
 		RunContext.threadNumber = 1;
-		Indices.initialize();
+		
+		final Indices indices = new Indices();
+		indices.initialize();
 
 		final List<String> updateCategorylines = new ArrayList<String>();
 		updateCategorylines.add(String.format(category));
 
-		new File(Indices.getFilePath() + Indices.programDataFolder).mkdirs();
+		new File(indices.getFilePath() + indices.getProgramDataFolder()).mkdirs();
 
-		final File tempUpdateCategoriesFile = new File(Indices.getFilePath() + Indices.programDataFolder
-				+ Indices.filePathSymbol + UpdateData.updateCategories);
+		final File tempUpdateCategoriesFile = new File(indices.getFilePath() + indices.getProgramDataFolder()
+				+ indices.getFilePathSymbol() + UpdateData.updateCategories);
 		final Path tempFilePath = tempUpdateCategoriesFile.toPath();
 		Files.write(tempFilePath, updateCategorylines, Charset.defaultCharset());
 
@@ -53,18 +55,18 @@ public class UpdateDataTest {
 				.format("Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex,Overwrite"));
 		updateSelectionlines.add(String.format("%s,Yahoo,NA,NA,-1,false,true", entry));
 
-		new File(Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol + category).mkdirs();
+		new File(indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + category).mkdirs();
 
-		final File tempUpdateSelectionFile = new File(Indices.getFilePath() + Indices.programDataFolder
-				+ Indices.filePathSymbol + category + Indices.filePathSymbol + UpdateData.updateSelectionFile);
+		final File tempUpdateSelectionFile = new File(indices.getFilePath() + indices.getProgramDataFolder()
+				+ indices.getFilePathSymbol() + category + indices.getFilePathSymbol() + UpdateData.updateSelectionFile);
 		final Path tempSelectionFilePath = tempUpdateSelectionFile.toPath();
 		Files.write(tempSelectionFilePath, updateSelectionlines, Charset.defaultCharset());
 
-		final UpdateData updateData = new UpdateData(null, "");
+		final UpdateData updateData = new UpdateData(null, "", indices);
 		updateData.run();
 
-		final File entryFile = new File(Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol
-				+ category + Indices.filePathSymbol + entry + Indices.filePathSymbol + dailyDataFile);
+		final File entryFile = new File(indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
+				+ category + indices.getFilePathSymbol() + entry + indices.getFilePathSymbol() + dailyDataFile);
 		final List<String> lines = Files.readAllLines(entryFile.toPath());
 		assertTrue(lines.size() > 0);
 		assertEquals(String.format("2010-06-29\t23.889999"), lines.get(0));
@@ -76,15 +78,17 @@ public class UpdateDataTest {
 		final String entry = "IXIC";
 		final String dailyDataFile = entry + "dailydata.csv";
 		RunContext.threadNumber = 1;
-		Indices.initialize();
+		
+		final Indices indices = new Indices();
+		indices.initialize();
 
 		final List<String> updateCategorylines = new ArrayList<String>();
 		updateCategorylines.add(String.format(category));
 
-		new File(Indices.getFilePath() + Indices.programDataFolder).mkdirs();
+		new File(indices.getFilePath() + indices.getProgramDataFolder()).mkdirs();
 
-		final File tempUpdateCategoriesFile = new File(Indices.getFilePath() + Indices.programDataFolder
-				+ Indices.filePathSymbol + UpdateData.updateCategories);
+		final File tempUpdateCategoriesFile = new File(indices.getFilePath() + indices.getProgramDataFolder()
+				+ indices.getFilePathSymbol() + UpdateData.updateCategories);
 		final Path tempFilePath = tempUpdateCategoriesFile.toPath();
 		Files.write(tempFilePath, updateCategorylines, Charset.defaultCharset());
 
@@ -93,18 +97,18 @@ public class UpdateDataTest {
 				.format("Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex,Overwrite"));
 		updateSelectionlines.add(String.format("%s,Yahoo,NA,NA,-1,true,true", entry));
 
-		new File(Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol + category).mkdirs();
+		new File(indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + category).mkdirs();
 
-		final File tempUpdateSelectionFile = new File(Indices.getFilePath() + Indices.programDataFolder
-				+ Indices.filePathSymbol + category + Indices.filePathSymbol + UpdateData.updateSelectionFile);
+		final File tempUpdateSelectionFile = new File(indices.getFilePath() + indices.getProgramDataFolder()
+				+ indices.getFilePathSymbol() + category + indices.getFilePathSymbol() + UpdateData.updateSelectionFile);
 		final Path tempSelectionFilePath = tempUpdateSelectionFile.toPath();
 		Files.write(tempSelectionFilePath, updateSelectionlines, Charset.defaultCharset());
 
-		final UpdateData updateData = new UpdateData(null, "");
+		final UpdateData updateData = new UpdateData(null, "", indices);
 		updateData.run();
 
-		final File entryFile = new File(Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol
-				+ category + Indices.filePathSymbol + entry + Indices.filePathSymbol + dailyDataFile);
+		final File entryFile = new File(indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
+				+ category + indices.getFilePathSymbol() + entry + indices.getFilePathSymbol() + dailyDataFile);
 		final List<String> lines = Files.readAllLines(entryFile.toPath());
 		assertTrue(lines.size() > 0);
 		assertEquals(String.format("1971-02-05\t100.0"), lines.get(0));
@@ -116,7 +120,9 @@ public class UpdateDataTest {
 		final String entry = "IXIC";
 		final String dailyDataFile = entry + "dailydata.csv";
 		RunContext.threadNumber = 1;
-		Indices.initialize();
+		
+		final Indices indices = new Indices();
+		indices.initialize();
 
 		final List<String> previousFileLines = new ArrayList<String>();
 		previousFileLines.add("2016-08-05\t5221.120117");
@@ -128,16 +134,16 @@ public class UpdateDataTest {
 		previousFileLines.add("2016-08-15\t5262.02002");
 		previousFileLines.add("2016-08-16\t5227.109863");
 
-		new File(Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol + category
-				+ Indices.filePathSymbol + entry).mkdirs();
+		new File(indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + category
+				+ indices.getFilePathSymbol() + entry).mkdirs();
 		final File previousDailyData = new File(
-				Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol + category
-						+ Indices.filePathSymbol + entry + Indices.filePathSymbol + dailyDataFile);
+				indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + category
+						+ indices.getFilePathSymbol() + entry + indices.getFilePathSymbol() + dailyDataFile);
 		final Path previousDailyDataPath = previousDailyData.toPath();
 		Files.write(previousDailyDataPath, previousFileLines, Charset.defaultCharset(),
 				StandardOpenOption.TRUNCATE_EXISTING);
 
-		final URLS selection = new URLS();
+		final URLS selection = new URLS(indices);
 		selection.setUpdateWorker(null);
 		selection.setDataName(entry);
 		selection.setYahooIndex(true);
@@ -195,9 +201,11 @@ public class UpdateDataTest {
 		final String entry = "IXIC";
 		final String dailyDataFile = entry + "dailydata.csv";
 		RunContext.threadNumber = 1;
-		Indices.initialize();
+		
+		final Indices indices = new Indices();
+		indices.initialize();
 
-		final URLS selection = new URLS();
+		final URLS selection = new URLS(indices);
 		selection.setUpdateWorker(null);
 		selection.setDataName(entry);
 		selection.setYahooIndex(true);
@@ -207,8 +215,8 @@ public class UpdateDataTest {
 		selection.setOverwrite(false);
 
 		final File previousDailyData = new File(
-				Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol + category
-						+ Indices.filePathSymbol + entry + Indices.filePathSymbol + dailyDataFile);
+				indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + category
+						+ indices.getFilePathSymbol() + entry + indices.getFilePathSymbol() + dailyDataFile);
 
 		Files.deleteIfExists(previousDailyData.toPath());
 
@@ -284,15 +292,17 @@ public class UpdateDataTest {
 		final String entry = "DTWEXM";
 		final String dailyDataFile = entry + "dailydata.csv";
 		RunContext.threadNumber = 1;
-		Indices.initialize();
+		
+		final Indices indices = new Indices();
+		indices.initialize();
 
 		final List<String> updateCategorylines = new ArrayList<String>();
 		updateCategorylines.add(String.format(category));
 
-		new File(Indices.getFilePath() + Indices.programDataFolder).mkdirs();
+		new File(indices.getFilePath() + indices.getProgramDataFolder()).mkdirs();
 
-		final File tempUpdateCategoriesFile = new File(Indices.getFilePath() + Indices.programDataFolder
-				+ Indices.filePathSymbol + UpdateData.updateCategories);
+		final File tempUpdateCategoriesFile = new File(indices.getFilePath() + indices.getProgramDataFolder()
+				+ indices.getFilePathSymbol() + UpdateData.updateCategories);
 		final Path tempFilePath = tempUpdateCategoriesFile.toPath();
 		Files.write(tempFilePath, updateCategorylines, Charset.defaultCharset());
 
@@ -301,18 +311,18 @@ public class UpdateDataTest {
 				.format("Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex,Overwrite"));
 		updateSelectionlines.add(String.format("%s,FED,NA,NA,-1,false,false", entry));
 
-		new File(Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol + category).mkdirs();
+		new File(indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + category).mkdirs();
 
-		final File tempUpdateSelectionFile = new File(Indices.getFilePath() + Indices.programDataFolder
-				+ Indices.filePathSymbol + category + Indices.filePathSymbol + UpdateData.updateSelectionFile);
+		final File tempUpdateSelectionFile = new File(indices.getFilePath() + indices.getProgramDataFolder()
+				+ indices.getFilePathSymbol() + category + indices.getFilePathSymbol() + UpdateData.updateSelectionFile);
 		final Path tempSelectionFilePath = tempUpdateSelectionFile.toPath();
 		Files.write(tempSelectionFilePath, updateSelectionlines, Charset.defaultCharset());
 
-		final UpdateData updateData = new UpdateData(null, "");
+		final UpdateData updateData = new UpdateData(null, "", indices);
 		updateData.run();
 
-		final File entryFile = new File(Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol
-				+ category + Indices.filePathSymbol + entry + Indices.filePathSymbol + dailyDataFile);
+		final File entryFile = new File(indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
+				+ category + indices.getFilePathSymbol() + entry + indices.getFilePathSymbol() + dailyDataFile);
 		final List<String> lines = Files.readAllLines(entryFile.toPath());
 		assertTrue(lines.size() > 0);
 		assertEquals(lines.get(0), String.format("1973-01-02\t108.2242"));
@@ -327,15 +337,17 @@ public class UpdateDataTest {
 		final String quandlCol = "2";
 		final String dailyDataFile = entry + "dailydata.csv";
 		RunContext.threadNumber = 1;
-		Indices.initialize();
+		
+		final Indices indices = new Indices();
+		indices.initialize();
 
 		final List<String> updateCategorylines = new ArrayList<String>();
 		updateCategorylines.add(String.format(category));
 
-		new File(Indices.getFilePath() + Indices.programDataFolder).mkdirs();
+		new File(indices.getFilePath() + indices.getProgramDataFolder()).mkdirs();
 
-		final File tempUpdateCategoriesFile = new File(Indices.getFilePath() + Indices.programDataFolder
-				+ Indices.filePathSymbol + UpdateData.updateCategories);
+		final File tempUpdateCategoriesFile = new File(indices.getFilePath() + indices.getProgramDataFolder()
+				+ indices.getFilePathSymbol() + UpdateData.updateCategories);
 		final Path tempFilePath = tempUpdateCategoriesFile.toPath();
 		Files.write(tempFilePath, updateCategorylines, Charset.defaultCharset());
 
@@ -345,18 +357,18 @@ public class UpdateDataTest {
 		updateSelectionlines
 				.add(String.format("%s,QUANDL,%s,%s,%s,false,false", entry, quandlDataset, quandlName, quandlCol));
 
-		new File(Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol + category).mkdirs();
+		new File(indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + category).mkdirs();
 
-		final File tempUpdateSelectionFile = new File(Indices.getFilePath() + Indices.programDataFolder
-				+ Indices.filePathSymbol + category + Indices.filePathSymbol + UpdateData.updateSelectionFile);
+		final File tempUpdateSelectionFile = new File(indices.getFilePath() + indices.getProgramDataFolder()
+				+ indices.getFilePathSymbol() + category + indices.getFilePathSymbol() + UpdateData.updateSelectionFile);
 		final Path tempSelectionFilePath = tempUpdateSelectionFile.toPath();
 		Files.write(tempSelectionFilePath, updateSelectionlines, Charset.defaultCharset());
 
-		final UpdateData updateData = new UpdateData(null, "");
+		final UpdateData updateData = new UpdateData(null, "", indices);
 		updateData.run();
 
-		final File entryFile = new File(Indices.getFilePath() + Indices.programDataFolder + Indices.filePathSymbol
-				+ category + Indices.filePathSymbol + entry + Indices.filePathSymbol + dailyDataFile);
+		final File entryFile = new File(indices.getFilePath() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
+				+ category + indices.getFilePathSymbol() + entry + indices.getFilePathSymbol() + dailyDataFile);
 		final List<String> lines = Files.readAllLines(entryFile.toPath());
 		assertTrue(lines.size() > 0);
 		assertEquals(lines.get(0), String.format("1896-07-14\t33.43"));

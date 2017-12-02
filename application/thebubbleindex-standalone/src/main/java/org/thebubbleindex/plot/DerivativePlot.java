@@ -61,7 +61,8 @@ public class DerivativePlot {
 	private final List<String> dailyPriceData;
 	private final Date begDate;
 	private final Date endDate;
-	private static final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
+	private final Indices indices;
+	private final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
 		@Override
 		protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyy-MM-dd");
@@ -95,8 +96,10 @@ public class DerivativePlot {
 
 	public DerivativePlot(final BubbleIndexWorker bubbleIndexWorker, final String categoryName,
 			final String selectionName, final String windowsString, final Date begDate, Date endDate,
-			final boolean isCustomRange, final List<String> dailyPriceData, final List<String> dailyPriceDate) {
+			final boolean isCustomRange, final List<String> dailyPriceData, final List<String> dailyPriceDate,
+			final Indices indices) {
 		Logs.myLogger.info("Initializing Bubble Index Derivative Plot.");
+
 		this.bubbleIndexWorker = bubbleIndexWorker;
 		this.selectionName = selectionName;
 		this.dailyPriceDate = dailyPriceDate;
@@ -105,6 +108,8 @@ public class DerivativePlot {
 		this.dailyPriceData = dailyPriceData;
 		this.begDate = begDate;
 		this.endDate = endDate;
+		this.indices = indices;
+
 		dailyPriceDataSize = dailyPriceData.size();
 		final String windowsStringArray[] = windowsString.split(",");
 		final Set<Integer> windowSet = new HashSet<Integer>(maxWindows);
@@ -318,9 +323,9 @@ public class DerivativePlot {
 			final List<Double> DataListDouble = new ArrayList<Double>(dailyPriceDataSize);
 			final List<Double> DataListDeriv = new ArrayList<Double>(dailyPriceDataSize);
 
-			final String previousFilePath = Indices.userDir + "ProgramData" + Indices.filePathSymbol + categoryName
-					+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName
-					+ Integer.toString(backtestDayLengths.get(i)) + "days.csv";
+			final String previousFilePath = indices.getUserDir() + "ProgramData" + indices.getFilePathSymbol()
+					+ categoryName + indices.getFilePathSymbol() + selectionName + indices.getFilePathSymbol()
+					+ selectionName + Integer.toString(backtestDayLengths.get(i)) + "days.csv";
 
 			if (new File(previousFilePath).exists()) {
 				Logs.myLogger.info("Found previous file = {}", previousFilePath);

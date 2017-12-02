@@ -19,13 +19,13 @@ import org.thebubbleindex.logging.Logs;
  */
 public class Indices {
 
-	public final static String programDataFolder = "ProgramData";
-	public final static String categoryList = "CategoryList.csv";
-	public static String userDir;
-	public final static String filePathSymbol = File.separator;
-	public final static Map<String, InputCategory> categoriesAndComponents = new TreeMap<String, InputCategory>();
+	private final String programDataFolder = "ProgramData";
+	private final String categoryList = "CategoryList.csv";
+	private String userDir;
+	private final String filePathSymbol = File.separator;
+	private final Map<String, InputCategory> categoriesAndComponents = new TreeMap<String, InputCategory>();
 
-	public static void initialize() {
+	public void initialize() {
 
 		Logs.myLogger.info("Initializing categories and selections.");
 
@@ -61,13 +61,13 @@ public class Indices {
 
 			for (final String line : lines) {
 				final String categoryName = line;
-				final InputCategory tempInputCategory = new InputCategory(categoryName);
+				final InputCategory tempInputCategory = new InputCategory(categoryName, this);
 				tempInputCategory.setComponents();
 				categoriesAndComponents.put(categoryName, tempInputCategory);
 			}
-			
+
 			if (lines.isEmpty()) {
-				categoriesAndComponents.put("Null", new InputCategory("Null"));
+				categoriesAndComponents.put("Null", new InputCategory("Null", this));
 			}
 
 		} catch (final FileNotFoundException ex) {
@@ -77,7 +77,7 @@ public class Indices {
 		}
 	}
 
-	public static String[] getCategoriesAsArray() {
+	public String[] getCategoriesAsArray() {
 		final String[] categories = new String[categoriesAndComponents.size()];
 		int index = 0;
 		for (final String category : categoriesAndComponents.keySet()) {
@@ -94,9 +94,33 @@ public class Indices {
 	 * @return path the jar
 	 * @throws java.io.UnsupportedEncodingException
 	 */
-	public static String getFilePath() throws UnsupportedEncodingException {
+	public String getFilePath() throws UnsupportedEncodingException {
 		final String rawPath = Indices.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		final File jarFile = new File(URLDecoder.decode(rawPath, "UTF-8"));
 		return jarFile.getParent() + filePathSymbol;
+	}
+
+	public String getUserDir() {
+		return userDir;
+	}
+
+	public void setUserDir(final String userDir) {
+		this.userDir = userDir;
+	}
+
+	public String getProgramDataFolder() {
+		return programDataFolder;
+	}
+
+	public String getCategoryList() {
+		return categoryList;
+	}
+
+	public String getFilePathSymbol() {
+		return filePathSymbol;
+	}
+
+	public Map<String, InputCategory> getCategoriesAndComponents() {
+		return categoriesAndComponents;
 	}
 }

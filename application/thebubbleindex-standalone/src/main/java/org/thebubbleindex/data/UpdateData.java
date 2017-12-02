@@ -34,17 +34,19 @@ public class UpdateData {
 	private String quandlKey = "";
 	public final static String updateCategories = "UpdateCategories.csv";
 	public final static String updateSelectionFile = "UpdateSelection.csv";
+	private final Indices indices;
 
-	public UpdateData(final UpdateWorker updateWorker, final String quandlKey) {
+	public UpdateData(final UpdateWorker updateWorker, final String quandlKey, final Indices indices) {
 		this.updateWorker = updateWorker;
 		this.quandlKey = quandlKey;
+		this.indices = indices;
 		Logs.myLogger.info("Initializing update.");
 		init();
 	}
 
 	public void run() {
 		Logs.myLogger.info("Running update.");
-		
+
 		final Map<String, Integer> errorsPerCategory = new HashMap<String, Integer>(50);
 
 		for (final String category : categories) {
@@ -67,7 +69,7 @@ public class UpdateData {
 			for (int j = 0; j < Selections.size(); j++) {
 				callables.add(new UpdateRunnable(updateWorker, category, Selections.get(j), Sources.get(j),
 						quandlDataSet.get(j), quandlDataName.get(j), quandlColumn.get(j), isYahooIndex.get(j),
-						quandlKey, overwrite.get(j)));
+						quandlKey, overwrite.get(j), indices));
 			}
 
 			final List<Future<Integer>> results;
@@ -93,7 +95,8 @@ public class UpdateData {
 				executor.awaitTermination(5, TimeUnit.SECONDS);
 			} catch (final InterruptedException ex) {
 				executor.shutdownNow();
-				Logs.myLogger.error("While updating category {}. Await termination execution exception. {}", category, ex);
+				Logs.myLogger.error("While updating category {}. Await termination execution exception. {}", category,
+						ex);
 			}
 
 			final Integer finalErrorNumber = new Integer(errors);
@@ -113,19 +116,19 @@ public class UpdateData {
 	private void init() {
 		try {
 
-			if (!new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + updateCategories)
-					.exists()) {
+			if (!new File(indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
+					+ updateCategories).exists()) {
 				Logs.myLogger.error("Unable to find update list... creating it.");
 				try {
-					new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + updateCategories)
-							.createNewFile();
+					new File(indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
+							+ updateCategories).createNewFile();
 				} catch (final IOException e) {
 					Logs.myLogger.error("Unable to create update list file.");
 				}
 			}
 
-			final Path filepath = new File(
-					Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + updateCategories).toPath();
+			final Path filepath = new File(indices.getUserDir() + indices.getProgramDataFolder()
+					+ indices.getFilePathSymbol() + updateCategories).toPath();
 			Logs.myLogger.info("Filepath: {}", filepath);
 			final BufferedReader reader = Files.newBufferedReader(filepath, Charset.defaultCharset());
 			String line;
@@ -157,12 +160,13 @@ public class UpdateData {
 			final List<String> quandlDataSet, final List<String> quandlDataName, final List<Integer> quandlColumn,
 			final List<Boolean> isYahooIndex, final List<Boolean> overwrite) {
 		try {
-			final File updateFile = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol
-					+ Category + Indices.filePathSymbol + updateSelectionFile);
+			final File updateFile = new File(indices.getUserDir() + indices.getProgramDataFolder()
+					+ indices.getFilePathSymbol() + Category + indices.getFilePathSymbol() + updateSelectionFile);
 			if (!updateFile.exists()) {
 				Logs.myLogger.error("Unable to find update selection list for {}... creating it.", Category);
 				try {
-					new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + Category).mkdirs();
+					new File(indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
+							+ Category).mkdirs();
 					updateFile.createNewFile();
 					final Path tempFilePath = updateFile.toPath();
 					final List<String> lines = new ArrayList<String>(1);

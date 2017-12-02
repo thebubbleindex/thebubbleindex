@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.thebubbleindex.data.URLS;
+import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.swing.UpdateWorker;
 
@@ -26,6 +27,7 @@ public class UpdateRunnable implements Callable<Integer> {
 	private final UpdateWorker updateWorker;
 	private final String quandlKey;
 	private final Boolean overwrite;
+	private final Indices indices;
 
 	/**
 	 * 
@@ -41,7 +43,7 @@ public class UpdateRunnable implements Callable<Integer> {
 	 */
 	public UpdateRunnable(final UpdateWorker updateWorker, final String Category, final String Selections,
 			final String Sources, final String quandlDataSet, final String quandlDataName, final int quandlColumn,
-			final Boolean isYahooIndex, final String quandlKey, final Boolean overwrite) {
+			final Boolean isYahooIndex, final String quandlKey, final Boolean overwrite, final Indices indices) {
 
 		this.updateWorker = updateWorker;
 		this.category = Category;
@@ -53,6 +55,7 @@ public class UpdateRunnable implements Callable<Integer> {
 		this.isYahooIndex = isYahooIndex;
 		this.quandlKey = quandlKey;
 		this.overwrite = overwrite;
+		this.indices = indices;
 	}
 
 	/**
@@ -62,7 +65,7 @@ public class UpdateRunnable implements Callable<Integer> {
 	@Override
 	public Integer call() {
 		if (!RunContext.Stop) {
-			final URLS selection = new URLS();
+			final URLS selection = new URLS(indices);
 			selection.setUpdateWorker(updateWorker);
 			selection.setDataName(selections);
 			selection.setYahooIndex(isYahooIndex);

@@ -30,15 +30,6 @@ public class noGUI {
 		Single, Category, All, Update
 	}
 
-	public static String windows;
-	public static int threads;
-	public static float tCrit;
-	public static float mCoeff;
-	public static float omega;
-	public static Boolean forcedCPU;
-	private static String categoryName;
-	private static String selectionName;
-
 	/**
 	 * main The entry point of the application.
 	 * <p>
@@ -74,7 +65,20 @@ public class noGUI {
 	 */
 	public static void main(final String[] args) throws ClassNotFoundException, IOException {
 
+		String windows;
+		int threads;
+		float tCrit;
+		float mCoeff;
+		float omega;
+		@SuppressWarnings("unused")
+		Boolean forcedCPU;
+		String categoryName;
+		String selectionName;
+		String openCLSrc = null;
+
+		final DailyDataCache dailyDataCache = new DailyDataCache();
 		final Date startTime = new Date();
+		final Indices indices = new Indices();
 		ThreadContext.put("StartTime", startTime.toString());
 
 		Logs.myLogger.info("Starting The Bubble Index");
@@ -92,16 +96,16 @@ public class noGUI {
 
 				Logs.myLogger.info("Running non-GUI mode");
 				RunContext.isGUI = false;
-				Indices.initialize();
+				indices.initialize();
 
 				try {
 					Logs.myLogger.info("Reading OpenCL source file.");
-					RunIndex.src = IOUtils.readText(RunIndex.class.getResource("GPUKernel.cl"));
+					openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("GPUKernel.cl"));
 				} catch (final IOException ex) {
 					Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
 					Utilities.displayOutput("Error. OpenCL source file missing.", false);
 				}
-				Utilities.displayOutput("Working Dir: " + Indices.userDir, false);
+				Utilities.displayOutput("Working Dir: " + indices.getUserDir(), false);
 
 				final RunType type = RunType.valueOf(args[++i]);
 
@@ -122,7 +126,8 @@ public class noGUI {
 					for (final String window : windowArray) {
 						try {
 							final BubbleIndex bubble = new BubbleIndex(omega, mCoeff, tCrit,
-									Integer.parseInt(window.trim()), categoryName, selectionName);
+									Integer.parseInt(window.trim()), categoryName, selectionName, dailyDataCache,
+									indices, openCLSrc);
 							bubble.runBubbleIndex(null);
 							bubble.outputResults(null);
 						} catch (final FailedToRunIndex ex) {
@@ -142,7 +147,7 @@ public class noGUI {
 					RunContext.threadNumber = threads;
 					Logs.myLogger.info("Running entire category. Category Name = {}", categoryName);
 
-					final ArrayList<String> updateNames = Indices.categoriesAndComponents.get(categoryName)
+					final ArrayList<String> updateNames = indices.getCategoriesAndComponents().get(categoryName)
 							.getComponents();
 					final String[] windowArray = windows.split(",");
 
@@ -150,7 +155,7 @@ public class noGUI {
 						selectionName = updateName;
 						for (final String window : windowArray) {
 							final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
-									Integer.parseInt(window.trim()), categoryName, updateName);
+									Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache, indices, openCLSrc);
 							bubbleIndex.runBubbleIndex(null);
 							bubbleIndex.outputResults(null);
 						}
@@ -167,7 +172,8 @@ public class noGUI {
 					Logs.myLogger.info("Running all categories and selections.");
 					final String[] windowArray = windows.split(",");
 
-					for (final Map.Entry<String, InputCategory> myEntry : Indices.categoriesAndComponents.entrySet()) {
+					for (final Map.Entry<String, InputCategory> myEntry : indices.getCategoriesAndComponents()
+							.entrySet()) {
 
 						categoryName = myEntry.getKey();
 						final ArrayList<String> updateNames = myEntry.getValue().getComponents();
@@ -176,7 +182,8 @@ public class noGUI {
 							selectionName = updateName;
 							for (final String window : windowArray) {
 								final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
-										Integer.parseInt(window.trim()), categoryName, updateName);
+										Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache,
+										indices, openCLSrc);
 								bubbleIndex.runBubbleIndex(null);
 								bubbleIndex.outputResults(null);
 							}
@@ -190,7 +197,7 @@ public class noGUI {
 					} catch (final Exception ex) {
 						quandlKey = "";
 					}
-					final UpdateData updateData = new UpdateData(null, quandlKey);
+					final UpdateData updateData = new UpdateData(null, quandlKey, indices);
 					updateData.run();
 				} else {
 					RunContext.isGUI = true;

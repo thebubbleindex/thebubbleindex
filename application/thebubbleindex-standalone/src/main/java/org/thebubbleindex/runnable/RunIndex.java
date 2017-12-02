@@ -30,6 +30,7 @@ import org.thebubbleindex.callable.MyCPUCallable;
 import org.thebubbleindex.callable.MyGPUCallable;
 import org.thebubbleindex.exception.FailedToRunIndex;
 import org.thebubbleindex.exception.InvalidData;
+import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.math.LombScargle;
 import org.thebubbleindex.swing.BubbleIndexWorker;
@@ -41,7 +42,7 @@ import org.thebubbleindex.util.Utilities;
  * @author bigttrott
  */
 public class RunIndex {
-	public static String src;
+	final private String openCLSrc;
 	final private double[] dailyPriceValues;
 	final private int dataSize;
 	final private int window;
@@ -53,6 +54,7 @@ public class RunIndex {
 	final private String selectionName;
 	final private String previousFilePath;
 	final private BubbleIndexWorker bubbleIndexWorker;
+	final private Indices indices;
 
 	/**
 	 * RunIndex constructor
@@ -72,7 +74,7 @@ public class RunIndex {
 	public RunIndex(final BubbleIndexWorker bubbleIndexWorker, final double[] dailyPriceValues, final int dataSize,
 			final int window, final List<Double> results, final List<String> dailyPriceDate,
 			final String previousFilePath, final String selectionName, final double omegaDouble,
-			final double mCoeffDouble, final double tCritDouble) {
+			final double mCoeffDouble, final double tCritDouble, final Indices indices, final String openCLSrc) {
 		this.dailyPriceValues = dailyPriceValues;
 		this.dataSize = dataSize;
 		this.window = window;
@@ -84,6 +86,8 @@ public class RunIndex {
 		this.mCoeffDouble = mCoeffDouble;
 		this.tCritDouble = tCritDouble;
 		this.bubbleIndexWorker = bubbleIndexWorker;
+		this.indices = indices;
+		this.openCLSrc = openCLSrc;
 	}
 
 	/**
@@ -97,7 +101,7 @@ public class RunIndex {
 	 */
 	public void execIndexWithGPU() throws FailedToRunIndex {
 
-		final LombScargle lombScargle = new LombScargle(70, 18, 19, omegaDouble, mCoeffDouble);
+		final LombScargle lombScargle = new LombScargle(70, 18, 19, omegaDouble, mCoeffDouble, indices);
 
 		final List<String> DateList = new ArrayList<String>(10000);
 		final List<String> DataList = new ArrayList<String>(10000);
@@ -172,7 +176,7 @@ public class RunIndex {
 						System.out.println("GPU context created with " + deviceName + " :: Driver " + driverVersion);
 					}
 					Logs.myLogger.info("GPU context created with {} :: Driver {}", deviceName, driverVersion);
-					final CLProgram program = context.createProgram(src);
+					final CLProgram program = context.createProgram(openCLSrc);
 					programs.add(program);
 					final CLKernel kernel = program.createKernel("hq_derivative");
 					addFloatsKernels.add(kernel);
@@ -234,7 +238,7 @@ public class RunIndex {
 	 */
 	public void execIndexWithCPU() throws FailedToRunIndex {
 
-		final LombScargle lombScargle = new LombScargle(70, 18, 19, omegaDouble, mCoeffDouble);
+		final LombScargle lombScargle = new LombScargle(70, 18, 19, omegaDouble, mCoeffDouble, indices);
 
 		final List<String> DateList = new ArrayList<String>(10000);
 		final List<String> DataList = new ArrayList<String>(10000);

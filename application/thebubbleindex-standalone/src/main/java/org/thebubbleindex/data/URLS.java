@@ -52,7 +52,12 @@ public class URLS {
 	private boolean overwrite;
 	private String yahooCrumb = null;
 	private String yahooCookie = null;
+	private final Indices indices;
 
+	public URLS(final Indices indices) {
+		this.indices = indices;
+	}
+	
 	public void setUpdateWorker(final UpdateWorker updateWorker) {
 		this.updateWorker = updateWorker;
 	}
@@ -388,8 +393,8 @@ public class URLS {
 		final List<String> oldpriceData = new ArrayList<String>(1000);
 		final List<String> olddateData = new ArrayList<String>(1000);
 
-		final Path filepath = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + dataType
-				+ Indices.filePathSymbol + dataName + Indices.filePathSymbol + dataName + dailyDataFile).toPath();
+		final Path filepath = new File(indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + dataType
+				+ indices.getFilePathSymbol() + dataName + indices.getFilePathSymbol() + dataName + dailyDataFile).toPath();
 
 		if (overwrite) {
 			if (Files.exists(filepath)) {
@@ -423,8 +428,8 @@ public class URLS {
 				}
 			}
 
-			final File dailydata = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol
-					+ dataType + Indices.filePathSymbol + dataName + Indices.filePathSymbol + dataName + dailyDataFile);
+			final File dailydata = new File(indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
+					+ dataType + indices.getFilePathSymbol() + dataName + indices.getFilePathSymbol() + dataName + dailyDataFile);
 
 			dailydata.createNewFile();
 
@@ -445,12 +450,12 @@ public class URLS {
 		} else {
 
 			try {
-				final File dailydata = new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol
-						+ dataType + Indices.filePathSymbol + dataName + Indices.filePathSymbol + dataName
+				final File dailydata = new File(indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
+						+ dataType + indices.getFilePathSymbol() + dataName + indices.getFilePathSymbol() + dataName
 						+ dailyDataFile);
 
-				new File(Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + dataType
-						+ Indices.filePathSymbol + dataName + Indices.filePathSymbol).mkdirs();
+				new File(indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + dataType
+						+ indices.getFilePathSymbol() + dataName + indices.getFilePathSymbol()).mkdirs();
 
 				dailydata.createNewFile();
 

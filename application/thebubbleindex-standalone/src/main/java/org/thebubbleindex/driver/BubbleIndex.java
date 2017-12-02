@@ -25,24 +25,26 @@ import org.thebubbleindex.util.Utilities;
  */
 public class BubbleIndex {
 
-	final String categoryName;
-	final String selectionName;
+	private final String categoryName;
+	private final String selectionName;
 
-	String previousFilePath;
-	String filePath;
-	String savePath;
+	private String previousFilePath;
+	private String filePath;
+	private String savePath;
+	private final String openCLSrc;
 
-	final double omega;
-	final double mCoeff;
-	final double tCrit;
-	final int window;
-	final int dataSize;
+	private final double omega;
+	private final double mCoeff;
+	private final double tCrit;
+	private final int window;
+	private final int dataSize;
 
-	final List<String> dailyPriceData;
-	final List<String> dailyPriceDate;
-	final List<Double> results;
+	private final List<String> dailyPriceData;
+	private final List<String> dailyPriceDate;
+	private final List<Double> results;
 
-	final double[] dailyPriceDoubleValues;
+	private final double[] dailyPriceDoubleValues;
+	private final Indices indices;
 
 	/**
 	 * BubbleIndex constructor
@@ -55,7 +57,8 @@ public class BubbleIndex {
 	 * @param selectionName
 	 */
 	public BubbleIndex(final double omega, final double mCoeff, final double tCrit, final int window,
-			final String categoryName, final String selectionName) {
+			final String categoryName, final String selectionName, final DailyDataCache dailyDataCache,
+			final Indices indices, final String openCLSrc) {
 
 		Logs.myLogger
 				.info("Initializing The Bubble Index. Category Name = {}, Selection Name = {}, Omega = {}, M = {}, TCrit = {}, "
@@ -67,16 +70,19 @@ public class BubbleIndex {
 		this.window = window;
 		this.categoryName = categoryName;
 		this.selectionName = selectionName;
+		this.indices = indices;
+		this.openCLSrc = openCLSrc;
+
 		if (!RunContext.Stop)
 			setFilePaths();
 
-		if (DailyDataCache.selectionName.equals(this.selectionName)) {
-			dailyPriceData = DailyDataCache.dailyPriceData;
-			dailyPriceDate = DailyDataCache.dailyPriceDate;
+		if (dailyDataCache.getSelectionName().equals(this.selectionName)) {
+			dailyPriceData = dailyDataCache.getDailyPriceData();
+			dailyPriceDate = dailyDataCache.getDailyPriceDate();
 
 			dataSize = dailyPriceData.size();
 
-			dailyPriceDoubleValues = DailyDataCache.dailyPriceDoubleValues;
+			dailyPriceDoubleValues = dailyDataCache.getDailyPriceDoubleValues();
 
 			results = new ArrayList<Double>(dataSize);
 
@@ -87,9 +93,9 @@ public class BubbleIndex {
 			if (!RunContext.Stop)
 				Utilities.ReadValues(filePath, dailyPriceDate, dailyPriceData, false, false);
 
-			DailyDataCache.selectionName = this.selectionName;
-			DailyDataCache.dailyPriceData = new ArrayList<String>(dailyPriceData);
-			DailyDataCache.dailyPriceDate = new ArrayList<String>(dailyPriceDate);
+			dailyDataCache.setSelectionName(this.selectionName);
+			dailyDataCache.setDailyPriceData(new ArrayList<String>(dailyPriceData));
+			dailyDataCache.setDailyPriceDate(new ArrayList<String>(dailyPriceDate));
 
 			dataSize = dailyPriceData.size();
 
@@ -98,7 +104,7 @@ public class BubbleIndex {
 			if (!RunContext.Stop)
 				convertPrices();
 
-			DailyDataCache.dailyPriceDoubleValues = dailyPriceDoubleValues;
+			dailyDataCache.setDailyPriceDoubleValues(dailyPriceDoubleValues);
 
 			results = new ArrayList<Double>(dataSize);
 		}
@@ -111,7 +117,8 @@ public class BubbleIndex {
 	 * @param categoryName
 	 * @param selectionName
 	 */
-	public BubbleIndex(final String categoryName, final String selectionName) {
+	public BubbleIndex(final String categoryName, final String selectionName, final DailyDataCache dailyDataCache,
+			final Indices indices, final String openCLSrc) {
 		Logs.myLogger.info("Initializing The Bubble Index. Category Name = {}, Selection Name = {}", categoryName,
 				selectionName);
 
@@ -122,6 +129,9 @@ public class BubbleIndex {
 
 		this.categoryName = categoryName;
 		this.selectionName = selectionName;
+		this.indices = indices;
+		this.openCLSrc = openCLSrc;
+
 		if (!RunContext.Stop)
 			setFilePaths();
 
@@ -149,7 +159,7 @@ public class BubbleIndex {
 	public void runBubbleIndex(final BubbleIndexWorker bubbleIndexWorker) {
 		if (dataSize > window) {
 			final RunIndex runIndex = new RunIndex(bubbleIndexWorker, dailyPriceDoubleValues, dataSize, window, results,
-					dailyPriceDate, previousFilePath, selectionName, omega, mCoeff, tCrit);
+					dailyPriceDate, previousFilePath, selectionName, omega, mCoeff, tCrit, indices, openCLSrc);
 
 			if (!RunContext.forceCPU) {
 				try {
@@ -233,9 +243,9 @@ public class BubbleIndex {
 				"Plotting. Category Name = {}, Selection Name = {}, Windows = {}," + " BegDate = {}, EndDate = {}",
 				categoryName, selectionName, windowsString, begDate.toString(), endDate.toString());
 		new BubbleIndexPlot(bubbleIndexWorker, categoryName, selectionName, windowsString, begDate, endDate,
-				isCustomRange, dailyPriceData, dailyPriceDate);
+				isCustomRange, dailyPriceData, dailyPriceDate, indices);
 		new DerivativePlot(bubbleIndexWorker, categoryName, selectionName, windowsString, begDate, endDate,
-				isCustomRange, dailyPriceData, dailyPriceDate);
+				isCustomRange, dailyPriceData, dailyPriceDate, indices);
 
 	}
 
@@ -246,15 +256,16 @@ public class BubbleIndex {
 	 */
 	private void setFilePaths() {
 
-		filePath = Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + categoryName
-				+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName + "dailydata.csv";
+		filePath = indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + categoryName
+				+ indices.getFilePathSymbol() + selectionName + indices.getFilePathSymbol() + selectionName
+				+ "dailydata.csv";
 
-		savePath = Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + categoryName
-				+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol;
+		savePath = indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + categoryName
+				+ indices.getFilePathSymbol() + selectionName + indices.getFilePathSymbol();
 
-		previousFilePath = Indices.userDir + Indices.programDataFolder + Indices.filePathSymbol + categoryName
-				+ Indices.filePathSymbol + selectionName + Indices.filePathSymbol + selectionName
-				+ Integer.toString(window) + "days.csv";
+		previousFilePath = indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
+				+ categoryName + indices.getFilePathSymbol() + selectionName + indices.getFilePathSymbol()
+				+ selectionName + Integer.toString(window) + "days.csv";
 
 		Utilities.displayOutput("Output File Path: " + previousFilePath, false);
 	}

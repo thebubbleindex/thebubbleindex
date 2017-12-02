@@ -33,10 +33,14 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 	final private Date endDate;
 	final private Boolean isCustomRange;
 	final private Boolean GRAPH_ON;
+	final private DailyDataCache dailyDataCache;
+	final private Indices indices;
+	final private String openCLSrc;
 
 	public BubbleIndexWorker(final RunType type, final GUI gui, final String windowsInput, final Double omega,
 			final Double mCoeff, final Double tCrit, final String categoryName, final String selectionName,
-			final Date begDate, final Date endDate, final Boolean isCustomRange, final Boolean GRAPH_ON) {
+			final Date begDate, final Date endDate, final Boolean isCustomRange, final Boolean GRAPH_ON,
+			final DailyDataCache dailyDataCache, final Indices indices, final String openCLSrc) {
 		this.type = type;
 		this.gui = gui;
 		this.windowsInput = windowsInput;
@@ -49,6 +53,9 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 		this.endDate = endDate;
 		this.isCustomRange = isCustomRange;
 		this.GRAPH_ON = GRAPH_ON;
+		this.dailyDataCache = dailyDataCache;
+		this.indices = indices;
+		this.openCLSrc = openCLSrc;
 	}
 
 	@Override
@@ -83,7 +90,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 	@Override
 	public void done() {
 		gui.resetGUI();
-		DailyDataCache.reset();
+		dailyDataCache.reset();
 	}
 
 	private void runSingle() {
@@ -92,7 +99,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 		final String[] windowInputArray = windowsInput.split(",");
 		for (final String windowString : windowInputArray) {
 			final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(windowString.trim()),
-					categoryName, selectionName);
+					categoryName, selectionName, dailyDataCache, indices, openCLSrc);
 			if (!RunContext.Stop)
 				bubbleIndex.runBubbleIndex(this);
 			if (!RunContext.Stop)
@@ -103,7 +110,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 			Logs.myLogger.info("Graph selection box checked. Plotting first four time windows.");
 			publish("Plotting first four time windows...");
 
-			final BubbleIndex bubbleIndex = new BubbleIndex(categoryName, selectionName);
+			final BubbleIndex bubbleIndex = new BubbleIndex(categoryName, selectionName, dailyDataCache, indices, openCLSrc);
 			bubbleIndex.plot(this, windowsInput, begDate, endDate, isCustomRange);
 		}
 	}
@@ -112,13 +119,13 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 		Logs.myLogger.info("Run entire category button clicked");
 		publish("Running category: " + categoryName);
 		// categoryName = (String)DropDownCategory.getSelectedItem();
-		final ArrayList<String> updateNames = Indices.categoriesAndComponents.get(categoryName).getComponents();
+		final ArrayList<String> updateNames = indices.getCategoriesAndComponents().get(categoryName).getComponents();
 		final String[] windowInputArray = windowsInput.split(",");
 
 		for (final String updateName : updateNames) {
 			for (final String windowString : windowInputArray) {
 				final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
-						Integer.parseInt(windowString.trim()), categoryName, updateName);
+						Integer.parseInt(windowString.trim()), categoryName, updateName, dailyDataCache, indices, openCLSrc);
 				if (!RunContext.Stop)
 					bubbleIndex.runBubbleIndex(this);
 				if (!RunContext.Stop)
@@ -136,7 +143,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 
 		publish("Running all categories.");
 
-		for (final Map.Entry<String, InputCategory> myEntry : Indices.categoriesAndComponents.entrySet()) {
+		for (final Map.Entry<String, InputCategory> myEntry : indices.getCategoriesAndComponents().entrySet()) {
 
 			final String category = myEntry.getKey();
 			gui.updateDropDownSelection(category);
@@ -146,7 +153,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 			for (final String updateName : updateNames) {
 				for (final String windowString : windowInputArray) {
 					final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
-							Integer.parseInt(windowString.trim()), category, updateName);
+							Integer.parseInt(windowString.trim()), category, updateName, dailyDataCache, indices, openCLSrc);
 					if (!RunContext.Stop)
 						bubbleIndex.runBubbleIndex(this);
 					if (!RunContext.Stop)

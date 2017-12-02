@@ -13,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
 
 import org.junit.Test;
 import org.thebubbleindex.inputs.Indices;
@@ -34,7 +33,9 @@ public class BubbleIndexPlotTest {
 	// @Test
 	public void bubbleIndexPlotShouldDisplayCustomDate()
 			throws ParseException, URISyntaxException, IOException, InterruptedException {
-		Indices.initialize();
+		final Indices indices = new Indices();
+		indices.initialize();
+		
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final String categoryName = "Currencies";
@@ -53,7 +54,7 @@ public class BubbleIndexPlotTest {
 		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
 
 		new BubbleIndexPlot(null, categoryName, selectionName, windowsString, begDate, endDate, isCustomRange,
-				dailyPriceData, dailyPriceDate);
+				dailyPriceData, dailyPriceDate, indices);
 
 		for (int i = 0; i < 10; i++) {
 			// Pause for 4 seconds
@@ -69,7 +70,9 @@ public class BubbleIndexPlotTest {
 	// @Test
 	public void bubbleIndexPlotShouldDisplayFullDates()
 			throws ParseException, URISyntaxException, IOException, InterruptedException {
-		Indices.initialize();
+		final Indices indices = new Indices();
+		indices.initialize();
+		
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final String categoryName = "Currencies";
@@ -88,7 +91,7 @@ public class BubbleIndexPlotTest {
 		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
 
 		new BubbleIndexPlot(null, categoryName, selectionName, windowsString, begDate, endDate, isCustomRange,
-				dailyPriceData, dailyPriceDate);
+				dailyPriceData, dailyPriceDate, indices);
 
 		for (int i = 0; i < 10; i++) {
 			// Pause for 4 seconds

@@ -1,10 +1,10 @@
 package org.thebubbleindex.data;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
 
 /**
@@ -30,7 +30,7 @@ public class ExportData {
 		FileWriter writer = null;
 
 		try {
-			writer = new FileWriter(savePath + Indices.filePathSymbol + FileName, UPDATE);
+			writer = new FileWriter(savePath + File.separator + FileName, UPDATE);
 
 			if (!UPDATE) {
 				addHeader(writer);
@@ -49,7 +49,7 @@ public class ExportData {
 			writer.flush();
 			writer.close();
 
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			Logs.myLogger.error("save path = {}. {}", savePath, ex);
 		} finally {
 			if (writer != null) {
