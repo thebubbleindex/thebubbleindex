@@ -62,6 +62,8 @@ public class BubbleIndexPlot {
 	public final Date endDate;
 	public final boolean isCustomRange;
 	private final Indices indices;
+	private final RunContext runContext;
+
 	private final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
 		@Override
 		protected SimpleDateFormat initialValue() {
@@ -90,7 +92,7 @@ public class BubbleIndexPlot {
 	public BubbleIndexPlot(final BubbleIndexWorker bubbleIndexWorker, final String categoryName,
 			final String selectionName, final String windowsString, final Date begDate, final Date endDate,
 			final boolean isCustomRange, final List<String> dailyPriceData, final List<String> dailyPriceDate,
-			final Indices indices) {
+			final Indices indices, final RunContext runContext) {
 		Logs.myLogger.info("Initializing Bubble Index Plot.");
 
 		this.bubbleIndexWorker = bubbleIndexWorker;
@@ -102,6 +104,7 @@ public class BubbleIndexPlot {
 		this.dailyPriceData = dailyPriceData;
 		this.dailyPriceDate = dailyPriceDate;
 		this.indices = indices;
+		this.runContext = runContext;
 
 		dailyPriceDataSize = dailyPriceData.size();
 		final String windowsStringArray[] = windowsString.split(",");
@@ -201,7 +204,7 @@ public class BubbleIndexPlot {
 		if (isCustomRange) {
 			Logs.myLogger.info("Creating custom range. Beginning date = {}. End date = {}", begDate.toString(),
 					endDate.toString());
-			if (RunContext.isGUI) {
+			if (runContext.isGUI()) {
 				bubbleIndexWorker.publishText(String.format("Creating custom range. Beginning date = %s. End date = %s",
 						begDate.toString(), endDate.toString()));
 			} else {
@@ -335,7 +338,7 @@ public class BubbleIndexPlot {
 			if (new File(previousFilePath).exists()) {
 
 				Logs.myLogger.info("Found previous file = {}", previousFilePath);
-				if (RunContext.isGUI) {
+				if (runContext.isGUI()) {
 					bubbleIndexWorker.publishText("Found previous file: " + previousFilePath);
 				} else {
 					System.out.println("Found previous file: " + previousFilePath);
@@ -343,7 +346,7 @@ public class BubbleIndexPlot {
 				try {
 					Utilities.ReadValues(previousFilePath, DataListString, DateList, true, true);
 				} catch (final FailedToRunIndex ex) {
-					if (RunContext.isGUI) {
+					if (runContext.isGUI()) {
 						bubbleIndexWorker.publishText("Failed to read previous file: " + previousFilePath);
 					} else {
 						System.out.println("Failed to read previous file: " + previousFilePath);
@@ -373,7 +376,7 @@ public class BubbleIndexPlot {
 							DataListDouble.get(j) * 1.0 / stdWindowValue * 100.0);
 				}
 			} else {
-				if (RunContext.isGUI) {
+				if (runContext.isGUI()) {
 					bubbleIndexWorker.publishText("Failed to find previous file: " + previousFilePath);
 				} else {
 					System.out.println("Failed to find previous file: " + previousFilePath);

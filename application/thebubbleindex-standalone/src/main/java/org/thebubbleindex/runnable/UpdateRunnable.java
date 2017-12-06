@@ -28,6 +28,7 @@ public class UpdateRunnable implements Callable<Integer> {
 	private final String quandlKey;
 	private final Boolean overwrite;
 	private final Indices indices;
+	private final RunContext runContext;
 
 	/**
 	 * 
@@ -43,7 +44,8 @@ public class UpdateRunnable implements Callable<Integer> {
 	 */
 	public UpdateRunnable(final UpdateWorker updateWorker, final String Category, final String Selections,
 			final String Sources, final String quandlDataSet, final String quandlDataName, final int quandlColumn,
-			final Boolean isYahooIndex, final String quandlKey, final Boolean overwrite, final Indices indices) {
+			final Boolean isYahooIndex, final String quandlKey, final Boolean overwrite, final Indices indices,
+			final RunContext runContext) {
 
 		this.updateWorker = updateWorker;
 		this.category = Category;
@@ -56,6 +58,7 @@ public class UpdateRunnable implements Callable<Integer> {
 		this.quandlKey = quandlKey;
 		this.overwrite = overwrite;
 		this.indices = indices;
+		this.runContext = runContext;
 	}
 
 	/**
@@ -64,8 +67,8 @@ public class UpdateRunnable implements Callable<Integer> {
 	 */
 	@Override
 	public Integer call() {
-		if (!RunContext.Stop) {
-			final URLS selection = new URLS(indices);
+		if (!runContext.isStop()) {
+			final URLS selection = new URLS(indices, runContext);
 			selection.setUpdateWorker(updateWorker);
 			selection.setDataName(selections);
 			selection.setYahooIndex(isYahooIndex);
@@ -87,7 +90,7 @@ public class UpdateRunnable implements Callable<Integer> {
 
 			final ByteArrayOutputStream outputstream = new ByteArrayOutputStream();
 
-			if (!RunContext.Stop) {
+			if (!runContext.isStop()) {
 				try {
 					selection.readURL_file(outputstream);
 				} catch (final IOException ex) {
@@ -99,7 +102,7 @@ public class UpdateRunnable implements Callable<Integer> {
 				}
 			}
 
-			if (!RunContext.Stop) {
+			if (!runContext.isStop()) {
 				if (outputstream.size() > 0) {
 					try {
 
@@ -109,7 +112,7 @@ public class UpdateRunnable implements Callable<Integer> {
 						selection.parseAndCleanDataStream(outputstream, dateData, priceData);
 						outputstream.close();
 						selection.updateData(dateData, priceData);
-						
+
 					} catch (final IOException ex) {
 						Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, ex);
 						return 1;

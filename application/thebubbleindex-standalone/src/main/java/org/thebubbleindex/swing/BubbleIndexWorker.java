@@ -36,11 +36,13 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 	final private DailyDataCache dailyDataCache;
 	final private Indices indices;
 	final private String openCLSrc;
+	final private RunContext runContext;
 
 	public BubbleIndexWorker(final RunType type, final GUI gui, final String windowsInput, final Double omega,
 			final Double mCoeff, final Double tCrit, final String categoryName, final String selectionName,
 			final Date begDate, final Date endDate, final Boolean isCustomRange, final Boolean GRAPH_ON,
-			final DailyDataCache dailyDataCache, final Indices indices, final String openCLSrc) {
+			final DailyDataCache dailyDataCache, final Indices indices, final String openCLSrc,
+			final RunContext runContext) {
 		this.type = type;
 		this.gui = gui;
 		this.windowsInput = windowsInput;
@@ -56,6 +58,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 		this.dailyDataCache = dailyDataCache;
 		this.indices = indices;
 		this.openCLSrc = openCLSrc;
+		this.runContext = runContext;
 	}
 
 	@Override
@@ -84,7 +87,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 	@Override
 	protected void process(final List<String> textList) {
 		for (final String text : textList)
-			Utilities.displayOutput(text, false);
+			Utilities.displayOutput(runContext, text, false);
 	}
 
 	@Override
@@ -99,10 +102,10 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 		final String[] windowInputArray = windowsInput.split(",");
 		for (final String windowString : windowInputArray) {
 			final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(windowString.trim()),
-					categoryName, selectionName, dailyDataCache, indices, openCLSrc);
-			if (!RunContext.Stop)
+					categoryName, selectionName, dailyDataCache, indices, openCLSrc, runContext);
+			if (!runContext.isStop())
 				bubbleIndex.runBubbleIndex(this);
-			if (!RunContext.Stop)
+			if (!runContext.isStop())
 				bubbleIndex.outputResults(this);
 		}
 
@@ -110,7 +113,8 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 			Logs.myLogger.info("Graph selection box checked. Plotting first four time windows.");
 			publish("Plotting first four time windows...");
 
-			final BubbleIndex bubbleIndex = new BubbleIndex(categoryName, selectionName, dailyDataCache, indices, openCLSrc);
+			final BubbleIndex bubbleIndex = new BubbleIndex(categoryName, selectionName, dailyDataCache, indices,
+					openCLSrc, runContext);
 			bubbleIndex.plot(this, windowsInput, begDate, endDate, isCustomRange);
 		}
 	}
@@ -125,15 +129,16 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 		for (final String updateName : updateNames) {
 			for (final String windowString : windowInputArray) {
 				final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
-						Integer.parseInt(windowString.trim()), categoryName, updateName, dailyDataCache, indices, openCLSrc);
-				if (!RunContext.Stop)
+						Integer.parseInt(windowString.trim()), categoryName, updateName, dailyDataCache, indices,
+						openCLSrc, runContext);
+				if (!runContext.isStop())
 					bubbleIndex.runBubbleIndex(this);
-				if (!RunContext.Stop)
+				if (!runContext.isStop())
 					bubbleIndex.outputResults(this);
-				if (RunContext.Stop)
+				if (runContext.isStop())
 					break;
 			}
-			if (RunContext.Stop)
+			if (runContext.isStop())
 				break;
 		}
 	}
@@ -153,18 +158,19 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
 			for (final String updateName : updateNames) {
 				for (final String windowString : windowInputArray) {
 					final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
-							Integer.parseInt(windowString.trim()), category, updateName, dailyDataCache, indices, openCLSrc);
-					if (!RunContext.Stop)
+							Integer.parseInt(windowString.trim()), category, updateName, dailyDataCache, indices,
+							openCLSrc, runContext);
+					if (!runContext.isStop())
 						bubbleIndex.runBubbleIndex(this);
-					if (!RunContext.Stop)
+					if (!runContext.isStop())
 						bubbleIndex.outputResults(this);
-					if (RunContext.Stop)
+					if (runContext.isStop())
 						break;
 				}
-				if (RunContext.Stop)
+				if (runContext.isStop())
 					break;
 			}
-			if (RunContext.Stop)
+			if (runContext.isStop())
 				break;
 		}
 	}

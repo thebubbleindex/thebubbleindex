@@ -35,11 +35,14 @@ public class UpdateData {
 	public final static String updateCategories = "UpdateCategories.csv";
 	public final static String updateSelectionFile = "UpdateSelection.csv";
 	private final Indices indices;
+	private final RunContext runContext;
 
-	public UpdateData(final UpdateWorker updateWorker, final String quandlKey, final Indices indices) {
+	public UpdateData(final UpdateWorker updateWorker, final String quandlKey, final Indices indices,
+			final RunContext runContext) {
 		this.updateWorker = updateWorker;
 		this.quandlKey = quandlKey;
 		this.indices = indices;
+		this.runContext = runContext;
 		Logs.myLogger.info("Initializing update.");
 		init();
 	}
@@ -63,13 +66,13 @@ public class UpdateData {
 			readCategoryList(category, Selections, Sources, quandlDataSet, quandlDataName, quandlColumn, isYahooIndex,
 					overwrite);
 
-			final ExecutorService executor = Executors.newFixedThreadPool(RunContext.threadNumber);
+			final ExecutorService executor = Executors.newFixedThreadPool(runContext.getThreadNumber());
 			final List<Callable<Integer>> callables = new ArrayList<Callable<Integer>>(500);
 
 			for (int j = 0; j < Selections.size(); j++) {
 				callables.add(new UpdateRunnable(updateWorker, category, Selections.get(j), Sources.get(j),
 						quandlDataSet.get(j), quandlDataName.get(j), quandlColumn.get(j), isYahooIndex.get(j),
-						quandlKey, overwrite.get(j), indices));
+						quandlKey, overwrite.get(j), indices, runContext));
 			}
 
 			final List<Future<Integer>> results;
@@ -103,7 +106,7 @@ public class UpdateData {
 			errorsPerCategory.put(category, finalErrorNumber);
 		}
 		checkForErrors(errorsPerCategory);
-		if (RunContext.isGUI) {
+		if (runContext.isGUI()) {
 			updateWorker.publishText("Update Done!");
 		} else {
 			System.out.println("Update Done!");
@@ -138,7 +141,7 @@ public class UpdateData {
 
 		} catch (final IOException ex) {
 			Logs.myLogger.error("Failed to read UpdateCategories.csv... {}", ex);
-			if (RunContext.isGUI) {
+			if (runContext.isGUI()) {
 				updateWorker.publishText("Failed to Read File: UpdateCategories.csv");
 			} else {
 				System.out.println("Failed to Read File: UpdateCategories.csv");
@@ -201,7 +204,7 @@ public class UpdateData {
 			}
 
 			Logs.myLogger.info("Found {} entries in {} update list.", Selections.size(), Category);
-			if (RunContext.isGUI) {
+			if (runContext.isGUI()) {
 				updateWorker.publishText("Found " + Selections.size() + " entries in " + Category + " update list.");
 			} else {
 				System.out.println("Found " + Selections.size() + " entries in " + Category + " update list.");
@@ -209,7 +212,7 @@ public class UpdateData {
 		} catch (final IOException ex) {
 			Logs.myLogger.error("Failed to get Name Selections from {}/UpdateSelection.csv... {}", Category, ex);
 			final String cat = Category;
-			if (RunContext.isGUI) {
+			if (runContext.isGUI()) {
 				updateWorker.publishText("Failed to Get Selections From: " + cat + "/UpdateSelection.csv");
 
 			} else {
@@ -225,7 +228,7 @@ public class UpdateData {
 		for (final Map.Entry<String, Integer> errors : errorsPerCategory.entrySet()) {
 			final String categoryName = errors.getKey();
 			final int errorNumber = errors.getValue();
-			if (RunContext.isGUI) {
+			if (runContext.isGUI()) {
 				updateWorker.publishText(categoryName + ": Errors = " + errorNumber);
 			} else {
 				System.out.println(categoryName + ": Errors = " + errorNumber);

@@ -18,6 +18,7 @@ import java.util.Scanner;
 import org.junit.Test;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.plot.DerivativePlot;
+import org.thebubbleindex.runnable.RunContext;
 
 /**
  * 
@@ -35,7 +36,8 @@ public class DerivativePlotTest {
 			throws ParseException, URISyntaxException, IOException, InterruptedException {
 		final Indices indices = new Indices();
 		indices.initialize();
-		
+		final RunContext runContext = new RunContext();
+
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final String categoryName = "Currencies";
@@ -54,7 +56,7 @@ public class DerivativePlotTest {
 		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
 
 		new DerivativePlot(null, categoryName, selectionName, windowsString, begDate, endDate, isCustomRange,
-				dailyPriceData, dailyPriceDate, indices);
+				dailyPriceData, dailyPriceDate, indices, runContext);
 
 		for (int i = 0; i < 10; i++) {
 			// Pause for 4 seconds
@@ -72,7 +74,8 @@ public class DerivativePlotTest {
 			throws ParseException, URISyntaxException, IOException, InterruptedException {
 		final Indices indices = new Indices();
 		indices.initialize();
-		
+		final RunContext runContext = new RunContext();
+
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final String categoryName = "Currencies";
@@ -91,7 +94,7 @@ public class DerivativePlotTest {
 		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
 
 		new DerivativePlot(null, categoryName, selectionName, windowsString, begDate, endDate, isCustomRange,
-				dailyPriceData, dailyPriceDate, indices);
+				dailyPriceData, dailyPriceDate, indices, runContext);
 
 		for (int i = 0; i < 10; i++) {
 			// Pause for 4 seconds

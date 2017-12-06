@@ -55,6 +55,7 @@ public class RunIndex {
 	final private String previousFilePath;
 	final private BubbleIndexWorker bubbleIndexWorker;
 	final private Indices indices;
+	final private RunContext runContext;
 
 	/**
 	 * RunIndex constructor
@@ -74,7 +75,8 @@ public class RunIndex {
 	public RunIndex(final BubbleIndexWorker bubbleIndexWorker, final double[] dailyPriceValues, final int dataSize,
 			final int window, final List<Double> results, final List<String> dailyPriceDate,
 			final String previousFilePath, final String selectionName, final double omegaDouble,
-			final double mCoeffDouble, final double tCritDouble, final Indices indices, final String openCLSrc) {
+			final double mCoeffDouble, final double tCritDouble, final Indices indices, final String openCLSrc,
+			final RunContext runContext) {
 		this.dailyPriceValues = dailyPriceValues;
 		this.dataSize = dataSize;
 		this.window = window;
@@ -88,6 +90,7 @@ public class RunIndex {
 		this.bubbleIndexWorker = bubbleIndexWorker;
 		this.indices = indices;
 		this.openCLSrc = openCLSrc;
+		this.runContext = runContext;
 	}
 
 	/**
@@ -154,7 +157,7 @@ public class RunIndex {
 		try {
 			final CLPlatform[] platformsArray = JavaCL.listGPUPoweredPlatforms();
 			for (final CLPlatform platform : platformsArray) {
-				if (RunContext.isGUI) {
+				if (runContext.isGUI()) {
 					bubbleIndexWorker.publishText(platform.getName());
 				} else {
 					System.out.println(platform.getName());
@@ -169,7 +172,7 @@ public class RunIndex {
 					queues.add(queue);
 					final String deviceName = device.getName();
 					String driverVersion = device.getDriverVersion();
-					if (RunContext.isGUI) {
+					if (runContext.isGUI()) {
 						bubbleIndexWorker
 								.publishText("GPU context created with " + deviceName + " :: Driver " + driverVersion);
 					} else {
@@ -187,7 +190,7 @@ public class RunIndex {
 
 		} catch (final CLBuildException th) {
 			Logs.myLogger.error("CLBuildException. Selection Name = {}. {}", selectionName, th);
-			if (RunContext.isGUI) {
+			if (runContext.isGUI()) {
 				bubbleIndexWorker.publishText("No GPU found. Using CPU.");
 			} else {
 				System.out.println("No GPU found. Using CPU.");
@@ -201,7 +204,7 @@ public class RunIndex {
 		for (int batch = 0; batch < numBatches; batch++) {
 			final int batchStartIndex = batch * 500 + START_INDEX;
 			final int batchEndIndex = (batch + 1) * 500 + START_INDEX;
-			final ExecutorService executor = Executors.newFixedThreadPool(RunContext.threadNumber);
+			final ExecutorService executor = Executors.newFixedThreadPool(runContext.getThreadNumber());
 
 			final List<Callable<Float>> callables = new ArrayList<Callable<Float>>(dataSize);
 
@@ -283,13 +286,13 @@ public class RunIndex {
 		for (int batch = 0; batch < numBatches; batch++) {
 			final int batchStartIndex = batch * 500 + START_INDEX;
 			final int batchEndIndex = (batch + 1) * 500 + START_INDEX;
-			final ExecutorService executor = Executors.newFixedThreadPool(RunContext.threadNumber);
+			final ExecutorService executor = Executors.newFixedThreadPool(runContext.getThreadNumber());
 
 			final List<Callable<Double>> callables = new ArrayList<Callable<Double>>(dataSize);
 
 			for (int j = batchStartIndex; j < Math.min(dataSize - window, batchEndIndex); j++) {
 				callables.add(new MyCPUCallable(bubbleIndexWorker, j, window, lombScargle, tCritDouble,
-						dailyPriceValues, dailyPriceDate.get(j + window), selectionName));
+						dailyPriceValues, dailyPriceDate.get(j + window), selectionName, runContext));
 			}
 			try {
 				final List<Future<Double>> tempResults = executor.invokeAll(callables);
@@ -348,7 +351,7 @@ public class RunIndex {
 			for (int j = START; j < SIZE; j++) {
 				callables.add(new MyGPUCallable(bubbleIndexWorker, j, window, lombScargle, contexts.get(0),
 						queues.get(0), programs.get(0), addFloatsKernels.get(0), byteOrders.get(0), tCritDouble,
-						dailyPriceValues, selectionName, dailyPriceDate.get(j + window)));
+						dailyPriceValues, selectionName, dailyPriceDate.get(j + window), runContext));
 			}
 		}
 
@@ -385,7 +388,7 @@ public class RunIndex {
 						callables.add(new MyGPUCallable(bubbleIndexWorker, j, window, lombScargle,
 								contexts.get(contextIndex), queues.get(contextIndex), programs.get(contextIndex),
 								addFloatsKernels.get(contextIndex), byteOrders.get(contextIndex), tCritDouble,
-								dailyPriceValues, selectionName, dailyPriceDate.get(j + window)));
+								dailyPriceValues, selectionName, dailyPriceDate.get(j + window), runContext));
 						break;
 					}
 				}

@@ -2,6 +2,10 @@ package org.thebubbleindex.util;
 
 import static info.yeppp.Core.Multiply_V64fV64f_V64f;
 import static info.yeppp.Core.Subtract_V64fV64f_V64f;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,22 +30,21 @@ import no.uib.cipr.matrix.Vector;
  */
 public class Utilities {
 
-	public static int numberOfLines = 0;
-
 	/**
 	 * 
 	 * @param displayText
 	 * @param resetTextArea
 	 */
-	public static void displayOutput(final String displayText, final boolean resetTextArea) {
-		if (RunContext.isGUI) {
-			numberOfLines++;
+	public static void displayOutput(final RunContext runContext, final String displayText,
+			final boolean resetTextArea) {
+		if (runContext.isGUI()) {
+			final int numberOfLines = runContext.incrementAndGetNumberOfLines();
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					if (resetTextArea || numberOfLines > 200) {
 						GUI.OutputText.setText("");
-						numberOfLines = 0;
+						runContext.resetNumberOfLines();
 					}
 					GUI.OutputText.append(displayText + "\n");
 				}
@@ -184,5 +187,66 @@ public class Utilities {
 			Logs.myLogger.error("Error while reading file = {}. {}", locationPath, ex);
 			throw new FailedToRunIndex(ex);
 		}
+	}
+	
+
+	/**
+	 * WriteCSV writes an output file
+	 * 
+	 * @param savePath
+	 * @param Results
+	 * @param PERIODS
+	 * @param FileName
+	 * @param dailyPriceDate
+	 * @param UPDATE
+	 * @throws IOException
+	 */
+	public static void WriteCSV(final String savePath, final List<Double> Results, final int PERIODS,
+			final String FileName, final List<String> dailyPriceDate, final boolean UPDATE) throws IOException {
+
+		FileWriter writer = null;
+
+		try {
+			writer = new FileWriter(savePath + File.separator + FileName, UPDATE);
+
+			if (!UPDATE) {
+				addHeader(writer);
+			}
+
+			for (int i = 0; i < Results.size(); i++) {
+
+				writer.append(Integer.toString(PERIODS - Results.size() + i + 1));
+				writer.append(',');
+				writer.append(String.valueOf(Results.get(i)));
+				writer.append(',');
+				writer.append(dailyPriceDate.get(dailyPriceDate.size() - Results.size() + i));
+				writer.append('\n');
+			}
+
+			writer.flush();
+			writer.close();
+
+		} catch (final IOException ex) {
+			Logs.myLogger.error("save path = {}. {}", savePath, ex);
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+
+	/**
+	 * addHeader writes header of output file
+	 * 
+	 * @param writer
+	 * @throws IOException
+	 */
+	private static void addHeader(final FileWriter writer) throws IOException {
+		writer.append("Period Number");
+		writer.append(',');
+		writer.append("Value");
+		writer.append(',');
+		writer.append("Date");
+		writer.append('\n');
 	}
 }

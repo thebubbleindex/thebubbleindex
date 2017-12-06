@@ -63,6 +63,7 @@ public class GUI extends JFrame {
 	private String quandlKey;
 	private final Indices indices;
 	private String openCLSrc;
+	private final RunContext runContext;
 
 	private final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
 		@Override
@@ -74,18 +75,20 @@ public class GUI extends JFrame {
 	/**
 	 * Creates new form GUI
 	 */
-	public GUI() {
-		
+	public GUI(final RunContext runContext) {
+
 		try {
 			Logs.myLogger.info("Reading OpenCL source file.");
 			openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("GPUKernel.cl"));
 		} catch (final IOException ex) {
 			Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
-			Utilities.displayOutput("Error. OpenCL file missing.", false);
+			Utilities.displayOutput(runContext, "Error. OpenCL file missing.", false);
 		}
-		
+
 		indices = new Indices();
 		indices.initialize();
+
+		this.runContext = runContext;
 
 		initComponents();
 		final Properties guiProperties = new Properties();
@@ -108,12 +111,13 @@ public class GUI extends JFrame {
 				try {
 					input.close();
 				} catch (final IOException ex) {
-					Utilities.displayOutput("Error closing gui.properties file. " + ex.getLocalizedMessage(), false);
+					Utilities.displayOutput(runContext,
+							"Error closing gui.properties file. " + ex.getLocalizedMessage(), false);
 				}
 			}
 		}
 
-		Utilities.displayOutput("Working Dir: " + indices.getUserDir(), false);
+		Utilities.displayOutput(runContext, "Working Dir: " + indices.getUserDir(), false);
 	}
 
 	/**
@@ -123,18 +127,20 @@ public class GUI extends JFrame {
 	 * @param mCoeff
 	 * @param tCrit
 	 */
-	public GUI(final double omega, final double tCrit, final double mCoeff) {
-		
+	public GUI(final RunContext runContext, final double omega, final double tCrit, final double mCoeff) {
+
 		try {
 			Logs.myLogger.info("Reading OpenCL source file.");
 			openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("GPUKernel.cl"));
 		} catch (final IOException ex) {
 			Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
-			Utilities.displayOutput("Error. OpenCL file missing.", false);
+			Utilities.displayOutput(runContext, "Error. OpenCL file missing.", false);
 		}
-		
+
 		indices = new Indices();
 		indices.initialize();
+
+		this.runContext = runContext;
 
 		initComponents();
 		final Properties guiProperties = new Properties();
@@ -157,7 +163,8 @@ public class GUI extends JFrame {
 				try {
 					input.close();
 				} catch (final IOException ex) {
-					Utilities.displayOutput("Error closing gui.properties file. " + ex.getLocalizedMessage(), false);
+					Utilities.displayOutput(runContext,
+							"Error closing gui.properties file. " + ex.getLocalizedMessage(), false);
 				}
 			}
 		}
@@ -166,7 +173,7 @@ public class GUI extends JFrame {
 		TCriticalField.setText(String.valueOf(tCrit));
 		MTextField.setText(String.valueOf(mCoeff));
 
-		Utilities.displayOutput("Working Dir: " + indices.getUserDir(), false);
+		Utilities.displayOutput(runContext, "Working Dir: " + indices.getUserDir(), false);
 	}
 
 	/**
@@ -486,7 +493,7 @@ public class GUI extends JFrame {
 
 		final BubbleIndexWorker bubbleIndexWorker = new BubbleIndexWorker(RunType.Single, this, windowsInput, omega,
 				mCoeff, tCrit, categoryName, selectionName, begDate, endDate, isCustomRange, GRAPH_ON, dailyDataCache,
-				indices, openCLSrc);
+				indices, openCLSrc, runContext);
 		bubbleIndexWorker.execute();
 	}
 
@@ -497,8 +504,8 @@ public class GUI extends JFrame {
 	 */
 	public void initializeVariables(final DailyDataCache dailyDataCache) {
 		dailyDataCache.reset();
-		RunContext.threadNumber = Integer.parseInt(ThreadNumber.getText().trim());
-		RunContext.Stop = false;
+		runContext.setThreadNumber(Integer.parseInt(ThreadNumber.getText().trim()));
+		runContext.setStop(false);
 		GRAPH_ON = GraphCheckBox.isSelected();
 		isCustomRange = customDates.isSelected();
 		categoryName = (String) DropDownCategory.getSelectedItem();
@@ -585,7 +592,7 @@ public class GUI extends JFrame {
 	 */
 	private void StopRunningButtonActionPerformed(final ActionEvent evt) {
 		Logs.myLogger.info("Stop button clicked");
-		RunContext.Stop = true;
+		runContext.setStop(true);
 	}
 
 	/**
@@ -604,7 +611,7 @@ public class GUI extends JFrame {
 
 		final BubbleIndexWorker bubbleIndexWorker = new BubbleIndexWorker(RunType.Category, this, windowsInput, omega,
 				mCoeff, tCrit, categoryName, selectionName, begDate, endDate, isCustomRange, GRAPH_ON, dailyDataCache,
-				indices, openCLSrc);
+				indices, openCLSrc, runContext);
 		bubbleIndexWorker.execute();
 	}
 
@@ -626,7 +633,7 @@ public class GUI extends JFrame {
 		initializeVariables(dailyDataCache);
 		runnableGUI();
 
-		final UpdateWorker updateWorker = new UpdateWorker(this, quandlKey, indices);
+		final UpdateWorker updateWorker = new UpdateWorker(this, quandlKey, indices, runContext);
 
 		updateWorker.execute();
 	}
@@ -647,7 +654,7 @@ public class GUI extends JFrame {
 
 		final BubbleIndexWorker bubbleIndexWorker = new BubbleIndexWorker(RunType.All, this, windowsInput, omega,
 				mCoeff, tCrit, categoryName, selectionName, begDate, endDate, isCustomRange, GRAPH_ON, dailyDataCache,
-				indices, openCLSrc);
+				indices, openCLSrc, runContext);
 		bubbleIndexWorker.execute();
 
 	}
@@ -675,7 +682,7 @@ public class GUI extends JFrame {
 	 * containers.
 	 * 
 	 */
-	public static void GUImain() {
+	public static void GUImain(final RunContext runContext) {
 		// <editor-fold defaultstate="collapsed" desc=" Look and feel setting
 		// code (optional) ">
 		/*
@@ -701,7 +708,7 @@ public class GUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				new GUI().setVisible(true);
+				new GUI(runContext).setVisible(true);
 			}
 		});
 	}
@@ -714,7 +721,8 @@ public class GUI extends JFrame {
 	 * @param tCrit
 	 * @param mCoeff
 	 */
-	public static void GUImain(final double omega, final double tCrit, final double mCoeff) {
+	public static void GUImain(final RunContext runContext, final double omega, final double tCrit,
+			final double mCoeff) {
 		// <editor-fold defaultstate="collapsed" desc=" Look and feel setting
 		// code (optional) ">
 		/*
@@ -739,7 +747,7 @@ public class GUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				new GUI(omega, tCrit, mCoeff).setVisible(true);
+				new GUI(runContext, omega, tCrit, mCoeff).setVisible(true);
 			}
 		});
 	}

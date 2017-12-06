@@ -53,11 +53,13 @@ public class URLS {
 	private String yahooCrumb = null;
 	private String yahooCookie = null;
 	private final Indices indices;
+	private final RunContext runContext;
 
-	public URLS(final Indices indices) {
+	public URLS(final Indices indices, final RunContext runContext) {
 		this.indices = indices;
+		this.runContext = runContext;
 	}
-	
+
 	public void setUpdateWorker(final UpdateWorker updateWorker) {
 		this.updateWorker = updateWorker;
 	}
@@ -224,12 +226,12 @@ public class URLS {
 	 * @throws IOException
 	 */
 	public void readURL_file(final ByteArrayOutputStream outputstream) throws IOException {
-		if (RunContext.isGUI) {
+		if (runContext.isGUI()) {
 			updateWorker.publishText("GET: " + dataName);
 		} else {
 			System.out.println("GET: " + dataName);
 		}
-		if (RunContext.isGUI) {
+		if (runContext.isGUI()) {
 			updateWorker.publishText("Downloading file: " + dataName + ". Connecting to: " + url + " ...");
 		} else {
 			System.out.println("Downloading file: " + dataName + ". Connecting to: " + url + " ...");
@@ -321,13 +323,13 @@ public class URLS {
 					if (splits == null || splits.length <= 0) {
 						continue;
 					}
-					
+
 					final LocalDate date = LocalDate.parse(splits[0]);
-					
+
 					if (dateValueMap.containsKey(date)) {
 						continue;
 					}
-					
+
 					if (YAHOO && splits.length > 6) {
 						try {
 							dateValueMap.put(date, Double.parseDouble(splits[5]));
@@ -354,22 +356,23 @@ public class URLS {
 						}
 					}
 				}
-				
-				for (final Entry<LocalDate, Double> entry : dateValueMap.entrySet()) { 
+
+				for (final Entry<LocalDate, Double> entry : dateValueMap.entrySet()) {
 					priceData.add(String.valueOf(entry.getValue()));
 					dateData.add(entry.getKey().toString());
 				}
- 
-				/*	Reverse Yahoo Data - No longer need to reverse the order as of new Yahoo Crumb API - July 2017
-				if (YAHOO) {
-					Collections.reverse(dateData);
-					Collections.reverse(priceData);
-				}*/
+
+				/*
+				 * Reverse Yahoo Data - No longer need to reverse the order as
+				 * of new Yahoo Crumb API - July 2017 if (YAHOO) {
+				 * Collections.reverse(dateData);
+				 * Collections.reverse(priceData); }
+				 */
 			}
 		} catch (final IOException x) {
 			Logs.myLogger.error("Failed to write CSV file. Category Name = {}, Selection Name = {}. {}", dataType,
 					dataName, x);
-			if (RunContext.isGUI) {
+			if (runContext.isGUI()) {
 				updateWorker.publishText("Failed to process CSV file: " + dataName);
 			} else {
 				System.out.println("Failed to process CSV file: " + dataName);
@@ -393,8 +396,9 @@ public class URLS {
 		final List<String> oldpriceData = new ArrayList<String>(1000);
 		final List<String> olddateData = new ArrayList<String>(1000);
 
-		final Path filepath = new File(indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + dataType
-				+ indices.getFilePathSymbol() + dataName + indices.getFilePathSymbol() + dataName + dailyDataFile).toPath();
+		final Path filepath = new File(indices.getUserDir() + indices.getProgramDataFolder()
+				+ indices.getFilePathSymbol() + dataType + indices.getFilePathSymbol() + dataName
+				+ indices.getFilePathSymbol() + dataName + dailyDataFile).toPath();
 
 		if (overwrite) {
 			if (Files.exists(filepath)) {
@@ -428,8 +432,9 @@ public class URLS {
 				}
 			}
 
-			final File dailydata = new File(indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
-					+ dataType + indices.getFilePathSymbol() + dataName + indices.getFilePathSymbol() + dataName + dailyDataFile);
+			final File dailydata = new File(indices.getUserDir() + indices.getProgramDataFolder()
+					+ indices.getFilePathSymbol() + dataType + indices.getFilePathSymbol() + dataName
+					+ indices.getFilePathSymbol() + dataName + dailyDataFile);
 
 			dailydata.createNewFile();
 
@@ -450,9 +455,9 @@ public class URLS {
 		} else {
 
 			try {
-				final File dailydata = new File(indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
-						+ dataType + indices.getFilePathSymbol() + dataName + indices.getFilePathSymbol() + dataName
-						+ dailyDataFile);
+				final File dailydata = new File(indices.getUserDir() + indices.getProgramDataFolder()
+						+ indices.getFilePathSymbol() + dataType + indices.getFilePathSymbol() + dataName
+						+ indices.getFilePathSymbol() + dataName + dailyDataFile);
 
 				new File(indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol() + dataType
 						+ indices.getFilePathSymbol() + dataName + indices.getFilePathSymbol()).mkdirs();
@@ -469,7 +474,7 @@ public class URLS {
 			} catch (final IOException th) {
 				Logs.myLogger.error("Failed to create daily data. Category Name = {}, Selection Name = {}. {}",
 						dataType, dataName, th);
-				if (RunContext.isGUI) {
+				if (runContext.isGUI()) {
 					updateWorker.publishText("Failed to create daily data: " + dataName);
 				} else {
 					System.out.println("Failed to create daily data: " + dataName);

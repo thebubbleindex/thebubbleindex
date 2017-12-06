@@ -79,6 +79,8 @@ public class noGUI {
 		final DailyDataCache dailyDataCache = new DailyDataCache();
 		final Date startTime = new Date();
 		final Indices indices = new Indices();
+		final RunContext runContext = new RunContext();
+
 		ThreadContext.put("StartTime", startTime.toString());
 
 		Logs.myLogger.info("Starting The Bubble Index");
@@ -95,7 +97,7 @@ public class noGUI {
 			if (args[i].equalsIgnoreCase("noGUI")) {
 
 				Logs.myLogger.info("Running non-GUI mode");
-				RunContext.isGUI = false;
+				runContext.setGUI(false);
 				indices.initialize();
 
 				try {
@@ -103,9 +105,9 @@ public class noGUI {
 					openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("GPUKernel.cl"));
 				} catch (final IOException ex) {
 					Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
-					Utilities.displayOutput("Error. OpenCL source file missing.", false);
+					Utilities.displayOutput(runContext, "Error. OpenCL source file missing.", false);
 				}
-				Utilities.displayOutput("Working Dir: " + indices.getUserDir(), false);
+				Utilities.displayOutput(runContext, "Working Dir: " + indices.getUserDir(), false);
 
 				final RunType type = RunType.valueOf(args[++i]);
 
@@ -118,7 +120,7 @@ public class noGUI {
 					mCoeff = Float.parseFloat(args[++i]);
 					omega = Float.parseFloat(args[++i]);
 					forcedCPU = Boolean.parseBoolean(args[++i]);
-					RunContext.threadNumber = threads;
+					runContext.setThreadNumber(threads);
 					Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}",
 							categoryName, selectionName);
 					final String[] windowArray = windows.split(",");
@@ -127,7 +129,7 @@ public class noGUI {
 						try {
 							final BubbleIndex bubble = new BubbleIndex(omega, mCoeff, tCrit,
 									Integer.parseInt(window.trim()), categoryName, selectionName, dailyDataCache,
-									indices, openCLSrc);
+									indices, openCLSrc, runContext);
 							bubble.runBubbleIndex(null);
 							bubble.outputResults(null);
 						} catch (final FailedToRunIndex ex) {
@@ -144,7 +146,7 @@ public class noGUI {
 					omega = Float.parseFloat(args[++i]);
 					forcedCPU = Boolean.parseBoolean(args[++i]);
 
-					RunContext.threadNumber = threads;
+					runContext.setThreadNumber(threads);
 					Logs.myLogger.info("Running entire category. Category Name = {}", categoryName);
 
 					final ArrayList<String> updateNames = indices.getCategoriesAndComponents().get(categoryName)
@@ -155,7 +157,8 @@ public class noGUI {
 						selectionName = updateName;
 						for (final String window : windowArray) {
 							final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
-									Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache, indices, openCLSrc);
+									Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache, indices,
+									openCLSrc, runContext);
 							bubbleIndex.runBubbleIndex(null);
 							bubbleIndex.outputResults(null);
 						}
@@ -168,7 +171,7 @@ public class noGUI {
 					omega = Float.parseFloat(args[++i]);
 					forcedCPU = Boolean.parseBoolean(args[++i]);
 
-					RunContext.threadNumber = threads;
+					runContext.setThreadNumber(threads);
 					Logs.myLogger.info("Running all categories and selections.");
 					final String[] windowArray = windows.split(",");
 
@@ -183,38 +186,38 @@ public class noGUI {
 							for (final String window : windowArray) {
 								final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
 										Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache,
-										indices, openCLSrc);
+										indices, openCLSrc, runContext);
 								bubbleIndex.runBubbleIndex(null);
 								bubbleIndex.outputResults(null);
 							}
 						}
 					}
 				} else if (type == RunType.Update) {
-					RunContext.threadNumber = Runtime.getRuntime().availableProcessors();
+					runContext.setThreadNumber(Runtime.getRuntime().availableProcessors());
 					String quandlKey;
 					try {
 						quandlKey = args[++i];
 					} catch (final Exception ex) {
 						quandlKey = "";
 					}
-					final UpdateData updateData = new UpdateData(null, quandlKey, indices);
+					final UpdateData updateData = new UpdateData(null, quandlKey, indices, runContext);
 					updateData.run();
 				} else {
-					RunContext.isGUI = true;
-					GUI.GUImain();
+					runContext.setGUI(true);
+					GUI.GUImain(runContext);
 				}
 			} else {
-				RunContext.isGUI = true;
+				runContext.setGUI(true);
 				omega = Float.parseFloat(args[++i]);
 				tCrit = Float.parseFloat(args[++i]);
 				mCoeff = Float.parseFloat(args[++i]);
-				GUI.GUImain(omega, tCrit, mCoeff);
+				GUI.GUImain(runContext, omega, tCrit, mCoeff);
 			}
 		} else {
 			Logs.myLogger.info("No command line args found. Running GUI mode.");
 
-			RunContext.isGUI = true;
-			GUI.GUImain();
+			runContext.setGUI(true);
+			GUI.GUImain(runContext);
 		}
 	}
 }

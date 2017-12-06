@@ -62,6 +62,8 @@ public class DerivativePlot {
 	private final Date begDate;
 	private final Date endDate;
 	private final Indices indices;
+	private final RunContext runContext;
+
 	private final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
 		@Override
 		protected SimpleDateFormat initialValue() {
@@ -97,7 +99,7 @@ public class DerivativePlot {
 	public DerivativePlot(final BubbleIndexWorker bubbleIndexWorker, final String categoryName,
 			final String selectionName, final String windowsString, final Date begDate, Date endDate,
 			final boolean isCustomRange, final List<String> dailyPriceData, final List<String> dailyPriceDate,
-			final Indices indices) {
+			final Indices indices, final RunContext runContext) {
 		Logs.myLogger.info("Initializing Bubble Index Derivative Plot.");
 
 		this.bubbleIndexWorker = bubbleIndexWorker;
@@ -109,6 +111,7 @@ public class DerivativePlot {
 		this.begDate = begDate;
 		this.endDate = endDate;
 		this.indices = indices;
+		this.runContext = runContext;
 
 		dailyPriceDataSize = dailyPriceData.size();
 		final String windowsStringArray[] = windowsString.split(",");
@@ -305,7 +308,7 @@ public class DerivativePlot {
 	 */
 	private XYDataset createDerivDataset() {
 		Logs.myLogger.info("Creating derivative data set for each window.");
-		if (RunContext.isGUI) {
+		if (runContext.isGUI()) {
 			bubbleIndexWorker.publishText("Creating derivative data set for each window.");
 		} else {
 			System.out.println("Creating derivative data set for each window.");
@@ -333,7 +336,7 @@ public class DerivativePlot {
 				try {
 					Utilities.ReadValues(previousFilePath, DataListString, DateList, true, true);
 				} catch (final FailedToRunIndex ex) {
-					if (RunContext.isGUI) {
+					if (runContext.isGUI()) {
 						bubbleIndexWorker.publishText("Failed to read previous file: " + previousFilePath);
 					} else {
 						System.out.println("Failed to read previous file: " + previousFilePath);

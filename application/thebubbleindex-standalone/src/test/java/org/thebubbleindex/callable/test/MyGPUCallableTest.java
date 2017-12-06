@@ -29,7 +29,8 @@ public class MyGPUCallableTest {
 	@Test
 	public void resultsShouldMatchBITSTAMPUSD() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
-		
+		final RunContext runContext = new RunContext();
+
 		final String selectionName = "BITSTAMPUSD";
 		final String folder = "ProgramData";
 		final String folderType = "Currencies";
@@ -55,9 +56,9 @@ public class MyGPUCallableTest {
 		}
 
 		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
-		RunContext.threadNumber = 4;
-		RunContext.isGUI = false;
-		RunContext.forceCPU = false;
+		runContext.setThreadNumber(4);
+		runContext.setGUI(false);
+		runContext.setForceCPU(false);
 
 		final List<Integer> testWindows = new ArrayList<Integer>(5);
 		testWindows.add(52);
@@ -68,7 +69,7 @@ public class MyGPUCallableTest {
 
 		for (final Integer window : testWindows) {
 			testWindow(pathRoot, dailyPriceValues, dataSize, window, results, dailyPriceDate, selectionName,
-					omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc);
+					omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc, runContext);
 		}
 
 	}
@@ -76,7 +77,8 @@ public class MyGPUCallableTest {
 	@Test
 	public void resultsShouldMatchTSLA() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
-		
+		final RunContext runContext = new RunContext();
+
 		final String selectionName = "TSLA";
 		final String folder = "ProgramData";
 		final String folderType = "Stocks";
@@ -102,9 +104,9 @@ public class MyGPUCallableTest {
 		}
 
 		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
-		RunContext.threadNumber = 4;
-		RunContext.isGUI = false;
-		RunContext.forceCPU = false;
+		runContext.setThreadNumber(4);
+		runContext.setGUI(false);
+		runContext.setForceCPU(false);
 
 		final List<Integer> testWindows = new ArrayList<Integer>(5);
 		testWindows.add(52);
@@ -115,14 +117,15 @@ public class MyGPUCallableTest {
 
 		for (final Integer window : testWindows) {
 			testWindow(pathRoot, dailyPriceValues, dataSize, window, results, dailyPriceDate, selectionName,
-					omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc);
+					omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc, runContext);
 		}
 	}
 
 	@Test
 	public void resultsShouldMatchDTWEXM() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
-		
+		final RunContext runContext = new RunContext();
+
 		final String selectionName = "DTWEXM";
 		final String folder = "ProgramData";
 		final String folderType = "Currencies";
@@ -148,9 +151,9 @@ public class MyGPUCallableTest {
 		}
 
 		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
-		RunContext.threadNumber = 4;
-		RunContext.isGUI = false;
-		RunContext.forceCPU = false;
+		runContext.setThreadNumber(4);
+		runContext.setGUI(false);
+		runContext.setForceCPU(false);
 
 		final List<Integer> testWindows = new ArrayList<Integer>(5);
 		testWindows.add(52);
@@ -161,7 +164,7 @@ public class MyGPUCallableTest {
 
 		for (final Integer window : testWindows) {
 			testWindow(pathRoot, dailyPriceValues, dataSize, window, results, dailyPriceDate, selectionName,
-					omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc);
+					omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc, runContext);
 		}
 	}
 
@@ -169,7 +172,8 @@ public class MyGPUCallableTest {
 	public void shouldUpdateExistingDataCorrectly() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
 		indices.initialize();
-		
+		final RunContext runContext = new RunContext();
+
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> tempList = new ArrayList<String>();
 
@@ -206,9 +210,9 @@ public class MyGPUCallableTest {
 		}
 
 		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
-		RunContext.threadNumber = 4;
-		RunContext.isGUI = false;
-		RunContext.forceCPU = false;
+		runContext.setThreadNumber(4);
+		runContext.setGUI(false);
+		runContext.setForceCPU(false);
 
 		final List<Integer> testWindows = new ArrayList<Integer>(5);
 		testWindows.add(52);
@@ -218,29 +222,33 @@ public class MyGPUCallableTest {
 
 		for (final Integer window : testWindows) {
 			testWindowUpdate(pathRoot, dailyPriceValues, dataSize, window, results, dailyPriceDate, selectionName,
-					omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc);
+					omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc, runContext);
 		}
 	}
 
-	private void testWindow(final String pathRoot, final double[] dailyPriceValues, final int dataSize, final int window,
-			final List<Double> results, final List<String> dailyPriceDate, final String selectionName, final double omegaDouble,
-			final double mCoeffDouble, final double tCritDouble, final Indices indices, final String openCLSrc) throws IOException, URISyntaxException {
+	private void testWindow(final String pathRoot, final double[] dailyPriceValues, final int dataSize,
+			final int window, final List<Double> results, final List<String> dailyPriceDate, final String selectionName,
+			final double omegaDouble, final double mCoeffDouble, final double tCritDouble, final Indices indices,
+			final String openCLSrc, final RunContext runContext) throws IOException, URISyntaxException {
 
 		final String previousFilePath = pathRoot + String.valueOf(window) + "days.csv";
 		final RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
-				previousFilePath, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc);
+				previousFilePath, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc,
+				runContext);
 		runIndex.execIndexWithGPU();
 		compareResults(selectionName, window, results);
 		results.clear();
 	}
 
-	private void testWindowUpdate(final String pathRoot, final double[] dailyPriceValues, final int dataSize, final int window,
-			final List<Double> results, final List<String> dailyPriceDate, final String selectionName, final double omegaDouble,
-			final double mCoeffDouble, final double tCritDouble, final Indices indices, final String openCLSrc) throws IOException, URISyntaxException {
+	private void testWindowUpdate(final String pathRoot, final double[] dailyPriceValues, final int dataSize,
+			final int window, final List<Double> results, final List<String> dailyPriceDate, final String selectionName,
+			final double omegaDouble, final double mCoeffDouble, final double tCritDouble, final Indices indices,
+			final String openCLSrc, final RunContext runContext) throws IOException, URISyntaxException {
 
 		final String previousFilePath = pathRoot + String.valueOf(window) + "days.csv";
 		final RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
-				previousFilePath, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc);
+				previousFilePath, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc,
+				runContext);
 		runIndex.execIndexWithGPU();
 		compareResultsUpdate(selectionName, window, results);
 		results.clear();

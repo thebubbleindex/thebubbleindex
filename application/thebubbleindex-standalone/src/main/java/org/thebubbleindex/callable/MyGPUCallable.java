@@ -69,6 +69,8 @@ public class MyGPUCallable implements Callable<Float> {
 	private final String displayPeriodString;
 
 	private final BubbleIndexWorker bubbleIndexWorker;
+	
+	private final RunContext runContext;
 
 	/**
 	 * MyGPUCallable constructor
@@ -90,7 +92,7 @@ public class MyGPUCallable implements Callable<Float> {
 	public MyGPUCallable(final BubbleIndexWorker bubbleIndexWorker, final int index, final int numberOfDays,
 			final LombScargle lombScargle, final CLContext context, final CLQueue queue, final CLProgram program,
 			final CLKernel kernel, final ByteOrder byteOrder, final double tCritDouble, final double[] dailyPriceValues,
-			final String selectionName, final String displayPeriodString) {
+			final String selectionName, final String displayPeriodString, final RunContext runContext) {
 		this.numberOfDays = numberOfDays;
 		this.index = index;
 		this.context = context;
@@ -102,6 +104,7 @@ public class MyGPUCallable implements Callable<Float> {
 		this.selectionName = selectionName;
 		this.displayPeriodString = displayPeriodString;
 		this.bubbleIndexWorker = bubbleIndexWorker;
+		this.runContext = runContext;
 
 		this.freqSize = lombScargle.freqSize;
 		this.qSize = lombScargle.qSize;
@@ -133,7 +136,7 @@ public class MyGPUCallable implements Callable<Float> {
 	@Override
 	public Float call() {
 
-		if (!RunContext.Stop) {
+		if (!runContext.isStop()) {
 
 			final Pointer<Float> Values = allocateFloats(qSize * hSize).order(byteOrder);
 			final Pointer<Float> MeanArray = allocateFloats(qSize * hSize).order(byteOrder);
@@ -297,7 +300,7 @@ public class MyGPUCallable implements Callable<Float> {
 
 			final float output = Temp;
 
-			if (RunContext.isGUI) {
+			if (runContext.isGUI()) {
 				bubbleIndexWorker.publishText(String.format("Name: %s    Date: %s    Value: %15.2f    Window: %d",
 						selectionName, displayPeriodString, output, numberOfDays));
 			} else {

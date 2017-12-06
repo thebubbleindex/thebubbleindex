@@ -31,6 +31,7 @@ public class MyCPUCallable implements Callable<Double> {
 	private final String displayPeriodString;
 	private final String selectionName;
 	private final BubbleIndexWorker bubbleIndexWorker;
+	private final RunContext runContext;
 
 	/**
 	 * MyCPUCallable constructor
@@ -47,7 +48,7 @@ public class MyCPUCallable implements Callable<Double> {
 	 */
 	public MyCPUCallable(final BubbleIndexWorker bubbleIndexWorker, final int index, final int numberOfDays,
 			final LombScargle lombScargle, final double tCritDouble, final double[] dailyPriceValues,
-			final String displayPeriodString, final String selectionName) {
+			final String displayPeriodString, final String selectionName, final RunContext runContext) {
 		this.numberOfDays = numberOfDays;
 		this.index = index;
 		this.lombScargle = lombScargle;
@@ -58,7 +59,7 @@ public class MyCPUCallable implements Callable<Double> {
 		this.bubbleIndexWorker = bubbleIndexWorker;
 		this.omegaDouble = lombScargle.omegaDouble;
 		this.mCoeffDouble = lombScargle.mCoeffDouble;
-
+		this.runContext = runContext;
 	}
 
 	/**
@@ -69,7 +70,7 @@ public class MyCPUCallable implements Callable<Double> {
 	@Override
 	public Double call() {
 
-		if (!RunContext.Stop) {
+		if (!runContext.isStop()) {
 			final double[] TimeValues = new double[numberOfDays];
 			final double[] TimeValues_M_Power = new double[numberOfDays];
 			final double[] LogCosTimeValues = new double[numberOfDays];
@@ -118,7 +119,7 @@ public class MyCPUCallable implements Callable<Double> {
 
 			final double output = Temp;
 
-			if (RunContext.isGUI) {
+			if (runContext.isGUI()) {
 				bubbleIndexWorker.publishText(String.format("Name: %s    Date: %s    Value: %15.2f    Window: %d",
 						selectionName, displayPeriodString, output, numberOfDays));
 			} else {
