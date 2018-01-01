@@ -86,6 +86,9 @@ html(class: '', lang: 'en') {
 									a(href: '//amzn.com/0932750753', 'Elliott Wave Principle: Key To Market Behavior by Robert Prechter and A.J. Frost')
 								}
 								p() {
+									a(href: 'http://a.co/9CbIgnn', 'Order Out of Chaos by Ilya Prigogine and Isabelle Stengers')
+								}
+								p() {
 									a(href: '//arxiv.org/abs/cond-mat/0201458', 'Generalized q-Analysis of Log-Periodicity: Applications to Critical Ruptures by Wei-Xing Zhou and Didier Sornette')
 								}
 								p() {

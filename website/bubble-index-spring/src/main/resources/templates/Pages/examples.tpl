@@ -79,19 +79,19 @@ html(class: '', lang: 'en') {
 								}
 								p('The theoretical output of The Bubble Index, if given a purely mathematical LPPL function.')
 								p() {
-									a(class: 'text-colorful', href: 'https://www.scribd.com/user/224680756/thebubbleindex', 'Black Thursday')
+									a(class: 'text-colorful', href: 'https://bigttrott-thebubbleindex.netdna-ssl.com/PDF/Indices/DJIA/DJIA.pdf', 'Black Thursday')
 								}
 								p('Wealthy tycoons and Wall Street businessmen on Black Thursday, October 24, 1929 witnessed one of the largest declines in the history of the DJIA. With the crash came the start of The Great Depression and economic hardship for millions of families. This was a terrible crisis of capital which precipitated the New Deal policies of FDR who saved capitalism from itself. The Bubble Index: 1,764 Day Window, which peaks on October 17, 1929, shows a rapid increase starting on September 22, 1927. Cautious elites, had they been aware of the growing LPPL oscillations would have anticipated the crash at least a year before the actual event. Imagine having this index in 1928. A trader would have seen the index break record highs on October 1, 1928. In other words, more than a year before the crash of Black Thursday, a quantitative warning sign was predicting disaster.')								
 								p() {
-									a(class: 'text-colorful', href: 'https://www.scribd.com/user/224680756/thebubbleindex', 'Black Monday')
+									a(class: 'text-colorful', href: 'https://bigttrott-thebubbleindex.netdna-ssl.com/PDF/Indices/DJIA/DJIA.pdf', 'Black Monday')
 								}
 								p('Black Monday, October 19, 1987, can be considered a textbook example of an excellent prediction made by The Bubble Index: 1764 Day Window. On March 3, 1983 the index was hovering close to zero. Over the course of five years the index saw a massive and continuous rise to a peak on October 16, 1987. Wall Street firms could have easily avoided losses had they be aware of the LPPL oscillations. The crash of 1987 was an extreme event where bystanders witnessed one of the largest one day losses ever recorded.')
 								p() {
-									a(class: 'text-colorful', href: 'https://www.scribd.com/user/224680756/thebubbleindex', "Late 90's")
+									a(class: 'text-colorful', href: 'https://bigttrott-thebubbleindex.netdna-ssl.com/PDF/Indices/DJIA/DJIA.pdf', "Late 90's")
 								}
 								p("Emotions run high on Wall Street. Herd like behavior is the norm among certain subsets of the elite. And this can be clearly seen by looking at The Bubble Index during the Dot-Com Bubble. The Bubble Index (clearly seen in the 5,040, 10,080, and 20,160 Day Windows) rockets from near zero in the 1980's to a all-time highs in early 2000. Many common-sense people at the time knew that this was a massive bubble; evidenced was provided by some of the most extreme company valuations in recorded history. However, what they did not know was when the music was going to stop. With the help of The Bubble Index, a wise investor would have been out of the market.")
 								p() {
-									a(class: 'text-colorful', href: 'https://www.scribd.com/user/224680756/thebubbleindex', "The Great Recession")
+									a(class: 'text-colorful', href: 'https://bigttrott-thebubbleindex.netdna-ssl.com/PDF/Indices/DJIA/DJIA.pdf', "The Great Recession")
 								}
 								p("As seen in The Bubble Index: DJIA (10,080 and 20,160 Day Windows), the crash appears to be the result of a process with long memory. What's striking is that this increase started in the early 1980's. These indices reached a peak in November 2008. The warning signs for the beginning of the Great Recession and the crash of 2008-9 couldn't have been more clear. But don't worry, central bankers know this and visit The Bubble Index website daily.")
 								p('Predicting Anti-Bubbles')
