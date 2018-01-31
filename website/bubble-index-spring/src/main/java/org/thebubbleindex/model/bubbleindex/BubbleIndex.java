@@ -23,16 +23,16 @@ public class BubbleIndex {
 
 	public void findLocation() {
 
-		this.threejsLocation = "https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/" + this.dtype + "/" + this.symbol + "/"
+		this.threejsLocation = "https://cdn.thebubbleindex.com/WebGL/" + this.dtype + "/" + this.symbol + "/"
 				+ this.symbol + ".html";
 
-		this.pdfLocation = "https://bigttrott-thebubbleindex.netdna-ssl.com/PDF/" + this.dtype + "/" + this.symbol + "/"
+		this.pdfLocation = "https://cdn.thebubbleindex.com/PDF/" + this.dtype + "/" + this.symbol + "/"
 				+ this.symbol + ".pdf";
 
-		this.contourPDFLocation = "//bigttrott-thebubbleindex.netdna-ssl.com/" + this.dtype + "/" + this.symbol + "/"
+		this.contourPDFLocation = "//cdn.thebubbleindex.com/" + this.dtype + "/" + this.symbol + "/"
 				+ this.symbol + "Contour.pdf";
 
-		this.contourPNGLocation = "//bigttrott-thebubbleindex.netdna-ssl.com/" + this.dtype + "/" + this.symbol + "/"
+		this.contourPNGLocation = "//cdn.thebubbleindex.com/" + this.dtype + "/" + this.symbol + "/"
 				+ this.symbol + "Contour.png";
 	}
 
