@@ -984,18 +984,18 @@ public class MainController {
 	}
 
 	public ModelAndView plot(final String type, final String name, final String symbol) {
-		return new ModelAndView("redirect:https://bigttrott-thebubbleindex.netdna-ssl.com/TheBubbleIndex/" + type + "/" + symbol + "/"
+		return new ModelAndView("redirect:https://cdn.thebubbleindex.com/TheBubbleIndex/" + type + "/" + symbol + "/"
 				+ "plot.html");
 	}
 	
 	@RequestMapping(value = "/plot", method = RequestMethod.GET)
 	public ModelAndView plotEndpoint(@RequestParam("type") final String type, @RequestParam(value = "name", required = false) final String name, @RequestParam("symbol") final String symbol) {
-		return new ModelAndView("redirect:https://bigttrott-thebubbleindex.netdna-ssl.com/TheBubbleIndex/" + type + "/" + symbol + "/"
+		return new ModelAndView("redirect:https://cdn.thebubbleindex.com/TheBubbleIndex/" + type + "/" + symbol + "/"
 				+ "plot.html");
 	}
 
 	public ModelAndView fullPlot(final String type, final String name, final String symbol) {
-		return new ModelAndView("redirect:https://bigttrott-thebubbleindex.netdna-ssl.com/TheBubbleIndex/" + type + "/" + symbol + "/"
+		return new ModelAndView("redirect:https://cdn.thebubbleindex.com/TheBubbleIndex/" + type + "/" + symbol + "/"
 				+ "fullPlot.html");
 	}
 

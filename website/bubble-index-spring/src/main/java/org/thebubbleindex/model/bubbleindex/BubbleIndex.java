@@ -23,10 +23,10 @@ public class BubbleIndex {
 
 	public void findLocation() {
 
-		this.threejsLocation = "https://cdn.thebubbleindex.com/WebGL/" + this.dtype + "/" + this.symbol + "/"
+		this.threejsLocation = "https://cdn.thebubbleindex.com/TheBubbleIndex/" + this.dtype + "/" + this.symbol + "/"
 				+ this.symbol + ".html";
 
-		this.pdfLocation = "https://cdn.thebubbleindex.com/PDF/" + this.dtype + "/" + this.symbol + "/"
+		this.pdfLocation = "https://cdn.thebubbleindex.com/TheBubbleIndex/" + this.dtype + "/" + this.symbol + "/"
 				+ this.symbol + ".pdf";
 
 		this.contourPDFLocation = "//cdn.thebubbleindex.com/" + this.dtype + "/" + this.symbol + "/"
