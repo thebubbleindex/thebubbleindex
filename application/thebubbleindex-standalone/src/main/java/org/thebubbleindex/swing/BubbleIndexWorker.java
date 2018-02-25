@@ -1,5 +1,6 @@
 package org.thebubbleindex.swing;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,10 +18,13 @@ import org.thebubbleindex.util.Utilities;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
-public class BubbleIndexWorker extends SwingWorker<Boolean, String> {
-
+public class BubbleIndexWorker extends SwingWorker<Boolean, String> implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9031530067913885376L;
 	final private RunType type;
 	final private GUI gui;
 	final private String windowsInput;

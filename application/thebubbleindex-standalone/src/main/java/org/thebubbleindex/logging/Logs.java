@@ -1,15 +1,21 @@
 package org.thebubbleindex.logging;
 
 import org.apache.logging.log4j.Logger;
+
+import java.io.Serializable;
+
 import org.apache.logging.log4j.LogManager;
 
 /**
  * Logs contains the Log4j2 logger instance
  * 
- * @author bigttrott
+ * @author thebubbleindex
  */
-public class Logs {
-
+public class Logs implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3261003642653463279L;
 	public static Logger myLogger;
 
 	static {

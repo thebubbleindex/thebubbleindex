@@ -5,8 +5,11 @@ import com.nativelibs4java.util.IOUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.ThreadContext;
+import org.thebubbleindex.computegrid.BubbleIndexComputeGrid;
+import org.thebubbleindex.computegrid.IgniteBubbleIndexComputeGrid;
 import org.thebubbleindex.data.UpdateData;
 import org.thebubbleindex.exception.FailedToRunIndex;
 import org.thebubbleindex.inputs.Indices;
@@ -22,7 +25,7 @@ import org.thebubbleindex.util.Utilities;
  * either run in a Graphical User Interface (GUI) mode or a non-GUI mode via
  * command line arguments.
  * 
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class noGUI {
 
@@ -64,23 +67,9 @@ public class noGUI {
 	 * 
 	 */
 	public static void main(final String[] args) throws ClassNotFoundException, IOException {
-
-		String windows;
-		int threads;
-		float tCrit;
-		float mCoeff;
-		float omega;
-		@SuppressWarnings("unused")
-		Boolean forcedCPU;
-		String categoryName;
-		String selectionName;
 		String openCLSrc = null;
 
-		final DailyDataCache dailyDataCache = new DailyDataCache();
 		final Date startTime = new Date();
-		final Indices indices = new Indices();
-		final RunContext runContext = new RunContext();
-
 		ThreadContext.put("StartTime", startTime.toString());
 
 		Logs.myLogger.info("Starting The Bubble Index");
@@ -88,13 +77,17 @@ public class noGUI {
 		if (args.length > 0) {
 			Logs.myLogger.info("Found command line arguments.");
 
-			for (final String s : args) {
-				Logs.myLogger.info("{}", s);
+			for (final String arg : args) {
+				Logs.myLogger.info("{}", arg);
 			}
 
 			int i = 0;
 
-			if (args[i].equalsIgnoreCase("noGUI")) {
+			if (args[i].equalsIgnoreCase("computegrid")) {
+				final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
+				final DailyDataCache dailyDataCache = new DailyDataCache();
+				final Indices indices = new Indices();
+				final RunContext runContext = new RunContext();
 
 				Logs.myLogger.info("Running non-GUI mode");
 				runContext.setGUI(false);
@@ -112,15 +105,161 @@ public class noGUI {
 				final RunType type = RunType.valueOf(args[++i]);
 
 				if (type == RunType.Single) {
-					categoryName = args[++i];
-					selectionName = args[++i];
-					windows = args[++i];
-					threads = Integer.parseInt(args[++i]);
-					tCrit = Float.parseFloat(args[++i]);
-					mCoeff = Float.parseFloat(args[++i]);
-					omega = Float.parseFloat(args[++i]);
-					forcedCPU = Boolean.parseBoolean(args[++i]);
+					final String categoryName = args[++i];
+					final String selectionName = args[++i];
+					final String windows = args[++i];
+					final int threads = Integer.parseInt(args[++i]);
+					final float tCrit = Float.parseFloat(args[++i]);
+					final float mCoeff = Float.parseFloat(args[++i]);
+					final float omega = Float.parseFloat(args[++i]);
+					final boolean forcedCPU = Boolean.parseBoolean(args[++i]);
+
 					runContext.setThreadNumber(threads);
+					bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
+					bubbleIndexComputeGrid.setIndices(indices);
+					bubbleIndexComputeGrid.setRunContext(runContext);
+
+					Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}",
+							categoryName, selectionName);
+
+					final String[] windowArray = windows.split(",");
+
+					for (final String window : windowArray) {
+						final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
+								Integer.parseInt(window.trim()), categoryName, selectionName, dailyDataCache, indices,
+								openCLSrc, runContext);
+						bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+					}
+
+					bubbleIndexComputeGrid.deployTasks();
+
+					final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
+					for (final BubbleIndex result : results) {
+						result.outputResults(null);
+					}
+
+					bubbleIndexComputeGrid.shutdownGrid();
+				} else if (type == RunType.Category) {
+					final String categoryName = args[++i];
+					final String windows = args[++i];
+					final int threads = Integer.parseInt(args[++i]);
+					final float tCrit = Float.parseFloat(args[++i]);
+					final float mCoeff = Float.parseFloat(args[++i]);
+					final float omega = Float.parseFloat(args[++i]);
+					final boolean forcedCPU = Boolean.parseBoolean(args[++i]);
+
+					runContext.setThreadNumber(threads);
+					bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
+					bubbleIndexComputeGrid.setIndices(indices);
+					bubbleIndexComputeGrid.setRunContext(runContext);
+
+					Logs.myLogger.info("Running entire category. Category Name = {}", categoryName);
+
+					final ArrayList<String> updateNames = indices.getCategoriesAndComponents().get(categoryName)
+							.getComponents();
+					final String[] windowArray = windows.split(",");
+
+					for (final String updateName : updateNames) {
+						for (final String window : windowArray) {
+							final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
+									Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache, indices,
+									openCLSrc, runContext);
+							bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+						}
+					}
+
+					bubbleIndexComputeGrid.deployTasks();
+
+					final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
+					for (final BubbleIndex result : results) {
+						result.outputResults(null);
+					}
+
+					bubbleIndexComputeGrid.shutdownGrid();
+				} else if (type == RunType.All) {
+					final String windows = args[++i];
+					final int threads = Integer.parseInt(args[++i]);
+					final float tCrit = Float.parseFloat(args[++i]);
+					final float mCoeff = Float.parseFloat(args[++i]);
+					final float omega = Float.parseFloat(args[++i]);
+					final boolean forcedCPU = Boolean.parseBoolean(args[++i]);
+
+					runContext.setThreadNumber(threads);
+					bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
+					bubbleIndexComputeGrid.setIndices(indices);
+					bubbleIndexComputeGrid.setRunContext(runContext);
+
+					Logs.myLogger.info("Running all categories and selections.");
+					final String[] windowArray = windows.split(",");
+
+					for (final Map.Entry<String, InputCategory> myEntry : indices.getCategoriesAndComponents()
+							.entrySet()) {
+
+						final String categoryName = myEntry.getKey();
+						final ArrayList<String> updateNames = myEntry.getValue().getComponents();
+
+						for (final String updateName : updateNames) {
+							for (final String window : windowArray) {
+								final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
+										Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache,
+										indices, openCLSrc, runContext);
+								bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+							}
+						}
+					}
+
+					bubbleIndexComputeGrid.deployTasks();
+
+					final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
+					for (final BubbleIndex result : results) {
+						result.outputResults(null);
+					}
+
+					bubbleIndexComputeGrid.shutdownGrid();
+				} else if (type == RunType.Update) {
+					runContext.setThreadNumber(Runtime.getRuntime().availableProcessors());
+					String quandlKey;
+					try {
+						quandlKey = args[++i];
+					} catch (final Exception ex) {
+						quandlKey = "";
+					}
+					final UpdateData updateData = new UpdateData(null, quandlKey, indices, runContext);
+					updateData.run();
+				}
+			} else if (args[i].equalsIgnoreCase("noGUI")) {
+
+				final DailyDataCache dailyDataCache = new DailyDataCache();
+				final Indices indices = new Indices();
+				final RunContext runContext = new RunContext();
+
+				Logs.myLogger.info("Running non-GUI mode");
+				runContext.setGUI(false);
+				indices.initialize();
+
+				try {
+					Logs.myLogger.info("Reading OpenCL source file.");
+					openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("GPUKernel.cl"));
+				} catch (final IOException ex) {
+					Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
+					Utilities.displayOutput(runContext, "Error. OpenCL source file missing.", false);
+				}
+				Utilities.displayOutput(runContext, "Working Dir: " + indices.getUserDir(), false);
+
+				final RunType type = RunType.valueOf(args[++i]);
+
+				if (type == RunType.Single) {
+					final String categoryName = args[++i];
+					final String selectionName = args[++i];
+					final String windows = args[++i];
+					final int threads = Integer.parseInt(args[++i]);
+					final float tCrit = Float.parseFloat(args[++i]);
+					final float mCoeff = Float.parseFloat(args[++i]);
+					final float omega = Float.parseFloat(args[++i]);
+					final boolean forcedCPU = Boolean.parseBoolean(args[++i]);
+
+					runContext.setThreadNumber(threads);
+
 					Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}",
 							categoryName, selectionName);
 					final String[] windowArray = windows.split(",");
@@ -138,13 +277,13 @@ public class noGUI {
 						}
 					}
 				} else if (type == RunType.Category) {
-					categoryName = args[++i];
-					windows = args[++i];
-					threads = Integer.parseInt(args[++i]);
-					tCrit = Float.parseFloat(args[++i]);
-					mCoeff = Float.parseFloat(args[++i]);
-					omega = Float.parseFloat(args[++i]);
-					forcedCPU = Boolean.parseBoolean(args[++i]);
+					final String categoryName = args[++i];
+					final String windows = args[++i];
+					final int threads = Integer.parseInt(args[++i]);
+					final float tCrit = Float.parseFloat(args[++i]);
+					final float mCoeff = Float.parseFloat(args[++i]);
+					final float omega = Float.parseFloat(args[++i]);
+					final boolean forcedCPU = Boolean.parseBoolean(args[++i]);
 
 					runContext.setThreadNumber(threads);
 					Logs.myLogger.info("Running entire category. Category Name = {}", categoryName);
@@ -154,7 +293,6 @@ public class noGUI {
 					final String[] windowArray = windows.split(",");
 
 					for (final String updateName : updateNames) {
-						selectionName = updateName;
 						for (final String window : windowArray) {
 							final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
 									Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache, indices,
@@ -164,12 +302,12 @@ public class noGUI {
 						}
 					}
 				} else if (type == RunType.All) {
-					windows = args[++i];
-					threads = Integer.parseInt(args[++i]);
-					tCrit = Float.parseFloat(args[++i]);
-					mCoeff = Float.parseFloat(args[++i]);
-					omega = Float.parseFloat(args[++i]);
-					forcedCPU = Boolean.parseBoolean(args[++i]);
+					final String windows = args[++i];
+					final int threads = Integer.parseInt(args[++i]);
+					final float tCrit = Float.parseFloat(args[++i]);
+					final float mCoeff = Float.parseFloat(args[++i]);
+					final float omega = Float.parseFloat(args[++i]);
+					final boolean forcedCPU = Boolean.parseBoolean(args[++i]);
 
 					runContext.setThreadNumber(threads);
 					Logs.myLogger.info("Running all categories and selections.");
@@ -178,11 +316,10 @@ public class noGUI {
 					for (final Map.Entry<String, InputCategory> myEntry : indices.getCategoriesAndComponents()
 							.entrySet()) {
 
-						categoryName = myEntry.getKey();
+						final String categoryName = myEntry.getKey();
 						final ArrayList<String> updateNames = myEntry.getValue().getComponents();
 
 						for (final String updateName : updateNames) {
-							selectionName = updateName;
 							for (final String window : windowArray) {
 								final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
 										Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache,
@@ -207,16 +344,21 @@ public class noGUI {
 					GUI.GUImain(runContext);
 				}
 			} else {
+				final RunContext runContext = new RunContext();
 				runContext.setGUI(true);
-				omega = Float.parseFloat(args[++i]);
-				tCrit = Float.parseFloat(args[++i]);
-				mCoeff = Float.parseFloat(args[++i]);
+
+				final float omega = Float.parseFloat(args[++i]);
+				final float tCrit = Float.parseFloat(args[++i]);
+				final float mCoeff = Float.parseFloat(args[++i]);
+
 				GUI.GUImain(runContext, omega, tCrit, mCoeff);
 			}
 		} else {
 			Logs.myLogger.info("No command line args found. Running GUI mode.");
 
+			final RunContext runContext = new RunContext();
 			runContext.setGUI(true);
+
 			GUI.GUImain(runContext);
 		}
 	}

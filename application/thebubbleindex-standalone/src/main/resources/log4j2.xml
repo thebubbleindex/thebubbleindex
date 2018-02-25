@@ -32,9 +32,9 @@
 			<DefaultRolloverStrategy max="10" />
 		</RollingFile>
 		<RollingFile name="infoLogger-linux"
-			fileName="${user-dir}/${log-path}/thebubbleindex-info-${date:yyyy-MM-dd}.log"
+			fileName="${log-path}/thebubbleindex-info-${date:yyyy-MM-dd}.log"
 			immediateFlush="true" append="false"
-			filePattern="${user-dir}/${log-path}/thebubbleindex-info-%d{yyyy-MM-dd}-%i.log">
+			filePattern="${log-path}/thebubbleindex-info-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level - %msg%n" />
 			<Policies>
 				<SizeBasedTriggeringPolicy size="5MB" />
@@ -42,9 +42,9 @@
 			<DefaultRolloverStrategy max="10" />
 		</RollingFile>
 		<RollingFile name="errorLogger-linux"
-			fileName="${user-dir}/${log-path}/thebubbleindex-errors-${date:yyyy-MM-dd}.log"
+			fileName="${log-path}/thebubbleindex-errors-${date:yyyy-MM-dd}.log"
 			immediateFlush="true" append="false"
-			filePattern="${user-dir}/${log-path}/thebubbleindex-errors-%d{yyyy-MM-dd}-%i.log">
+			filePattern="${log-path}/thebubbleindex-errors-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout
 				pattern="%d{yyy-MM-dd HH:mm:ss.SSS} %class{36} %L %M %-5level - %msg%n" />
 			<Policies>

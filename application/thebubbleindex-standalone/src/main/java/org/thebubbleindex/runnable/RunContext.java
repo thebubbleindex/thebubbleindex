@@ -1,13 +1,18 @@
 package org.thebubbleindex.runnable;
 
+import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
-public class RunContext {
+public class RunContext implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5890820843688805245L;
 	private int threadNumber = 1;
 	private boolean isGUI;
 	private boolean forceCPU;

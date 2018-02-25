@@ -12,6 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,9 +54,13 @@ import org.thebubbleindex.util.Utilities;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
-public class BubbleIndexPlot {
+public class BubbleIndexPlot implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2545330008014498256L;
 	private final int maxWindows = 4;
 	private final List<Integer> backtestDayLengths = new ArrayList<Integer>(maxWindows);
 	public final Date begDate;

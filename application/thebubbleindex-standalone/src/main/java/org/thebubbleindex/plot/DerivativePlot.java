@@ -12,6 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,9 +54,13 @@ import org.thebubbleindex.util.Utilities;
 /**
  * Plots the derivatives of The Bubble Index with JFreeChart
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
-public class DerivativePlot {
+public class DerivativePlot implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2367485335893810831L;
 	private final int maxWindows = 4;
 	private final List<Integer> backtestDayLengths = new ArrayList<Integer>(maxWindows);
 	private final List<String> dailyPriceData;

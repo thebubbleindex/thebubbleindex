@@ -21,6 +21,11 @@ import java.util.List;
 import java.util.Scanner;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * 
+ * @author thebubbleindex
+ *
+ */
 public class MyGPUCallableTest {
 
 	final double epsilon = 0.01;

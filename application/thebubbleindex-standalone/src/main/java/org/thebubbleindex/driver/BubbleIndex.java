@@ -2,6 +2,7 @@ package org.thebubbleindex.driver;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,10 +21,14 @@ import org.thebubbleindex.util.Utilities;
  * variable initialization, reads input files and stores results obtained in the
  * Run for a single time window.
  * 
- * @author ttrott
+ * @author thebubbleindex
  */
-public class BubbleIndex {
+public class BubbleIndex implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6695607232313746483L;
 	private final String categoryName;
 	private final String selectionName;
 
@@ -285,5 +290,13 @@ public class BubbleIndex {
 				Logs.myLogger.error("Number Format Exception. Code 030. " + ex);
 			}
 		}
+	}
+
+	public int getWindow() {
+		return window;
+	}
+
+	public List<Double> getResults() {
+		return results;
 	}
 }

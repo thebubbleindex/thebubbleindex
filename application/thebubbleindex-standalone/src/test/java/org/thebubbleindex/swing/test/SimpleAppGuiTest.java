@@ -19,7 +19,7 @@ public class SimpleAppGuiTest {
 	final String fileSep = File.separator;
 
 	// un-comment to debug
-	// @Test
+	@Test
 	public void shouldOpenGuiForDebugging()
 			throws InterruptedException, IOException, ParseException, URISyntaxException, ClassNotFoundException {
 

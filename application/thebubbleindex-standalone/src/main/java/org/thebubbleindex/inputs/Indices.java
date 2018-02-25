@@ -3,6 +3,7 @@ package org.thebubbleindex.inputs;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
@@ -14,11 +15,14 @@ import org.thebubbleindex.logging.Logs;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  * 
  */
-public class Indices {
-
+public class Indices implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7852750057765539470L;
 	private final String programDataFolder = "ProgramData";
 	private final String categoryList = "CategoryList.csv";
 	private String userDir;

@@ -6,6 +6,7 @@ import static info.yeppp.Core.Subtract_V64fV64f_V64f;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,9 +27,13 @@ import no.uib.cipr.matrix.Vector;
 
 /**
  *
- * @author ttrott
+ * @author thebubbleindex
  */
-public class Utilities {
+public class Utilities implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -196637027374023030L;
 
 	/**
 	 * 
@@ -234,7 +239,7 @@ public class Utilities {
 			}
 		}
 	}
-
+	
 	/**
 	 * addHeader writes header of output file
 	 * 

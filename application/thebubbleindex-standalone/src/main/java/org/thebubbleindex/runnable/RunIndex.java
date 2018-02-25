@@ -11,6 +11,7 @@ import com.nativelibs4java.opencl.JavaCL;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -41,7 +42,11 @@ import org.thebubbleindex.util.Utilities;
  * 
  * @author bigttrott
  */
-public class RunIndex {
+public class RunIndex implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1893580755880891609L;
 	final private String openCLSrc;
 	final private double[] dailyPriceValues;
 	final private int dataSize;
