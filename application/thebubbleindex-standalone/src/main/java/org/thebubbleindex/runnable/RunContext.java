@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class RunContext {
 

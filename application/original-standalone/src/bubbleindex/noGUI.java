@@ -13,7 +13,7 @@ import org.apache.logging.log4j.ThreadContext;
  * Interface (GUI) mode or a non-GUI mode via command line
  * arguments. 
  * 
- * @author ttrott
+ * @author thebubbleindex
  */
 public class noGUI {
     

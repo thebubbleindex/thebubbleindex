@@ -14,7 +14,7 @@ import org.apache.commons.math3.util.FastMath;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class InputCategory {
 

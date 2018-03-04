@@ -1,5 +1,5 @@
 /**
- * @author bigttrott
+ * @author thebubbleindex
  *
  */
 package org.thebubbleindex.math;

@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 /**
  *
- * @author ttrott
+ * @author thebubbleindex
  * 
  */
 public class Indices {

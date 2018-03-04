@@ -3,7 +3,7 @@ title = "D3.js Multiple Line Plot - Part 4"
 categories = ["code", "d3", "programming", "website"]
 date = "2015-06-28T22:48:45-04:00"
 +++
-Working version of the plot, download <a href="https://bigttrott-thebubbleindex.netdna-ssl.com/Docs/plot_working_07272015.zip">here</a>.
+Working version of the plot, download <a href="https://cdn.thebubbleindex.com/Docs/plot_working_07272015.zip">here</a>.
 
 This post discusses the code responsible for creating an interactive legend for a multiple line plot -- as seen on the Plot page of The Bubble Index. The legend will be located below the plot. In order to create an area to contain room for the legend's text, the plot display must not fill the entire height of the svg object. As seen in <a href="https://lpplmarketwatch.com/2015/07/d3-multiple-line-plot-part-1/" target="_blank">part 1</a>, the plot has a bottom margin of size 100 and a top margin of size 20. This allows space for a legend to span the area below the plot.
 <pre><code>var maxPerRow = Math.ceil(indices.length / 2);

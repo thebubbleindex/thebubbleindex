@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class MyCallable implements Callable<Boolean> {
 

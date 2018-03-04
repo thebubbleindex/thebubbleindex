@@ -42,7 +42,7 @@ import org.thebubbleindex.util.Utilities;
  * GUI Creates, draws, and contains the input fields to run the GUI mode of The
  * Bubble Index application.
  * 
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class GUI extends JFrame {
 

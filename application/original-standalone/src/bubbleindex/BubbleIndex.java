@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * Provides variable initialization, reads input files and stores results
  * obtained in the Run for a single time window.
  * 
- * @author ttrott
+ * @author thebubbleindex
  */
 public class BubbleIndex {
     

@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  *
- * @author ttrott
+ * @author thebubbleindex
  */
 public class URLS {
     private String dataName;

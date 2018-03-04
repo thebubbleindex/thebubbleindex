@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public final class CreateJSON3DFiles {
 

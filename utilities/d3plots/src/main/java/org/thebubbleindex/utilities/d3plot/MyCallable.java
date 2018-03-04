@@ -7,7 +7,7 @@ import org.thebubbleindex.utilities.d3plot.CreatePlotFiles;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class MyCallable implements Callable<Boolean> {
 

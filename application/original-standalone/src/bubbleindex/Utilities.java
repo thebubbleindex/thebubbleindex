@@ -16,7 +16,7 @@ import org.ojalgo.matrix.PrimitiveMatrix;
 
 /**
  *
- * @author ttrott
+ * @author thebubbleindex
  */
 public class Utilities {
     

@@ -15,7 +15,7 @@ footer(class: 'section') {
 							a(class: 'text-colorful', href: 'http://thebubbleindex.lefora.com', 'Forum')
 						}
 						li() {
-							a(class: 'text-colorful', href: 'https://github.com/bigttrott/thebubbleindex', 'Source Code')
+							a(class: 'text-colorful', href: 'https://github.com/thebubbleindex', 'Source Code')
 						}
 						li() {
 							a(class: 'text-colorful', href: 'http://lpplmarketwatch.com', 'Blog')
@@ -65,7 +65,7 @@ footer(class: 'section') {
 					a(href: 'https://anautonomousagent.com') {
 						i(class: 'sprite sprite-linkedin-icon') {}
 					}
-					a(href: 'https://github.com/bigttrott/thebubbleindex') {
+					a(href: 'https://github.com/thebubbleindex') {
 						i(class: 'sprite sprite-pinterest-icon') {}
 					}					
 					a(href: 'http://thebubbleindex.lefora.com') {

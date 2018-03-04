@@ -26,7 +26,7 @@ import no.uib.cipr.matrix.Vector;
 
 /**
  *
- * @author ttrott
+ * @author thebubbleindex
  */
 public class Utilities {
 

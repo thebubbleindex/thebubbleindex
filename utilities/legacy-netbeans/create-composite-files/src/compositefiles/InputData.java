@@ -19,7 +19,7 @@ import org.apache.commons.math3.util.FastMath;
 
 /**
  *
- * @author ttrott
+ * @author thebubbleindex
  */
 public class InputData {
     

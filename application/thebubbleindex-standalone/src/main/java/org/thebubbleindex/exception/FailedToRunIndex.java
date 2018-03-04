@@ -2,7 +2,7 @@ package org.thebubbleindex.exception;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class FailedToRunIndex extends RuntimeException {
 

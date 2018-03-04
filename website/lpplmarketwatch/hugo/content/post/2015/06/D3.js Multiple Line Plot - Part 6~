@@ -3,7 +3,7 @@ title = "D3.js Multiple Line Plot - Part 6"
 tags = ["code", "d3", "programming", "website"]
 date = "2015-06-30T22:48:45-04:00"
 +++
-Working version of the plot, download <a href="https://bigttrott-thebubbleindex.netdna-ssl.com/Docs/plot_working_07272015.zip">here</a>.
+Working version of the plot, download <a href="https://cdn.thebubbleindex.com/Docs/plot_working_07272015.zip">here</a>.
 
 This final post describes the code which needs to be executed after any time-series has been added or removed. When a time-series has been added or removed via the legend button, it is possible that its unique range of y-values is not currently displayed in the plot. For instance, assume the "52 Days" and "104 Days" time-series are currently displayed and the y-range is: [0 - 123]. Now, the "2520 Days" time-series is added by a mouse click. This time series has y-values in the range [420 - 540]. Thus, the new range [0 - 540] needs to be established as the new y-axis. However, all the time-series displayed "pre-click" (52 and 104 Days) will need to be removed and re-drawn since their paths are scaled based on the [0 - 123] range of y-values. As seen in <a href="https://lpplmarketwatch.com/2015/07/d3-js-multiple-line-plot-part-4/" target="_blank">part 4</a>, if the legend button is black with a strike-through, the <code>addWindow()</code> function is called:
 <pre><code>function addWindow(name, addAllBoolean, updateBoolean, longTransition) {

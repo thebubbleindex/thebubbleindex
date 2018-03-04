@@ -11,7 +11,7 @@ import org.thebubbleindex.util.Utilities;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class UpdateWorker extends SwingWorker<Boolean, String> {
 

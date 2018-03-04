@@ -1,6 +1,6 @@
 # The Bubble Index
 
-[Download Pre-Built Jar](https://bigttrott-thebubbleindex.netdna-ssl.com/Release/bubbleindex.zip)
+[Download Pre-Built Jar](https://cdn.thebubbleindex.com/Release/bubbleindex.zip)
 
 [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.google.code.gson/gson/badge.svg)](http://)
 

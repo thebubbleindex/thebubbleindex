@@ -14,7 +14,7 @@ import org.thebubbleindex.logging.Logs;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  * 
  */
 public class Indices {

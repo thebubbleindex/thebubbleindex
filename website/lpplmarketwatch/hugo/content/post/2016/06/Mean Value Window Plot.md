@@ -28,6 +28,6 @@ The next step will be to calculate an empirical distribution for each window.
 
 Download the pdfs:
 
-<a href="https://bigttrott-thebubbleindex.netdna-ssl.com/Blog/log.pdf">Natural Log Plot</a>
+<a href="https://cdn.thebubbleindex.com/Blog/log.pdf">Natural Log Plot</a>
 
-<a href="https://bigttrott-thebubbleindex.netdna-ssl.com/Blog/exp.pdf">Exponential Plot</a>
+<a href="https://cdn.thebubbleindex.com/Blog/exp.pdf">Exponential Plot</a>

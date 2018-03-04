@@ -1086,11 +1086,11 @@ public class Application extends Controller {
 	}
 
 	public static void plot(String type, String name, String symbol) {
-		redirect("https://bigttrott-thebubbleindex.netdna-ssl.com/TheBubbleIndex/" + type + "/" + symbol + "/" + "plot.html");
+		redirect("https://cdn.thebubbleindex.com/TheBubbleIndex/" + type + "/" + symbol + "/" + "plot.html");
     }
 
     public static void fullPlot(String type, String name, String symbol) {
-    	redirect("https://bigttrott-thebubbleindex.netdna-ssl.com/TheBubbleIndex/" + type + "/" + symbol + "/" + "fullPlot.html");
+    	redirect("https://cdn.thebubbleindex.com/TheBubbleIndex/" + type + "/" + symbol + "/" + "fullPlot.html");
     }
 
 	public static void noResults() {

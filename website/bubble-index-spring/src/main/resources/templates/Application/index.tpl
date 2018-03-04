@@ -108,7 +108,7 @@ html(lang:'en') {
 							div(class: 'block-title background-white') {
 								h4() { yield 'LINKS' }
 							}
-							a(class: 'partner', href: 'https://github.com/bigttrott/thebubbleindex', 'Source Code / Download')
+							a(class: 'partner', href: 'https://github.com/thebubbleindex', 'Source Code / Download')
 							a(class: 'partner', href: 'http://tasmania.ethz.ch/pubfco/fco.html', 'Financial Crisis Observatory')
 							a(class: 'partner', href: 'http://lpplmarketwatch.com', 'LPPL Marketwatch')
 							a(class: 'partner', href: 'https://anautonomousagent.com', 'An Autonomous Agent')

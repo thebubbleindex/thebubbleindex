@@ -53,7 +53,7 @@ import org.thebubbleindex.util.Utilities;
 /**
  * Plots the derivatives of The Bubble Index with JFreeChart
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class DerivativePlot {
 	private final int maxWindows = 4;

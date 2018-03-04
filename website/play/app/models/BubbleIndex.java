@@ -18,9 +18,9 @@ public class BubbleIndex {
 	}
 
 	public void findLocation() {
-		this.threejsLocation = "//bigttrott-thebubbleindex.netdna-ssl.com/WebGL/" + this.type + "/" + this.symbol + "/"
+		this.threejsLocation = "//cdn.thebubbleindex.com/WebGL/" + this.type + "/" + this.symbol + "/"
 				+ this.symbol + ".html";
-		this.pdfLocation = "//bigttrott-thebubbleindex.netdna-ssl.com/PDF/" + this.type + "/" + this.symbol + "/"
+		this.pdfLocation = "//cdn.thebubbleindex.com/PDF/" + this.type + "/" + this.symbol + "/"
 				+ this.symbol + ".pdf";
 	}
 

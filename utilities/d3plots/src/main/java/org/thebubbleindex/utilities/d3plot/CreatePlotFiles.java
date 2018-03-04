@@ -21,7 +21,7 @@ import org.thebubbleindex.utilities.d3plot.MyCallable;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public final class CreatePlotFiles {
 
@@ -123,9 +123,9 @@ public final class CreatePlotFiles {
 
 	public void writeHTMLFiles(final String fileName, final String fileParent) throws IOException {
 
-		final String filePDFString = "https://bigttrott-thebubbleindex.netdna-ssl.com/PDF/"
+		final String filePDFString = "https://cdn.thebubbleindex.com/PDF/"
 				+ fileParent.replace(inputDir, "") + File.separator + fileName + ".pdf";
-		final String fileWebGLString = "https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/"
+		final String fileWebGLString = "https://cdn.thebubbleindex.com/WebGL/"
 				+ fileParent.replace(inputDir, "") + File.separator + fileName + ".html";
 
 		final File d3PlotFile = new File(fileParent + File.separator + "plot.html");

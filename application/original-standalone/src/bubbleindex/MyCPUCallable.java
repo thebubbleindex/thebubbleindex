@@ -8,7 +8,7 @@ import org.apache.commons.math3.util.FastMath;
  * The value returned from the Run method of this class is the value of
  * The Bubble Index for a specific date.
  * 
- * @author ttrott
+ * @author thebubbleindex
  */
 public class MyCPUCallable implements Callable<Float> {
      

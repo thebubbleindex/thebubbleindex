@@ -36,13 +36,13 @@
 		<div id="info">
 			<p><a href="http://threejs.org" target="_blank">three.js</a> - The Bubble Index 3D Contour: $NAME ($BEGDATE to $ENDDATE)</p> <p>Arrow keys / hold right mouse button to pan. Hold left mouse to rotate. Scroll to zoom.</p>
 		</div>
-<script type="text/javascript" src="https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/typeface-0.15.js"></script>
+<script type="text/javascript" src="https://cdn.thebubbleindex.com/WebGL/scripts/typeface-0.15.js"></script>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>
 
-<script type="text/javascript" src="https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/OrbitControls.js"></script>
-<script type="text/javascript" src="https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/Detector.js"></script>
-<script type="text/javascript" src="https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker_regular.typeface.js"></script>
+<script type="text/javascript" src="https://cdn.thebubbleindex.com/WebGL/scripts/OrbitControls.js"></script>
+<script type="text/javascript" src="https://cdn.thebubbleindex.com/WebGL/scripts/Detector.js"></script>
+<script type="text/javascript" src="https://cdn.thebubbleindex.com/WebGL/scripts/helvetiker_regular.typeface.js"></script>
 
 <script type="text/javascript">
 
@@ -251,7 +251,7 @@ function init() {
 	
 	  //// Start of TextGeometry
 	var loader = new THREE.FontLoader();
-	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
+	loader.load( 'https://cdn.thebubbleindex.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
 		var textGeo1 = new THREE.TextGeometry( "Date", {
 			font: font,
 			size: 1, // font size
@@ -277,7 +277,7 @@ function init() {
 
 	//// Start of TextGeometry
 	var loader = new THREE.FontLoader();
-	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
+	loader.load( 'https://cdn.thebubbleindex.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
 		var textGeo2 = new THREE.TextGeometry( "Window", {
 			font: font,
 			size: 1, // font size
@@ -303,7 +303,7 @@ function init() {
 
   //// Start of TextGeometry
 	var loader = new THREE.FontLoader();
-	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
+	loader.load( 'https://cdn.thebubbleindex.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
 		var textGeo3 = new THREE.TextGeometry( "Value", {
 			font: font,
 			size: 1, // font size
@@ -357,7 +357,7 @@ function addTicks() {
     }
 
 	var loader = new THREE.FontLoader();
-	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
+	loader.load( 'https://cdn.thebubbleindex.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
 		for (var i = 0; i <= 15; i++) {
 			var dateTick = new Date(startDate.getTime() + dateDiffIntervalLength * i);
 
@@ -389,7 +389,7 @@ function addTicks() {
 	});
 
 	var loader = new THREE.FontLoader();
-	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
+	loader.load( 'https://cdn.thebubbleindex.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
 	//window axis ticks
 		for (var i = 0; i <= numTicks; i = i + 2) {
 			var geometry = new THREE.Geometry();
@@ -424,7 +424,7 @@ function addTicks() {
 	});
 
 	var loader = new THREE.FontLoader();
-	loader.load( 'https://bigttrott-thebubbleindex.netdna-ssl.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
+	loader.load( 'https://cdn.thebubbleindex.com/WebGL/scripts/helvetiker-typeface-normal.json', function ( font ) {
 	//value axis ticks
 		for (var i = 0; i <= numTicks; i = i + 2) {
 			var geometry = new THREE.Geometry();

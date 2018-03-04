@@ -22,7 +22,7 @@ import org.thebubbleindex.util.Utilities;
  * either run in a Graphical User Interface (GUI) mode or a non-GUI mode via
  * command line arguments.
  * 
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class noGUI {
 

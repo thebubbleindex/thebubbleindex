@@ -18,7 +18,7 @@ import javax.swing.SwingUtilities;
  * GUI Creates, draws, and contains the input fields to run
  * the GUI mode of The Bubble Index application.
  * 
- * @author ttrott
+ * @author thebubbleindex
  */
 public class GUI extends javax.swing.JFrame {
 

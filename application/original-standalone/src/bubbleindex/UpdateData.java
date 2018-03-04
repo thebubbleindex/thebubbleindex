@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
 
 /**
  *
- * @author ttrott
+ * @author thebubbleindex
  */
 public class UpdateData {
 

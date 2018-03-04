@@ -22,7 +22,7 @@ import org.apache.commons.math3.util.FastMath;
  * For more information see:
  * <a href="http://en.wikipedia.org/wiki/Least-squares_spectral_analysis">Least Squares spectral analysis</a>
  * 
- * @author ttrott
+ * @author thebubbleindex
  */
 public class LombScargle {
       

@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * RunIndex creates a Run instance with the GPU or CPU execution code
  * 
- * @author ttrott
+ * @author thebubbleindex
  */
 public class RunIndex {
      

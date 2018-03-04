@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class CreateXYZFiles {
 

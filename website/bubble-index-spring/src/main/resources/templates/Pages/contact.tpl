@@ -72,7 +72,7 @@ html(class: '', lang: 'en') {
 								}
 								a(class: 'facebook', href: '//www.facebook.com/thebubbleindex') {}
 								a(class: 'twitter', href: '//mastodon.social/@TheBubbleIndex') {}
-								a(class: 'google', href: 'https://github.com/bigttrott/thebubbleindex') {}
+								a(class: 'google', href: 'https://github.com/thebubbleindex') {}
 							}
 							div(class: 'employee-info-description') {
 								div(class: 'name') {
@@ -93,7 +93,7 @@ html(class: '', lang: 'en') {
 								}
 								a(class: 'facebook', href: '//www.facebook.com/thebubbleindex') {}
 								a(class: 'twitter', href: '//mastodon.social/@TheBubbleIndex') {}
-								a(class: 'google', href: 'https://github.com/bigttrott/thebubbleindex') {}
+								a(class: 'google', href: 'https://github.com/thebubbleindex') {}
 							}
 							div(class: 'employee-info-description') {
 								div(class: 'name') {
@@ -114,7 +114,7 @@ html(class: '', lang: 'en') {
 								}
 								a(class: 'facebook', href: '//www.facebook.com/thebubbleindex') {}
 								a(class: 'twitter', href: '//mastodon.social/@TheBubbleIndex') {}
-								a(class: 'google', href: 'https://github.com/bigttrott/thebubbleindex') {}
+								a(class: 'google', href: 'https://github.com/thebubbleindex') {}
 							}
 							div(class: 'employee-info-description') {
 								div(class: 'name') {

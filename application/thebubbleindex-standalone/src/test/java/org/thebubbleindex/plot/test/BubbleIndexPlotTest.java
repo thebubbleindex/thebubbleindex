@@ -22,7 +22,7 @@ import org.thebubbleindex.testutil.TestUtil;
 
 /**
  * 
- * @author bigttrott
+ * @author thebubbleindex
  *
  */
 public class BubbleIndexPlotTest {

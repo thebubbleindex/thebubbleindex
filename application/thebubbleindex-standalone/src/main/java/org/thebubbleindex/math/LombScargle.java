@@ -24,7 +24,7 @@ import org.thebubbleindex.logging.Logs;
  * <a href="http://en.wikipedia.org/wiki/Least-squares_spectral_analysis">Least
  * Squares spectral analysis</a>
  * 
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class LombScargle {
 

@@ -43,7 +43,7 @@ import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 /**
  *
- * @author ttrott
+ * @author thebubbleindex
  */
 public class BubbleIndexPlot {
     private final int[] backtestDayLengths;

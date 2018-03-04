@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 /**
  * Logs contains the Log4j2 logger instance
  * 
- * @author ttrott
+ * @author thebubbleindex
  */
 public class Logs {
     

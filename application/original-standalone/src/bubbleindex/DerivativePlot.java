@@ -39,7 +39,7 @@ import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 /**
  *
- * @author ttrott
+ * @author thebubbleindex
  * Plots the derivatives of The Bubble Index with JFreeChart
  */
 public class DerivativePlot {
