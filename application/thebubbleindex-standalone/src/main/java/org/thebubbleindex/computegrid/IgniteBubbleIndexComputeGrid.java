@@ -32,6 +32,7 @@ import org.thebubbleindex.runnable.RunContext;
  */
 public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	private final String BUBBLE_INDEX_TASK_CACHE_NAME = "bubbleIndexTaskCache";
+	private final String address = "127.0.0.1:47500..47509";
 	private DailyDataCache dailyDataCache;
 	private Indices indices;
 	private RunContext runContext;
@@ -41,7 +42,7 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 
 	public IgniteBubbleIndexComputeGrid() {
 		final TcpDiscoveryMulticastIpFinder ipFinder = new TcpDiscoveryMulticastIpFinder();
-		ipFinder.setAddresses(Collections.singleton(new String("127.0.0.1:47500..47509")));
+		ipFinder.setAddresses(Collections.singleton(address));
 
 		final TcpDiscoverySpi discoverySpi = new TcpDiscoverySpi();
 
@@ -108,5 +109,10 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	@Override
 	public void shutdownGrid() {
 		Ignition.stop(true);
+	}
+
+	@Override
+	public String about() {
+		return ignite.version().toString();
 	}
 }

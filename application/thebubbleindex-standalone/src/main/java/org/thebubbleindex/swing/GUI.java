@@ -42,7 +42,7 @@ import org.thebubbleindex.util.Utilities;
  * GUI Creates, draws, and contains the input fields to run the GUI mode of The
  * Bubble Index application.
  * 
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class GUI extends JFrame {
 
@@ -50,27 +50,61 @@ public class GUI extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -911183288004591630L;
-	private double omega;
-	private double mCoeff;
-	private double tCrit;
-	private String windowsInput;
-	private String categoryName;
-	private String selectionName;
-	private boolean GRAPH_ON;
-	private boolean isCustomRange;
-	private Date begDate = new Date(0);
-	private Date endDate = new Date();
+	protected double omega;
+	protected double mCoeff;
+	protected double tCrit;
+	protected String windowsInput;
+	protected String categoryName;
+	protected String selectionName;
+	protected boolean GRAPH_ON;
+	protected boolean isCustomRange;
+	protected Date begDate = new Date(0);
+	protected Date endDate = new Date();
 	private String quandlKey;
-	private final Indices indices;
-	private String openCLSrc;
-	private final RunContext runContext;
+	protected final Indices indices;
+	protected String openCLSrc;
+	protected final RunContext runContext;
 
+	public static final TextArea OutputText = new java.awt.TextArea();
+	private final JLabel CategoryLabel = new JLabel();
+	private final JComboBox<String> DropDownCategory = new JComboBox<String>();
+	private final JComboBox<String> DropDownSelection = new JComboBox<String>();
+	private final JButton ExitButton = new JButton();
+	private final JCheckBox GraphCheckBox = new JCheckBox();
+	private final JLabel GraphOptionsHeaderLabel = new JLabel();
+	private final JTextField MTextField = new JTextField();
+	private final JLabel MTextLabel = new JLabel();
+	private final JLabel ModelOptionsHeaderLabel = new JLabel();
+	private final JTextField OmegaTextField = new JTextField();
+	private final JLabel OmegaTextLabel = new JLabel();
+	private final JButton RunProgram = new JButton();
+	private final JLabel SelectionAreaLabel = new JLabel();
+	private final JLabel SelectionLabel = new JLabel();
+	private final JButton StopRunningButton = new JButton();
+	private final JTextField TCriticalField = new JTextField();
+	private final JLabel TCriticalLabel = new JLabel();
+	private final JTextField ThreadNumber = new JTextField();
+	private final JLabel TitleLabel = new JLabel();
+	private final JLabel WindowsLabel = new JLabel();
+	private final JCheckBox customDates = new JCheckBox();
+	private final JCheckBox forceCPUBox = new JCheckBox();
+	private final JLabel quandlKeyLabel = new JLabel();
+	private final JTextField quandlKeyTextField = new JTextField();
+	private final JButton runAllNames = new JButton();
+	private final JButton runAllTypes = new JButton();
+	private final JLabel threadsTextLabel = new JLabel();
+	private final JButton updateDataButton = new JButton();
+	private final JTextField windowsTextField = new JTextField();
+	
 	private final ThreadLocal<SimpleDateFormat> dateformat = new ThreadLocal<SimpleDateFormat>() {
 		@Override
 		protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyy-MM-dd");
 		}
 	};
+	
+	private final JFormattedTextField customBegDate = new JFormattedTextField(dateformat.get());
+	private final JFormattedTextField customEndDate = new JFormattedTextField(dateformat.get());
 
 	/**
 	 * Creates new form GUI
@@ -180,10 +214,6 @@ public class GUI extends JFrame {
 	 * This method is called from within the constructor to initialize the form.
 	 */
 	private void initComponents() {
-
-		quandlKeyTextField = new JTextField();
-		quandlKeyLabel = new JLabel();
-
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setTitle("The Bubble Index");
 
@@ -486,7 +516,7 @@ public class GUI extends JFrame {
 	 * @param evt
 	 *            The click action event
 	 */
-	private void RunProgramActionPerformed(final ActionEvent evt) {
+	protected void RunProgramActionPerformed(final ActionEvent evt) {
 		final DailyDataCache dailyDataCache = new DailyDataCache();
 		initializeVariables(dailyDataCache);
 		runnableGUI();
@@ -603,7 +633,7 @@ public class GUI extends JFrame {
 	 * @param evt
 	 *            The click action event.
 	 */
-	private void runAllNamesActionPerformed(final ActionEvent evt) {// GEN-FIRST:event_runAllNamesActionPerformed
+	protected void runAllNamesActionPerformed(final ActionEvent evt) {
 		final DailyDataCache dailyDataCache = new DailyDataCache();
 
 		initializeVariables(dailyDataCache);
@@ -646,7 +676,7 @@ public class GUI extends JFrame {
 	 * @param evt
 	 *            The click action event
 	 */
-	private void runAllTypesActionPerformed(final ActionEvent evt) {
+	protected void runAllTypesActionPerformed(final ActionEvent evt) {
 		final DailyDataCache dailyDataCache = new DailyDataCache();
 
 		initializeVariables(dailyDataCache);
@@ -656,7 +686,6 @@ public class GUI extends JFrame {
 				mCoeff, tCrit, categoryName, selectionName, begDate, endDate, isCustomRange, GRAPH_ON, dailyDataCache,
 				indices, openCLSrc, runContext);
 		bubbleIndexWorker.execute();
-
 	}
 
 	/**
@@ -712,7 +741,7 @@ public class GUI extends JFrame {
 			}
 		});
 	}
-
+	
 	/**
 	 * GUImain provides the main entrance to create and initialize the GUI
 	 * containers.
@@ -751,39 +780,6 @@ public class GUI extends JFrame {
 			}
 		});
 	}
-
-	private final JLabel CategoryLabel = new JLabel();
-	private final JComboBox<String> DropDownCategory = new JComboBox<String>();
-	private final JComboBox<String> DropDownSelection = new JComboBox<String>();
-	private final JButton ExitButton = new JButton();
-	private final JCheckBox GraphCheckBox = new JCheckBox();
-	private final JLabel GraphOptionsHeaderLabel = new JLabel();
-	public final JTextField MTextField = new JTextField();
-	private final JLabel MTextLabel = new JLabel();
-	private final JLabel ModelOptionsHeaderLabel = new JLabel();
-	private final JTextField OmegaTextField = new JTextField();
-	private final JLabel OmegaTextLabel = new JLabel();
-	public static final TextArea OutputText = new java.awt.TextArea();
-	private final JButton RunProgram = new JButton();
-	private final JLabel SelectionAreaLabel = new JLabel();
-	private final JLabel SelectionLabel = new JLabel();
-	private final JButton StopRunningButton = new JButton();
-	public final JTextField TCriticalField = new JTextField();
-	private final JLabel TCriticalLabel = new JLabel();
-	public final JTextField ThreadNumber = new JTextField();
-	private final JLabel TitleLabel = new JLabel();
-	private final JLabel WindowsLabel = new JLabel();
-	private final JFormattedTextField customBegDate = new JFormattedTextField(dateformat.get());
-	private final JCheckBox customDates = new JCheckBox();
-	private final JFormattedTextField customEndDate = new JFormattedTextField(dateformat.get());
-	public final JCheckBox forceCPUBox = new JCheckBox();
-	private JLabel quandlKeyLabel;
-	private JTextField quandlKeyTextField;
-	private final JButton runAllNames = new JButton();
-	private final JButton runAllTypes = new JButton();
-	private final JLabel threadsTextLabel = new JLabel();
-	private final JButton updateDataButton = new JButton();
-	public final JTextField windowsTextField = new JTextField();
 
 	private void customInit(final Properties guiProperties) {
 

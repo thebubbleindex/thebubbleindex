@@ -25,22 +25,22 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> implements S
 	 * 
 	 */
 	private static final long serialVersionUID = -9031530067913885376L;
-	final private RunType type;
-	final private GUI gui;
-	final private String windowsInput;
-	final private Double omega;
-	final private Double tCrit;
-	final private Double mCoeff;
-	final private String categoryName;
-	final private String selectionName;
-	final private Date begDate;
-	final private Date endDate;
-	final private Boolean isCustomRange;
-	final private Boolean GRAPH_ON;
-	final private DailyDataCache dailyDataCache;
-	final private Indices indices;
-	final private String openCLSrc;
-	final private RunContext runContext;
+	protected final RunType type;
+	protected final GUI gui;
+	protected final String windowsInput;
+	protected final Double omega;
+	protected final Double tCrit;
+	protected final Double mCoeff;
+	protected final String categoryName;
+	protected final String selectionName;
+	protected final Date begDate;
+	protected final Date endDate;
+	protected final Boolean isCustomRange;
+	protected final Boolean GRAPH_ON;
+	protected final DailyDataCache dailyDataCache;
+	protected final Indices indices;
+	protected final String openCLSrc;
+	protected final RunContext runContext;
 
 	public BubbleIndexWorker(final RunType type, final GUI gui, final String windowsInput, final Double omega,
 			final Double mCoeff, final Double tCrit, final String categoryName, final String selectionName,
@@ -100,7 +100,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> implements S
 		dailyDataCache.reset();
 	}
 
-	private void runSingle() {
+	protected void runSingle() {
 		Logs.myLogger.info("Run Single Selection Button Clicked.");
 		publish("Running category: " + categoryName + " Name: " + selectionName);
 		final String[] windowInputArray = windowsInput.split(",");
@@ -123,7 +123,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> implements S
 		}
 	}
 
-	private void runAllNames() {
+	protected void runAllNames() {
 		Logs.myLogger.info("Run entire category button clicked");
 		publish("Running category: " + categoryName);
 		// categoryName = (String)DropDownCategory.getSelectedItem();
@@ -147,7 +147,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> implements S
 		}
 	}
 
-	private void runAllTypes() {
+	protected void runAllTypes() {
 		Logs.myLogger.info("Run all categories button clicked.");
 
 		publish("Running all categories.");

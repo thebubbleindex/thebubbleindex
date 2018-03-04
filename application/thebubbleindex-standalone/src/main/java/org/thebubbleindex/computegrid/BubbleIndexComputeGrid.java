@@ -27,4 +27,6 @@ public interface BubbleIndexComputeGrid {
 	void deployTasks();
 
 	void shutdownGrid();
+
+	String about();
 }
