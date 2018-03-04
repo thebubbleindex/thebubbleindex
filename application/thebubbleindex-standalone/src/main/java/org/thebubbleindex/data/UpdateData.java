@@ -25,7 +25,7 @@ import org.thebubbleindex.swing.UpdateWorker;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class UpdateData {
 

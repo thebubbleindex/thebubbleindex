@@ -40,7 +40,7 @@ import org.thebubbleindex.util.Utilities;
 /**
  * RunIndex creates a Run instance with the GPU or CPU execution code
  * 
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class RunIndex implements Serializable {
 	/**

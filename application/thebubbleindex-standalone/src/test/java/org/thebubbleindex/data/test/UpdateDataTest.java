@@ -25,7 +25,7 @@ import org.thebubbleindex.runnable.RunContext;
 
 /**
  * 
- * @author bigttrott
+ * @author thebubbleindex
  *
  */
 public class UpdateDataTest {

@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class DailyDataCache {
 

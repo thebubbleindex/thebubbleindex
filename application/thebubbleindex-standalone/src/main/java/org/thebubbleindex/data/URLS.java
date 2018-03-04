@@ -35,7 +35,7 @@ import org.thebubbleindex.swing.UpdateWorker;
 
 /**
  *
- * @author bigttrott
+ * @author thebubbleindex
  */
 public class URLS {
 	public static final String dailyDataFile = "dailydata.csv";

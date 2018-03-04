@@ -2,7 +2,7 @@
  * 
  */
 /**
- * @author ttrott
+ * @author thebubbleindex
  *
  */
 package org.thebubbleindex.util.test;
