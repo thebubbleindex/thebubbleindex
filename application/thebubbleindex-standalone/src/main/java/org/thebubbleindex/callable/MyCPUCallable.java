@@ -119,7 +119,7 @@ public class MyCPUCallable implements Callable<Double> {
 
 			final double output = Temp;
 
-			if (runContext.isGUI()) {
+			if (runContext.isGUI() && !runContext.isComputeGrid()) {
 				bubbleIndexWorker.publishText(String.format("Name: %s    Date: %s    Value: %15.2f    Window: %d",
 						selectionName, displayPeriodString, output, numberOfDays));
 			} else {

@@ -69,7 +69,7 @@ public class MyGPUCallable implements Callable<Float> {
 	private final String displayPeriodString;
 
 	private final BubbleIndexWorker bubbleIndexWorker;
-	
+
 	private final RunContext runContext;
 
 	/**
@@ -300,13 +300,14 @@ public class MyGPUCallable implements Callable<Float> {
 
 			final float output = Temp;
 
-			if (runContext.isGUI()) {
+			if (runContext.isGUI() && !runContext.isComputeGrid()) {
 				bubbleIndexWorker.publishText(String.format("Name: %s    Date: %s    Value: %15.2f    Window: %d",
 						selectionName, displayPeriodString, output, numberOfDays));
 			} else {
 				System.out.println(String.format("Name: %s    Date: %s    Value: %15.2f    Window: %d", selectionName,
 						displayPeriodString, output, numberOfDays));
 			}
+
 			Values.release();
 			MeanArray.release();
 			logtimeValues.release();
@@ -320,9 +321,7 @@ public class MyGPUCallable implements Callable<Float> {
 			TestFrequencies.release();
 
 			return Temp;
-		}
-
-		else {
+		} else {
 			return 0.0f;
 		}
 	}

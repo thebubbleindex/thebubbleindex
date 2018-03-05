@@ -121,8 +121,11 @@ public class noGUI {
 			if (cmd.hasOption(computeGridShortOption)) {
 				if (cmd.hasOption(guiShortOption)) {
 					final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
+					
 					final RunContext runContext = new RunContext();
 					runContext.setGUI(true);
+					runContext.setComputeGrid(true);
+					
 					bubbleIndexComputeGrid.setRunContext(runContext);
 
 					ComputeGridGUI.GUImain(runContext, bubbleIndexComputeGrid);

@@ -535,6 +535,7 @@ public class GUI extends JFrame {
 	public void initializeVariables(final DailyDataCache dailyDataCache) {
 		dailyDataCache.reset();
 		runContext.setThreadNumber(Integer.parseInt(ThreadNumber.getText().trim()));
+		runContext.setForceCPU(forceCPUBox.isSelected());
 		runContext.setStop(false);
 		GRAPH_ON = GraphCheckBox.isSelected();
 		isCustomRange = customDates.isSelected();

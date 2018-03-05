@@ -18,6 +18,7 @@ public class RunContext implements Serializable {
 	private boolean forceCPU;
 	private volatile boolean stop;
 	private final AtomicInteger numberOfLines = new AtomicInteger();
+	private boolean isComputeGrid;
 
 	public RunContext() {
 	}
@@ -78,5 +79,13 @@ public class RunContext implements Serializable {
 
 	public void resetNumberOfLines() {
 		numberOfLines.set(0);
+	}
+	
+	public void setComputeGrid(final boolean isComputeGrid) {
+		this.isComputeGrid = isComputeGrid;
+	}
+
+	public boolean isComputeGrid() {
+		return isComputeGrid;
 	}
 }

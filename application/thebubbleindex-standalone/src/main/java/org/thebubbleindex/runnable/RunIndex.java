@@ -162,7 +162,7 @@ public class RunIndex implements Serializable {
 		try {
 			final CLPlatform[] platformsArray = JavaCL.listGPUPoweredPlatforms();
 			for (final CLPlatform platform : platformsArray) {
-				if (runContext.isGUI()) {
+				if (runContext.isGUI() && !runContext.isComputeGrid()) {
 					bubbleIndexWorker.publishText(platform.getName());
 				} else {
 					System.out.println(platform.getName());
@@ -177,7 +177,7 @@ public class RunIndex implements Serializable {
 					queues.add(queue);
 					final String deviceName = device.getName();
 					String driverVersion = device.getDriverVersion();
-					if (runContext.isGUI()) {
+					if (runContext.isGUI() && !runContext.isComputeGrid()) {
 						bubbleIndexWorker
 								.publishText("GPU context created with " + deviceName + " :: Driver " + driverVersion);
 					} else {
@@ -195,7 +195,7 @@ public class RunIndex implements Serializable {
 
 		} catch (final CLBuildException th) {
 			Logs.myLogger.error("CLBuildException. Selection Name = {}. {}", selectionName, th);
-			if (runContext.isGUI()) {
+			if (runContext.isGUI() && !runContext.isComputeGrid()) {
 				bubbleIndexWorker.publishText("No GPU found. Using CPU.");
 			} else {
 				System.out.println("No GPU found. Using CPU.");

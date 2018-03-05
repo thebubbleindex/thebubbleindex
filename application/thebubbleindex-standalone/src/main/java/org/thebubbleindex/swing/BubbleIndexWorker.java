@@ -126,7 +126,7 @@ public class BubbleIndexWorker extends SwingWorker<Boolean, String> implements S
 	protected void runAllNames() {
 		Logs.myLogger.info("Run entire category button clicked");
 		publish("Running category: " + categoryName);
-		// categoryName = (String)DropDownCategory.getSelectedItem();
+
 		final ArrayList<String> updateNames = indices.getCategoriesAndComponents().get(categoryName).getComponents();
 		final String[] windowInputArray = windowsInput.split(",");
 
