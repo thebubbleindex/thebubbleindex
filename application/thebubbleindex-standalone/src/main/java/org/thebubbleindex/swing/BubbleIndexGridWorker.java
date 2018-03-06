@@ -50,7 +50,7 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 
 		final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
 		for (final BubbleIndex result : results) {
-			result.outputResults(null);
+			result.outputResults(this);
 		}
 
 		if (GRAPH_ON) {
@@ -83,7 +83,7 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 
 		final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
 		for (final BubbleIndex result : results) {
-			result.outputResults(null);
+			result.outputResults(this);
 		}
 	}
 
@@ -112,7 +112,7 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 
 		final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
 		for (final BubbleIndex result : results) {
-			result.outputResults(null);
+			result.outputResults(this);
 		}
 	}
 }

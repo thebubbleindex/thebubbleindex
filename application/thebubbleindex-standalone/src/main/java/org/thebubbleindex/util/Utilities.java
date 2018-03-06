@@ -194,6 +194,54 @@ public class Utilities implements Serializable {
 		}
 	}
 	
+	/**
+	 * ReadByteValues reads a byte array representation of file containing two columns separated by
+	 * either a tab or comma, storing each column into its own string list.
+	 * 
+	 * @param fileBytes
+	 * @param ColumnOne
+	 * @param ColumnTwo
+	 * @param firstLine
+	 * @param update
+	 * @throws FailedToRunIndex
+	 */
+	public static void ReadByteValues(final byte[] fileBytes, final List<String> ColumnOne, final List<String> ColumnTwo,
+			final boolean firstLine, final boolean update) throws FailedToRunIndex {
+		try {
+			final String fileAsString = new String(fileBytes);
+			final String[] lines = fileAsString.split("\\r?\\n");
+			int index = 0;
+			for (final String line : lines) {
+				// check for header
+				if (index == 0 && firstLine) {
+					index++;
+					continue;
+				}
+				final Scanner lineScan = new Scanner(line);
+				lineScan.useDelimiter(",|\t");
+				/*
+				 * When updating... The Bubble Index files contain three
+				 * columns. The first column is not needed.
+				 */
+				if (update) {
+					lineScan.next();
+					ColumnOne.add(lineScan.next());
+					ColumnTwo.add(lineScan.next());
+				}
+
+				else {
+					ColumnOne.add(lineScan.next());
+					ColumnTwo.add(lineScan.next());
+				}
+				
+				lineScan.close();
+				index++;
+			}
+		} catch (final Exception ex) {
+			Logs.myLogger.error("Error while reading bytes of file.", ex);
+			throw new FailedToRunIndex(ex);
+		}
+	}
 
 	/**
 	 * WriteCSV writes an output file

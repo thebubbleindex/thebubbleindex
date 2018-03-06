@@ -100,6 +100,8 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 		}
 
 		bubbleIndexTaskCache.clearAll(keys);
+		bubbleIndexTasks.clear();
+		
 		Logs.myLogger.log(Level.INFO, "Cleared tasks from cache. Cache now contains {} tasks.",
 				bubbleIndexTaskCache.size(CachePeekMode.PRIMARY));
 

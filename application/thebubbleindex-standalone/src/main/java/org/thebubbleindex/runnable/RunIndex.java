@@ -9,11 +9,8 @@ import com.nativelibs4java.opencl.CLProgram;
 import com.nativelibs4java.opencl.CLQueue;
 import com.nativelibs4java.opencl.JavaCL;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.nio.ByteOrder;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -57,7 +54,7 @@ public class RunIndex implements Serializable {
 	final private double mCoeffDouble;
 	final private double tCritDouble;
 	final private String selectionName;
-	final private String previousFilePath;
+	final private byte[] previousFileBytes;
 	final private BubbleIndexWorker bubbleIndexWorker;
 	final private Indices indices;
 	final private RunContext runContext;
@@ -79,7 +76,7 @@ public class RunIndex implements Serializable {
 	 */
 	public RunIndex(final BubbleIndexWorker bubbleIndexWorker, final double[] dailyPriceValues, final int dataSize,
 			final int window, final List<Double> results, final List<String> dailyPriceDate,
-			final String previousFilePath, final String selectionName, final double omegaDouble,
+			final byte[] previousFileBytes, final String selectionName, final double omegaDouble,
 			final double mCoeffDouble, final double tCritDouble, final Indices indices, final String openCLSrc,
 			final RunContext runContext) {
 		this.dailyPriceValues = dailyPriceValues;
@@ -87,7 +84,7 @@ public class RunIndex implements Serializable {
 		this.window = window;
 		this.results = results;
 		this.dailyPriceDate = dailyPriceDate;
-		this.previousFilePath = previousFilePath;
+		this.previousFileBytes = previousFileBytes;
 		this.selectionName = selectionName;
 		this.omegaDouble = omegaDouble;
 		this.mCoeffDouble = mCoeffDouble;
@@ -120,20 +117,15 @@ public class RunIndex implements Serializable {
 
 		final int START_INDEX;
 
-		if (new File(previousFilePath).exists()) {
-			Utilities.ReadValues(previousFilePath, DataList, DateList, true, true);
+		if (previousFileBytes != null && previousFileBytes.length > 0) {
+			Utilities.ReadByteValues(previousFileBytes, DataList, DateList, true, true);
 		}
 
 		if (DataList.size() == 0 || DateList.size() == 0) {
-			Logs.myLogger.info("Previous file: {} is blank. Trying to delete it.", previousFilePath);
-			try {
-				Files.delete(new File(previousFilePath).toPath());
-			} catch (final IOException e) {
-				Logs.myLogger.info("Previous file: {} is blank. Failed to delete it.", previousFilePath);
-			}
+			Logs.myLogger.info("Previous file bytes is blank.");
 		}
 
-		if (new File(previousFilePath).exists()) {
+		if (previousFileBytes != null && previousFileBytes.length > 0) {
 			int UpdateLength = 0;
 			try {
 				UpdateLength = dailyPriceDate.size() - updateDateMatch(DateList) - 1;
@@ -257,21 +249,15 @@ public class RunIndex implements Serializable {
 
 		final int START_INDEX;
 
-		if (new File(previousFilePath).exists()) {
-			Utilities.ReadValues(previousFilePath, DataList, DateList, true, true);
+		if (previousFileBytes != null && previousFileBytes.length > 0) {
+			Utilities.ReadByteValues(previousFileBytes, DataList, DateList, true, true);
 		}
 
 		if (DataList.size() == 0 || DateList.size() == 0) {
-			Logs.myLogger.info("Previous file: {} is blank. Trying to delete it.", previousFilePath);
-			try {
-				Files.delete(new File(previousFilePath).toPath());
-				execIndexWithCPU();
-			} catch (final IOException e) {
-				Logs.myLogger.info("Previous file: {} is blank. Failed to delete it.", previousFilePath);
-			}
+			Logs.myLogger.info("Previous file is blank.");
 		}
 
-		if (new File(previousFilePath).exists()) {
+		if (previousFileBytes != null && previousFileBytes.length > 0) {
 			int UpdateLength = 0;
 
 			try {

@@ -186,8 +186,10 @@ public class MyCPUCallableTest {
 			final RunContext runContext) throws IOException, URISyntaxException {
 
 		final String previousFilePath = pathRoot + String.valueOf(window) + "days.csv";
-		RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
-				previousFilePath, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc,
+		final byte[] previousFileBytes = Files.readAllBytes(new File(previousFilePath).toPath());
+
+		final RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
+				previousFileBytes, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc,
 				runContext);
 		runIndex.execIndexWithCPU();
 		compareResults(selectionName, window, results);
@@ -200,8 +202,10 @@ public class MyCPUCallableTest {
 			final String openCLSrc, final RunContext runContext) throws IOException, URISyntaxException {
 
 		final String previousFilePath = pathRoot + String.valueOf(window) + "days.csv";
+		final byte[] previousFileBytes = Files.readAllBytes(new File(previousFilePath).toPath());
+
 		final RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
-				previousFilePath, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc,
+				previousFileBytes, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc,
 				runContext);
 		runIndex.execIndexWithCPU();
 		compareResultsUpdate(selectionName, window, results);

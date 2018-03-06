@@ -3,6 +3,7 @@ package org.thebubbleindex.driver;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,7 @@ public class BubbleIndex implements Serializable {
 	private final String selectionName;
 
 	private String previousFilePath;
+	private byte[] previousFileBytes;
 	private String filePath;
 	private String savePath;
 	private final String openCLSrc;
@@ -154,7 +156,6 @@ public class BubbleIndex implements Serializable {
 
 		if (!runContext.isStop())
 			convertPrices();
-
 	}
 
 	/**
@@ -166,7 +167,7 @@ public class BubbleIndex implements Serializable {
 	public void runBubbleIndex(final BubbleIndexWorker bubbleIndexWorker) {
 		if (dataSize > window) {
 			final RunIndex runIndex = new RunIndex(bubbleIndexWorker, dailyPriceDoubleValues, dataSize, window, results,
-					dailyPriceDate, previousFilePath, selectionName, omega, mCoeff, tCrit, indices, openCLSrc,
+					dailyPriceDate, previousFileBytes, selectionName, omega, mCoeff, tCrit, indices, openCLSrc,
 					runContext);
 
 			if (!runContext.isForceCPU()) {
@@ -177,7 +178,7 @@ public class BubbleIndex implements Serializable {
 				} catch (final FailedToRunIndex er) {
 					Logs.myLogger.info("Category Name = {}, Selection Name = {}, Window = {}. {}", categoryName,
 							selectionName, window, er);
-					if (runContext.isGUI()) {
+					if (runContext.isGUI() && !runContext.isComputeGrid()) {
 						bubbleIndexWorker.publishText(er.getMessage());
 					} else {
 						System.out.println(er.getMessage());
@@ -192,7 +193,7 @@ public class BubbleIndex implements Serializable {
 				} catch (final FailedToRunIndex er) {
 					Logs.myLogger.error("Category Name = {}, Selection Name = {}, Window = {}. {}", categoryName,
 							selectionName, window, er);
-					if (runContext.isGUI()) {
+					if (runContext.isGUI() && !runContext.isComputeGrid()) {
 						bubbleIndexWorker.publishText("Error: " + er);
 					} else {
 						System.out.println("Error: " + er);
@@ -274,6 +275,12 @@ public class BubbleIndex implements Serializable {
 		previousFilePath = indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
 				+ categoryName + indices.getFilePathSymbol() + selectionName + indices.getFilePathSymbol()
 				+ selectionName + Integer.toString(window) + "days.csv";
+		
+		try {
+			previousFileBytes = Files.readAllBytes(new File(previousFilePath).toPath());
+		} catch (final IOException e) {
+			// ignore error, if prev file does not exist then previousFileBytes will be null
+		}
 
 		Utilities.displayOutput(runContext, "Output File Path: " + previousFilePath, false);
 	}
