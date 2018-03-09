@@ -122,21 +122,16 @@ public class noGUI {
 				if (cmd.hasOption(guiShortOption)) {
 					final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
 					
-					final RunContext runContext = new RunContext();
-					runContext.setGUI(true);
-					runContext.setComputeGrid(true);
+					final RunContext runContext = new RunContext(true, true);
 					
-					bubbleIndexComputeGrid.setRunContext(runContext);
-
-					ComputeGridGUI.GUImain(runContext, bubbleIndexComputeGrid);
+					ComputeGridGUI.ComputeGridGUImain(runContext, bubbleIndexComputeGrid);
 				} else {
 					final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
 					final DailyDataCache dailyDataCache = new DailyDataCache();
 					final Indices indices = new Indices();
-					final RunContext runContext = new RunContext();
+					final RunContext runContext = new RunContext(false, true);
 
 					Logs.myLogger.info("Running non-GUI mode");
-					runContext.setGUI(false);
 					indices.initialize();
 
 					try {
@@ -146,6 +141,7 @@ public class noGUI {
 						Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
 						Utilities.displayOutput(runContext, "Error. OpenCL source file missing.", false);
 					}
+					
 					Utilities.displayOutput(runContext, "Working Dir: " + indices.getUserDir(), false);
 
 					final RunType type = RunType.valueOf(cmd.getOptionValue(runTypeShortOption));
@@ -160,9 +156,6 @@ public class noGUI {
 						final float omega = Float.parseFloat(cmd.getOptionValue(omegaShortOption));
 
 						runContext.setThreadNumber(threads);
-						bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
-						bubbleIndexComputeGrid.setIndices(indices);
-						bubbleIndexComputeGrid.setRunContext(runContext);
 
 						Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}",
 								categoryName, selectionName);
@@ -193,9 +186,6 @@ public class noGUI {
 						final float omega = Float.parseFloat(cmd.getOptionValue(omegaShortOption));
 
 						runContext.setThreadNumber(threads);
-						bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
-						bubbleIndexComputeGrid.setIndices(indices);
-						bubbleIndexComputeGrid.setRunContext(runContext);
 
 						Logs.myLogger.info("Running entire category. Category Name = {}", categoryName);
 
@@ -228,9 +218,6 @@ public class noGUI {
 						final float omega = Float.parseFloat(cmd.getOptionValue(omegaShortOption));
 
 						runContext.setThreadNumber(threads);
-						bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
-						bubbleIndexComputeGrid.setIndices(indices);
-						bubbleIndexComputeGrid.setRunContext(runContext);
 
 						Logs.myLogger.info("Running all categories and selections.");
 						final String[] windowArray = windows.split(",");
@@ -263,16 +250,14 @@ public class noGUI {
 				}
 			} else {
 				if (cmd.hasOption(guiShortOption)) {
-					final RunContext runContext = new RunContext();
-					runContext.setGUI(true);
+					final RunContext runContext = new RunContext(true, false);
 					GUI.GUImain(runContext);
 				} else {
 					final DailyDataCache dailyDataCache = new DailyDataCache();
 					final Indices indices = new Indices();
-					final RunContext runContext = new RunContext();
+					final RunContext runContext = new RunContext(false, false);
 
 					Logs.myLogger.info("Running non-GUI mode");
-					runContext.setGUI(false);
 					indices.initialize();
 
 					try {
@@ -380,8 +365,7 @@ public class noGUI {
 		} else {
 			Logs.myLogger.info("No command line args found. Running GUI mode.");
 
-			final RunContext runContext = new RunContext();
-			runContext.setGUI(true);
+			final RunContext runContext = new RunContext(true, false);
 
 			GUI.GUImain(runContext);
 		}

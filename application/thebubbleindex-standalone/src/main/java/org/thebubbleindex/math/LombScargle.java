@@ -81,9 +81,9 @@ public class LombScargle {
 			this.hSize = Integer.parseInt(lsProperties.getProperty("hsize").trim());
 
 		} catch (final FileNotFoundException ex) {
-			Logs.myLogger.error("Using constructor values. Could not find lombscargle.properties file. {}", ex);
+			Logs.myLogger.error("Using constructor values. Could not find lombscargle.properties file.");
 		} catch (final IOException ex) {
-			Logs.myLogger.error("Using constructor values. Error while reading lombscargle.properties file. {}", ex);
+			Logs.myLogger.error("Using constructor values. Error while reading lombscargle.properties file.");
 		} finally {
 			if (input != null) {
 				try {

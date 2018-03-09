@@ -69,7 +69,6 @@ public class MyGPUCallable implements Callable<Float> {
 	private final String displayPeriodString;
 
 	private final BubbleIndexWorker bubbleIndexWorker;
-
 	private final RunContext runContext;
 
 	/**
@@ -135,9 +134,7 @@ public class MyGPUCallable implements Callable<Float> {
 	 */
 	@Override
 	public Float call() {
-
 		if (!runContext.isStop()) {
-
 			final Pointer<Float> Values = allocateFloats(qSize * hSize).order(byteOrder);
 			final Pointer<Float> MeanArray = allocateFloats(qSize * hSize).order(byteOrder);
 			final Pointer<Float> logtimeValues = allocateFloats(numberOfDays).order(byteOrder);

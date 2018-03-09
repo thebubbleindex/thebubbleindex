@@ -30,7 +30,7 @@ public class MyCPUCallableTest {
 	@Test
 	public void resultsShouldMatchBITSTAMPUSD() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 
 		final String selectionName = "BITSTAMPUSD";
 		final String folder = "ProgramData";
@@ -57,7 +57,6 @@ public class MyCPUCallableTest {
 		}
 
 		runContext.setThreadNumber(4);
-		runContext.setGUI(false);
 		runContext.setForceCPU(true);
 
 		final List<Integer> testWindows = new ArrayList<Integer>(5);
@@ -77,7 +76,7 @@ public class MyCPUCallableTest {
 	@Test
 	public void resultsShouldMatchTSLA() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 
 		final String selectionName = "TSLA";
 		final String folder = "ProgramData";
@@ -104,7 +103,6 @@ public class MyCPUCallableTest {
 		}
 
 		runContext.setThreadNumber(4);
-		runContext.setGUI(false);
 		runContext.setForceCPU(true);
 
 		final List<Integer> testWindows = new ArrayList<Integer>(5);
@@ -126,7 +124,7 @@ public class MyCPUCallableTest {
 
 		final Indices indices = new Indices();
 		indices.initialize();
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> tempList = new ArrayList<String>();
@@ -165,7 +163,6 @@ public class MyCPUCallableTest {
 
 		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
 		runContext.setThreadNumber(4);
-		runContext.setGUI(false);
 		runContext.setForceCPU(false);
 
 		final List<Integer> testWindows = new ArrayList<Integer>(5);

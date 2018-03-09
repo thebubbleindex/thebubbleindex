@@ -537,6 +537,7 @@ public class GUI extends JFrame {
 		runContext.setThreadNumber(Integer.parseInt(ThreadNumber.getText().trim()));
 		runContext.setForceCPU(forceCPUBox.isSelected());
 		runContext.setStop(false);
+				
 		GRAPH_ON = GraphCheckBox.isSelected();
 		isCustomRange = customDates.isSelected();
 		categoryName = (String) DropDownCategory.getSelectedItem();
@@ -596,7 +597,7 @@ public class GUI extends JFrame {
 	 * @param evt
 	 *            The click action event
 	 */
-	private void ExitButtonActionPerformed(final ActionEvent evt) {
+	protected void ExitButtonActionPerformed(final ActionEvent evt) {
 		Logs.myLogger.info("Exit button clicked");
 		System.exit(0);
 	}
@@ -621,7 +622,7 @@ public class GUI extends JFrame {
 	 * @param evt
 	 *            The click action event
 	 */
-	private void StopRunningButtonActionPerformed(final ActionEvent evt) {
+	protected void StopRunningButtonActionPerformed(final ActionEvent evt) {
 		Logs.myLogger.info("Stop button clicked");
 		runContext.setStop(true);
 	}

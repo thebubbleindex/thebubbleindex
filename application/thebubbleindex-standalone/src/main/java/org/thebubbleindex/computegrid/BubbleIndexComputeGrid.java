@@ -3,9 +3,6 @@ package org.thebubbleindex.computegrid;
 import java.util.List;
 
 import org.thebubbleindex.driver.BubbleIndex;
-import org.thebubbleindex.driver.DailyDataCache;
-import org.thebubbleindex.inputs.Indices;
-import org.thebubbleindex.runnable.RunContext;
 
 /**
  * 
@@ -14,19 +11,15 @@ import org.thebubbleindex.runnable.RunContext;
  */
 public interface BubbleIndexComputeGrid {
 
-	void setDailyDataCache(final DailyDataCache dailyDataCache);
-
-	void setIndices(final Indices indices);
-
-	void setRunContext(final RunContext runContext);
-
 	List<BubbleIndex> executeBubbleIndexTasks();
 
-	void addBubbleIndexTask(final int key, final BubbleIndex bubbleIndexTask);
+	void addBubbleIndexTask(final Integer key, final BubbleIndex bubbleIndexTask);
 
 	void deployTasks();
 
 	void shutdownGrid();
 
 	String about();
+
+	void triggerStopAllTasksMessage();
 }

@@ -54,8 +54,10 @@ public class Utilities implements Serializable {
 					GUI.OutputText.append(displayText + "\n");
 				}
 			});
-		} else {
+		} else if (!runContext.isComputeGrid()) {
 			Logs.myLogger.info("{}", displayText);
+		} else {
+			System.out.println(displayText);
 		}
 	}
 
@@ -193,10 +195,11 @@ public class Utilities implements Serializable {
 			throw new FailedToRunIndex(ex);
 		}
 	}
-	
+
 	/**
-	 * ReadByteValues reads a byte array representation of file containing two columns separated by
-	 * either a tab or comma, storing each column into its own string list.
+	 * ReadByteValues reads a byte array representation of file containing two
+	 * columns separated by either a tab or comma, storing each column into its
+	 * own string list.
 	 * 
 	 * @param fileBytes
 	 * @param ColumnOne
@@ -205,8 +208,8 @@ public class Utilities implements Serializable {
 	 * @param update
 	 * @throws FailedToRunIndex
 	 */
-	public static void ReadByteValues(final byte[] fileBytes, final List<String> ColumnOne, final List<String> ColumnTwo,
-			final boolean firstLine, final boolean update) throws FailedToRunIndex {
+	public static void ReadByteValues(final byte[] fileBytes, final List<String> ColumnOne,
+			final List<String> ColumnTwo, final boolean firstLine, final boolean update) throws FailedToRunIndex {
 		try {
 			final String fileAsString = new String(fileBytes);
 			final String[] lines = fileAsString.split("\\r?\\n");
@@ -233,7 +236,7 @@ public class Utilities implements Serializable {
 					ColumnOne.add(lineScan.next());
 					ColumnTwo.add(lineScan.next());
 				}
-				
+
 				lineScan.close();
 				index++;
 			}
@@ -287,7 +290,7 @@ public class Utilities implements Serializable {
 			}
 		}
 	}
-	
+
 	/**
 	 * addHeader writes header of output file
 	 * 

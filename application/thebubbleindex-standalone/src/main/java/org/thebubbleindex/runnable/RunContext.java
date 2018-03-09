@@ -13,20 +13,32 @@ public class RunContext implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -5890820843688805245L;
-	private int threadNumber = 1;
-	private boolean isGUI;
+	private final boolean isGUI;
+	private final boolean isComputeGrid;
+
+	private Integer threadNumber;
 	private boolean forceCPU;
 	private volatile boolean stop;
 	private final AtomicInteger numberOfLines = new AtomicInteger();
-	private boolean isComputeGrid;
 
-	public RunContext() {
-	}
-
-	public RunContext(final boolean isGUI, final boolean forceCPU, final int threadNumber) {
+	public RunContext(final boolean isGUI, final boolean forceCPU, final Integer threadNumber) {
 		this.threadNumber = threadNumber;
 		this.isGUI = isGUI;
 		this.forceCPU = forceCPU;
+		this.isComputeGrid = false;
+	}
+
+	public RunContext(final boolean isGUI, final boolean isComputeGrid) {
+		this.isGUI = isGUI;
+		this.isComputeGrid = isComputeGrid;
+	}
+
+	public RunContext(final boolean isGUI, final boolean forceCPU, final Integer threadNumber,
+			final boolean isComputeGrid) {
+		this.threadNumber = threadNumber;
+		this.isGUI = isGUI;
+		this.forceCPU = forceCPU;
+		this.isComputeGrid = isComputeGrid;
 	}
 
 	public boolean isForceCPU() {
@@ -61,10 +73,6 @@ public class RunContext implements Serializable {
 		this.threadNumber = threadNumber;
 	}
 
-	public void setGUI(final boolean isGUI) {
-		this.isGUI = isGUI;
-	}
-
 	public void setCPU(final boolean forceCPU) {
 		this.forceCPU = forceCPU;
 	}
@@ -79,10 +87,6 @@ public class RunContext implements Serializable {
 
 	public void resetNumberOfLines() {
 		numberOfLines.set(0);
-	}
-	
-	public void setComputeGrid(final boolean isComputeGrid) {
-		this.isComputeGrid = isComputeGrid;
 	}
 
 	public boolean isComputeGrid() {

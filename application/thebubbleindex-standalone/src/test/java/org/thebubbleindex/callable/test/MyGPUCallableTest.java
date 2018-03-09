@@ -34,7 +34,7 @@ public class MyGPUCallableTest {
 	@Test
 	public void resultsShouldMatchBITSTAMPUSD() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 
 		final String selectionName = "BITSTAMPUSD";
 		final String folder = "ProgramData";
@@ -62,7 +62,6 @@ public class MyGPUCallableTest {
 
 		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
 		runContext.setThreadNumber(4);
-		runContext.setGUI(false);
 		runContext.setForceCPU(false);
 
 		final List<Integer> testWindows = new ArrayList<Integer>(5);
@@ -82,7 +81,7 @@ public class MyGPUCallableTest {
 	@Test
 	public void resultsShouldMatchTSLA() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 
 		final String selectionName = "TSLA";
 		final String folder = "ProgramData";
@@ -110,7 +109,6 @@ public class MyGPUCallableTest {
 
 		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
 		runContext.setThreadNumber(4);
-		runContext.setGUI(false);
 		runContext.setForceCPU(false);
 
 		final List<Integer> testWindows = new ArrayList<Integer>(5);
@@ -129,7 +127,7 @@ public class MyGPUCallableTest {
 	@Test
 	public void resultsShouldMatchDTWEXM() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 
 		final String selectionName = "DTWEXM";
 		final String folder = "ProgramData";
@@ -157,7 +155,6 @@ public class MyGPUCallableTest {
 
 		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
 		runContext.setThreadNumber(4);
-		runContext.setGUI(false);
 		runContext.setForceCPU(false);
 
 		final List<Integer> testWindows = new ArrayList<Integer>(5);
@@ -177,7 +174,7 @@ public class MyGPUCallableTest {
 	public void shouldUpdateExistingDataCorrectly() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
 		indices.initialize();
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> tempList = new ArrayList<String>();
@@ -216,7 +213,6 @@ public class MyGPUCallableTest {
 
 		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
 		runContext.setThreadNumber(4);
-		runContext.setGUI(false);
 		runContext.setForceCPU(false);
 
 		final List<Integer> testWindows = new ArrayList<Integer>(5);

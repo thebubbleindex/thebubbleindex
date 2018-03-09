@@ -36,7 +36,7 @@ public class DerivativePlotTest {
 			throws ParseException, URISyntaxException, IOException, InterruptedException {
 		final Indices indices = new Indices();
 		indices.initialize();
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(true, false);
 
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> dailyPriceDate = new ArrayList<String>();
@@ -74,7 +74,7 @@ public class DerivativePlotTest {
 			throws ParseException, URISyntaxException, IOException, InterruptedException {
 		final Indices indices = new Indices();
 		indices.initialize();
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(true, false);
 
 		final List<String> dailyPriceData = new ArrayList<String>();
 		final List<String> dailyPriceDate = new ArrayList<String>();

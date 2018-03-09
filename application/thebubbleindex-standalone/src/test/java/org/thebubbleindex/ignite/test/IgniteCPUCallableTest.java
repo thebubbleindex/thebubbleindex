@@ -31,7 +31,12 @@ public class IgniteCPUCallableTest {
 		final Indices indices = new Indices();
 		indices.initialize();
 
-		final RunContext runContext = new RunContext();
+		final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
+
+		final RunContext runContext = new RunContext(false, true);
+		runContext.setThreadNumber(4);
+		runContext.setForceCPU(true);
+
 		final DailyDataCache dailyDataCache = new DailyDataCache();
 
 		final String selectionName = "BITSTAMPUSD";
@@ -63,15 +68,8 @@ public class IgniteCPUCallableTest {
 		dailyDataCache.setDailyPriceDoubleValues(dailyPriceValues);
 		dailyDataCache.setSelectionName(selectionName);
 
-		final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
-
-		runContext.setThreadNumber(4);
-		runContext.setGUI(false);
-		runContext.setForceCPU(true);
-
 		bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
 		bubbleIndexComputeGrid.setIndices(indices);
-		bubbleIndexComputeGrid.setRunContext(runContext);
 
 		Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}", folderType,
 				selectionName);
@@ -100,7 +98,12 @@ public class IgniteCPUCallableTest {
 		final Indices indices = new Indices();
 		indices.initialize();
 
-		final RunContext runContext = new RunContext();
+		final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
+
+		final RunContext runContext = new RunContext(false, true);
+		runContext.setThreadNumber(4);
+		runContext.setForceCPU(true);
+		
 		final DailyDataCache dailyDataCache = new DailyDataCache();
 
 		final String selectionName = "TSLA";
@@ -132,15 +135,8 @@ public class IgniteCPUCallableTest {
 		dailyDataCache.setDailyPriceDoubleValues(dailyPriceValues);
 		dailyDataCache.setSelectionName(selectionName);
 
-		final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
-
-		runContext.setThreadNumber(4);
-		runContext.setGUI(false);
-		runContext.setForceCPU(true);
-
 		bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
 		bubbleIndexComputeGrid.setIndices(indices);
-		bubbleIndexComputeGrid.setRunContext(runContext);
 
 		Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}", folderType,
 				selectionName);

@@ -30,6 +30,7 @@ public class BubbleIndex implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 6695607232313746483L;
+	private final List<String> outputMessageList = new ArrayList<String>(200);
 	private final String categoryName;
 	private final String selectionName;
 
@@ -71,6 +72,11 @@ public class BubbleIndex implements Serializable {
 				.info("Initializing The Bubble Index. Category Name = {}, Selection Name = {}, Omega = {}, M = {}, TCrit = {}, "
 						+ "Window = {}", categoryName, selectionName, omega, mCoeff, tCrit, window);
 
+		if (runContext.isComputeGrid())
+			outputMessageList.add("Initializing The Bubble Index. Category Name = " + categoryName
+					+ ", Selection Name = " + selectionName + ", Omega = " + omega + ", M = " + mCoeff + ", TCrit = "
+					+ tCrit + " , + Window = " + window);
+
 		this.omega = omega;
 		this.mCoeff = mCoeff;
 		this.tCrit = tCrit;
@@ -81,7 +87,7 @@ public class BubbleIndex implements Serializable {
 		this.openCLSrc = openCLSrc;
 		this.runContext = runContext;
 
-		if (!runContext.isStop())
+		if (!this.runContext.isStop())
 			setFilePaths();
 
 		if (dailyDataCache.getSelectionName().equals(this.selectionName)) {
@@ -98,7 +104,7 @@ public class BubbleIndex implements Serializable {
 			dailyPriceData = new ArrayList<String>(10000);
 			dailyPriceDate = new ArrayList<String>(10000);
 
-			if (!runContext.isStop())
+			if (!this.runContext.isStop())
 				Utilities.ReadValues(filePath, dailyPriceDate, dailyPriceData, false, false);
 
 			dailyDataCache.setSelectionName(this.selectionName);
@@ -109,7 +115,7 @@ public class BubbleIndex implements Serializable {
 
 			dailyPriceDoubleValues = new double[dataSize];
 
-			if (!runContext.isStop())
+			if (!this.runContext.isStop())
 				convertPrices();
 
 			dailyDataCache.setDailyPriceDoubleValues(dailyPriceDoubleValues);
@@ -141,20 +147,20 @@ public class BubbleIndex implements Serializable {
 		this.openCLSrc = openCLSrc;
 		this.runContext = runContext;
 
-		if (!runContext.isStop())
+		if (!this.runContext.isStop())
 			setFilePaths();
 
 		dailyPriceData = new ArrayList<String>();
 		dailyPriceDate = new ArrayList<String>();
 		results = new ArrayList<Double>();
 
-		if (!runContext.isStop())
+		if (!this.runContext.isStop())
 			Utilities.ReadValues(filePath, dailyPriceDate, dailyPriceData, false, false);
 		dataSize = dailyPriceData.size();
 
 		dailyPriceDoubleValues = new double[dataSize];
 
-		if (!runContext.isStop())
+		if (!this.runContext.isStop())
 			convertPrices();
 	}
 
@@ -172,6 +178,10 @@ public class BubbleIndex implements Serializable {
 
 			if (!runContext.isForceCPU()) {
 				try {
+					if (runContext.isComputeGrid())
+						outputMessageList.add("Executing GPU Run. Category Name = " + categoryName
+								+ ", Selection Name = " + selectionName);
+
 					Logs.myLogger.info("Executing GPU Run. Category Name = {}, Selection Name = {}", categoryName,
 							selectionName);
 					runIndex.execIndexWithGPU();
@@ -181,6 +191,9 @@ public class BubbleIndex implements Serializable {
 					if (runContext.isGUI() && !runContext.isComputeGrid()) {
 						bubbleIndexWorker.publishText(er.getMessage());
 					} else {
+						if (runContext.isComputeGrid())
+							outputMessageList.add(er.getMessage());
+
 						System.out.println(er.getMessage());
 					}
 					results.clear();
@@ -202,6 +215,10 @@ public class BubbleIndex implements Serializable {
 				}
 			}
 		}
+		
+		// make sure, if the stop button is pressed that there are no results
+		if (runContext.isStop())
+			results.clear();
 	}
 
 	/**
@@ -215,11 +232,13 @@ public class BubbleIndex implements Serializable {
 
 				final String Name = selectionName + window + "days.csv";
 
-				if (runContext.isGUI()) {
-					bubbleIndexWorker.publishText("Writing output file.");
+				if (runContext.isGUI() && !runContext.isComputeGrid()) {
+					bubbleIndexWorker.publishText("Writing output file: " + Name);
 				} else {
-					System.out.println("Writing output file.");
+					outputMessageList.add("Writing output file: " + previousFilePath);
+					System.out.println("Writing output file: " + Name);
 				}
+				
 				try {
 					Logs.myLogger.info("Writing output file: {}", previousFilePath);
 
@@ -227,6 +246,9 @@ public class BubbleIndex implements Serializable {
 							new File(previousFilePath).exists());
 				} catch (final IOException ex) {
 					Logs.myLogger.error("Failed to write csv output. Save path = {}. {}", savePath, ex);
+
+					if (runContext.isComputeGrid())
+						outputMessageList.add("Failed to write csv output." + ex.getMessage());
 				}
 			}
 		}
@@ -275,11 +297,12 @@ public class BubbleIndex implements Serializable {
 		previousFilePath = indices.getUserDir() + indices.getProgramDataFolder() + indices.getFilePathSymbol()
 				+ categoryName + indices.getFilePathSymbol() + selectionName + indices.getFilePathSymbol()
 				+ selectionName + Integer.toString(window) + "days.csv";
-		
+
 		try {
 			previousFileBytes = Files.readAllBytes(new File(previousFilePath).toPath());
 		} catch (final IOException e) {
-			// ignore error, if prev file does not exist then previousFileBytes will be null
+			// ignore error, if prev file does not exist then previousFileBytes
+			// will be null
 		}
 
 		Utilities.displayOutput(runContext, "Output File Path: " + previousFilePath, false);
@@ -304,6 +327,15 @@ public class BubbleIndex implements Serializable {
 	}
 
 	public List<Double> getResults() {
+		outputMessageList.add("Completed with " + results.size() + " results.");
 		return results;
+	}
+
+	public List<String> getGUITextOutputsFromComputeGrid() {
+		return outputMessageList;
+	}
+
+	public RunContext getRunContext() {
+		return runContext;
 	}
 }

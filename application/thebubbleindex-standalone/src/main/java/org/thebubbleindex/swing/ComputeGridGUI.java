@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 
 import javax.swing.UIManager;
+
 import org.thebubbleindex.computegrid.BubbleIndexComputeGrid;
 import org.thebubbleindex.driver.DailyDataCache;
 import org.thebubbleindex.driver.noGUI.RunType;
@@ -27,7 +28,6 @@ public class ComputeGridGUI extends GUI {
 	public ComputeGridGUI(final RunContext runContext, final BubbleIndexComputeGrid bubbleIndexComputeGrid) {
 		super(runContext);
 		this.bubbleIndexComputeGrid = bubbleIndexComputeGrid;
-
 		Utilities.displayOutput(runContext, "Bubble Index Compute Grid: " + bubbleIndexComputeGrid.about(), false);
 	}
 
@@ -68,6 +68,33 @@ public class ComputeGridGUI extends GUI {
 				dailyDataCache, indices, openCLSrc, runContext, bubbleIndexComputeGrid);
 		bubbleIndexGridWorker.execute();
 	}
+	
+	/**
+	 * ExitButtonActionPerformed Calls System.exit(0) upon clicking.
+	 * 
+	 * @param evt
+	 *            The click action event
+	 */
+	@Override
+	protected void ExitButtonActionPerformed(final ActionEvent evt) {
+		Logs.myLogger.info("Exit button clicked");
+		bubbleIndexComputeGrid.triggerStopAllTasksMessage();
+		bubbleIndexComputeGrid.shutdownGrid();
+		System.exit(0);
+	}
+	
+	/**
+	 * StopRunningButtonActionPerformed Changes the Stop variable in RunContext
+	 * to true. This should initiate a complete halt of any executing process.
+	 * 
+	 * @param evt
+	 *            The click action event
+	 */
+	@Override
+	protected void StopRunningButtonActionPerformed(final ActionEvent evt) {
+		Logs.myLogger.info("Stop button clicked");
+		bubbleIndexComputeGrid.triggerStopAllTasksMessage();
+	}
 
 	/**
 	 * GUImain provides the main entrance to create and initialize the GUI
@@ -77,7 +104,7 @@ public class ComputeGridGUI extends GUI {
 	 * @param tCrit
 	 * @param mCoeff
 	 */
-	public static void GUImain(final RunContext runContext, final BubbleIndexComputeGrid bubbleIndexComputeGrid) {
+	public static void ComputeGridGUImain(final RunContext runContext, final BubbleIndexComputeGrid bubbleIndexComputeGrid) {
 		// <editor-fold defaultstate="collapsed" desc=" Look and feel setting
 		// code (optional) ">
 		/*

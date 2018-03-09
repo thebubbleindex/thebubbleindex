@@ -40,7 +40,11 @@ public class IgniteGPUCallableTest {
 		final Indices indices = new Indices();
 		indices.initialize();
 
-		final RunContext runContext = new RunContext();
+		final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
+
+		final RunContext runContext = new RunContext(false, true);
+		runContext.setThreadNumber(4);
+		
 		final DailyDataCache dailyDataCache = new DailyDataCache();
 
 		final String selectionName = "BITSTAMPUSD";
@@ -72,8 +76,6 @@ public class IgniteGPUCallableTest {
 		dailyDataCache.setDailyPriceDoubleValues(dailyPriceValues);
 		dailyDataCache.setSelectionName(selectionName);
 
-		final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
-
 		String openCLSrc = null;
 		try {
 			openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
@@ -83,12 +85,8 @@ public class IgniteGPUCallableTest {
 		
 		assert openCLSrc != null;
 		
-		runContext.setThreadNumber(4);
-		runContext.setGUI(false);
-
 		bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
 		bubbleIndexComputeGrid.setIndices(indices);
-		bubbleIndexComputeGrid.setRunContext(runContext);
 
 		Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}", folderType,
 				selectionName);
@@ -117,7 +115,11 @@ public class IgniteGPUCallableTest {
 		final Indices indices = new Indices();
 		indices.initialize();
 
-		final RunContext runContext = new RunContext();
+		final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
+
+		final RunContext runContext = new RunContext(false, true);
+		runContext.setThreadNumber(4);
+		
 		final DailyDataCache dailyDataCache = new DailyDataCache();
 
 		final String selectionName = "TSLA";
@@ -149,8 +151,6 @@ public class IgniteGPUCallableTest {
 		dailyDataCache.setDailyPriceDoubleValues(dailyPriceValues);
 		dailyDataCache.setSelectionName(selectionName);
 
-		final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
-
 		String openCLSrc = null;
 		try {
 			openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
@@ -160,12 +160,8 @@ public class IgniteGPUCallableTest {
 		
 		assert openCLSrc != null;
 		
-		runContext.setThreadNumber(4);
-		runContext.setGUI(false);
-
 		bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
 		bubbleIndexComputeGrid.setIndices(indices);
-		bubbleIndexComputeGrid.setRunContext(runContext);
 
 		Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}", folderType,
 				selectionName);

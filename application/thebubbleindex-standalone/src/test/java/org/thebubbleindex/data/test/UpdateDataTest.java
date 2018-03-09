@@ -32,7 +32,7 @@ public class UpdateDataTest {
 
 	@Test
 	public void yahooDataShouldBeDownloadedCorrectly() throws IOException {
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 		runContext.setThreadNumber(1);
 
 		final String category = "Stocks";
@@ -79,7 +79,7 @@ public class UpdateDataTest {
 
 	@Test
 	public void yahooIndexDataShouldBeDownloadedCorrectly() throws IOException {
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 		runContext.setThreadNumber(1);
 
 		final String category = "Indices";
@@ -126,7 +126,7 @@ public class UpdateDataTest {
 
 	@Test
 	public void existingYahooDataShouldBeUpdatedCorrectly() throws IOException {
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 		runContext.setThreadNumber(1);
 
 		final String category = "Indices";
@@ -210,7 +210,7 @@ public class UpdateDataTest {
 
 	@Test
 	public void yahooDataShouldBeCleanedCorrectly() throws IOException {
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 		runContext.setThreadNumber(1);
 
 		final String category = "Indices";
@@ -304,7 +304,7 @@ public class UpdateDataTest {
 
 	@Test
 	public void fedDataShouldBeDownloadedCorrectly() throws IOException {
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 		runContext.setThreadNumber(1);
 
 		final String category = "Currencies";
@@ -351,7 +351,7 @@ public class UpdateDataTest {
 
 	@Test
 	public void quandlDataShouldBeDownloadedCorrectly() throws IOException {
-		final RunContext runContext = new RunContext();
+		final RunContext runContext = new RunContext(false, false);
 		runContext.setThreadNumber(1);
 
 		final String category = "Indices";
