@@ -1,18 +1,16 @@
 package org.thebubbleindex.callable.test;
 
+import org.cactoos.io.ResourceOf;
+import org.cactoos.text.TextOf;
 import org.junit.Test;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.runnable.RunContext;
 import org.thebubbleindex.runnable.RunIndex;
 import org.thebubbleindex.testutil.TestUtil;
 
-import com.nativelibs4java.util.IOUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -42,12 +40,11 @@ public class MyGPUCallableTest {
 		final double omegaDouble = 6.28;
 		final double mCoeffDouble = 0.38;
 		final double tCritDouble = 21.0;
+
 		final String pathRoot = folder + fileSep + folderType + fileSep + selectionName + fileSep + selectionName;
+		final ResourceOf dailyDataResource = new ResourceOf(pathRoot + "dailydata.csv");
 
-		final URL dailyDataUrl = getClass().getClassLoader().getResource(pathRoot + "dailydata.csv");
-		final Path dailyDataPath = new File(dailyDataUrl.toURI()).toPath();
-
-		final List<String> lines = Files.readAllLines(dailyDataPath, Charset.defaultCharset());
+		final List<String> lines = TestUtil.getLines(new TextOf(dailyDataResource).asString());
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final List<Double> priceValues = new ArrayList<Double>();
 		final List<Double> results = new ArrayList<Double>();
@@ -60,7 +57,8 @@ public class MyGPUCallableTest {
 			dailyPriceValues[i] = priceValues.get(i);
 		}
 
-		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
+		final String openCLSrc = new TextOf(new ResourceOf("GPUKernel.cl")).asString();
+
 		runContext.setThreadNumber(4);
 		runContext.setForceCPU(false);
 
@@ -75,7 +73,6 @@ public class MyGPUCallableTest {
 			testWindow(pathRoot, dailyPriceValues, dataSize, window, results, dailyPriceDate, selectionName,
 					omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc, runContext);
 		}
-
 	}
 
 	@Test
@@ -89,12 +86,11 @@ public class MyGPUCallableTest {
 		final double omegaDouble = 6.28;
 		final double mCoeffDouble = 0.38;
 		final double tCritDouble = 21.0;
+
 		final String pathRoot = folder + fileSep + folderType + fileSep + selectionName + fileSep + selectionName;
+		final ResourceOf dailyDataResource = new ResourceOf(pathRoot + "dailydata.csv");
 
-		final URL dailyDataUrl = getClass().getClassLoader().getResource(pathRoot + "dailydata.csv");
-		final Path dailyDataPath = new File(dailyDataUrl.toURI()).toPath();
-
-		final List<String> lines = Files.readAllLines(dailyDataPath, Charset.defaultCharset());
+		final List<String> lines = TestUtil.getLines(new TextOf(dailyDataResource).asString());
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final List<Double> priceValues = new ArrayList<Double>();
 		final List<Double> results = new ArrayList<Double>();
@@ -107,7 +103,8 @@ public class MyGPUCallableTest {
 			dailyPriceValues[i] = priceValues.get(i);
 		}
 
-		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
+		final String openCLSrc = new TextOf(new ResourceOf("GPUKernel.cl")).asString();
+
 		runContext.setThreadNumber(4);
 		runContext.setForceCPU(false);
 
@@ -135,12 +132,11 @@ public class MyGPUCallableTest {
 		final double omegaDouble = 6.28;
 		final double mCoeffDouble = 0.38;
 		final double tCritDouble = 21.0;
+
 		final String pathRoot = folder + fileSep + folderType + fileSep + selectionName + fileSep + selectionName;
+		final ResourceOf dailyDataResource = new ResourceOf(pathRoot + "dailydata.csv");
 
-		final URL dailyDataUrl = getClass().getClassLoader().getResource(pathRoot + "dailydata.csv");
-		final Path dailyDataPath = new File(dailyDataUrl.toURI()).toPath();
-
-		final List<String> lines = Files.readAllLines(dailyDataPath, Charset.defaultCharset());
+		final List<String> lines = TestUtil.getLines(new TextOf(dailyDataResource).asString());
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final List<Double> priceValues = new ArrayList<Double>();
 		final List<Double> results = new ArrayList<Double>();
@@ -152,8 +148,9 @@ public class MyGPUCallableTest {
 		for (int i = 0; i < dataSize; i++) {
 			dailyPriceValues[i] = priceValues.get(i);
 		}
+		
+		final String openCLSrc = new TextOf(new ResourceOf("GPUKernel.cl")).asString();
 
-		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
 		runContext.setThreadNumber(4);
 		runContext.setForceCPU(false);
 
@@ -185,10 +182,7 @@ public class MyGPUCallableTest {
 		final String testFolder = "sample-results";
 
 		final String dailyDataPricePathRoot = testFolder + fileSep + selectionName + fileSep + selectionName;
-		final URL dailyDataUrl = getClass().getClassLoader()
-				.getResource(dailyDataPricePathRoot + "dailydata-UPDATE.csv");
-		final Path dailyDataPath = new File(dailyDataUrl.toURI()).toPath();
-		final List<String> lines = Files.readAllLines(dailyDataPath, Charset.defaultCharset());
+		final List<String> lines = TestUtil.getLines(new TextOf(new ResourceOf(dailyDataPricePathRoot + "dailydata-UPDATE.csv")).asString());
 
 		TestUtil.parseDailyData(lines, dailyPriceData, tempList);
 		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
@@ -211,7 +205,8 @@ public class MyGPUCallableTest {
 			dailyPriceValues[i] = priceValues.get(i);
 		}
 
-		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
+		final String openCLSrc = new TextOf(new ResourceOf("GPUKernel.cl")).asString();
+
 		runContext.setThreadNumber(4);
 		runContext.setForceCPU(false);
 
@@ -233,11 +228,17 @@ public class MyGPUCallableTest {
 			final String openCLSrc, final RunContext runContext) throws IOException, URISyntaxException {
 
 		final String previousFilePath = pathRoot + String.valueOf(window) + "days.csv";
-		final byte[] previousFileBytes = Files.readAllBytes(new File(previousFilePath).toPath());
-
+		byte[] previousFileBytes = null;
+		
+		try {
+			previousFileBytes = new TextOf(new ResourceOf(previousFilePath)).asString().getBytes();
+		} catch (final Exception ex) {	
+		}
+		
 		final RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
 				previousFileBytes, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc,
 				runContext);
+		
 		runIndex.execIndexWithGPU();
 		compareResults(selectionName, window, results);
 		results.clear();
@@ -254,6 +255,7 @@ public class MyGPUCallableTest {
 		final RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
 				previousFileBytes, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc,
 				runContext);
+		
 		runIndex.execIndexWithGPU();
 		compareResultsUpdate(selectionName, window, results);
 		results.clear();
@@ -261,11 +263,10 @@ public class MyGPUCallableTest {
 
 	private void compareResults(final String selectionName, final int window, final List<Double> results)
 			throws IOException, URISyntaxException {
-		final URL resultURL = getClass().getClassLoader().getResource("sample-results" + fileSep + selectionName
+		final ResourceOf resultResource = new ResourceOf("sample-results" + fileSep + selectionName
 				+ fileSep + selectionName + String.valueOf(window) + "days.csv");
-		final Path resultPath = new File(resultURL.toURI()).toPath();
-		final List<String> lines = Files.readAllLines(resultPath, Charset.defaultCharset());
-
+		final List<String> lines = TestUtil.getLines(new TextOf(resultResource).asString());
+		
 		int index = 0;
 		for (final String line : lines) {
 			if (index == 0) {
@@ -286,7 +287,6 @@ public class MyGPUCallableTest {
 	}
 
 	private void compareResultsUpdate(final String selectionName, final int window, final List<Double> results) {
-
 		assertEquals(6, results.size());
 		if (window == 52) {
 			assertEquals(4.341765880584717, results.get(0), epsilon);
@@ -322,7 +322,7 @@ public class MyGPUCallableTest {
 	private void moveFiles(final String dailyDataPricePathRoot, final String windowsString, final String categoryName,
 			final String selectionName) throws IOException {
 		final String targetPathRoot = getClass().getProtectionDomain().getCodeSource().getLocation().getPath()
-				.replaceFirst("test-classes/", "") + "ProgramData" + fileSep + categoryName + fileSep + selectionName;
+				.replaceFirst("test-classes/", "").replaceFirst("classes/", "") + "ProgramData" + fileSep + categoryName + fileSep + selectionName;
 		new File(targetPathRoot).mkdirs();
 		final String[] windows = windowsString.split(",");
 		for (final String window : windows) {

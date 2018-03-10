@@ -128,7 +128,10 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	@Override
 	public void triggerStopAllTasksMessage() {
 		final ClusterGroup rmtGrp = ignite.cluster().forRemotes();
-		ignite.message(rmtGrp).send(TERMINATION_EVT_TOPIC, "STOP_ALL_TASKS");
+		if (!rmtGrp.nodes().isEmpty()) {
+			ignite.message(rmtGrp).send(TERMINATION_EVT_TOPIC, "STOP_ALL_TASKS");
+		}
+
 	}
 
 	/**

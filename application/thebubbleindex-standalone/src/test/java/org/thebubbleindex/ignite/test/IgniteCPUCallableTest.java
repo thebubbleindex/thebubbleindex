@@ -1,5 +1,7 @@
 package org.thebubbleindex.ignite.test;
 
+import org.cactoos.io.ResourceOf;
+import org.cactoos.text.TextOf;
 import org.junit.Test;
 import org.thebubbleindex.computegrid.BubbleIndexComputeGrid;
 import org.thebubbleindex.computegrid.IgniteBubbleIndexComputeGrid;
@@ -8,6 +10,8 @@ import org.thebubbleindex.driver.DailyDataCache;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.runnable.RunContext;
+import org.thebubbleindex.testutil.TestUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -47,11 +51,9 @@ public class IgniteCPUCallableTest {
 		final double tCritDouble = 21.0;
 
 		final String pathRoot = folder + fileSep + folderType + fileSep + selectionName + fileSep + selectionName;
+		final ResourceOf dailyDataResource = new ResourceOf(pathRoot + "dailydata.csv");
 
-		final URL dailyDataUrl = getClass().getClassLoader().getResource(pathRoot + "dailydata.csv");
-		final Path dailyDataPath = new File(dailyDataUrl.toURI()).toPath();
-
-		final List<String> lines = Files.readAllLines(dailyDataPath, Charset.defaultCharset());
+		final List<String> lines = TestUtil.getLines(new TextOf(dailyDataResource).asString());
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final List<String> dailyPriceData = new ArrayList<String>();
 
@@ -67,9 +69,6 @@ public class IgniteCPUCallableTest {
 		dailyDataCache.setDailyPriceDate(dailyPriceDate);
 		dailyDataCache.setDailyPriceDoubleValues(dailyPriceValues);
 		dailyDataCache.setSelectionName(selectionName);
-
-		bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
-		bubbleIndexComputeGrid.setIndices(indices);
 
 		Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}", folderType,
 				selectionName);
@@ -114,11 +113,9 @@ public class IgniteCPUCallableTest {
 		final double tCritDouble = 21.0;
 
 		final String pathRoot = folder + fileSep + folderType + fileSep + selectionName + fileSep + selectionName;
+		final ResourceOf dailyDataResource = new ResourceOf(pathRoot + "dailydata.csv");
 
-		final URL dailyDataUrl = getClass().getClassLoader().getResource(pathRoot + "dailydata.csv");
-		final Path dailyDataPath = new File(dailyDataUrl.toURI()).toPath();
-
-		final List<String> lines = Files.readAllLines(dailyDataPath, Charset.defaultCharset());
+		final List<String> lines = TestUtil.getLines(new TextOf(dailyDataResource).asString());
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final List<String> dailyPriceData = new ArrayList<String>();
 
@@ -134,9 +131,6 @@ public class IgniteCPUCallableTest {
 		dailyDataCache.setDailyPriceDate(dailyPriceDate);
 		dailyDataCache.setDailyPriceDoubleValues(dailyPriceValues);
 		dailyDataCache.setSelectionName(selectionName);
-
-		bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
-		bubbleIndexComputeGrid.setIndices(indices);
 
 		Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}", folderType,
 				selectionName);

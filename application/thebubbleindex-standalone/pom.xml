@@ -66,6 +66,11 @@
 			<artifactId>mtj</artifactId>
 			<version>1.0.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.cactoos</groupId>
+			<artifactId>cactoos</artifactId>
+			<version>0.29</version>
+		</dependency>
 		<!-- Need to manually install the Yeppp! library to your repository -->
 		<!-- mvn install:install-file -Dfile=${project.basedir}/src/main/resources/yeppp-bundle.jar 
 			-DgroupId=yeppp -DartifactId=yeppp-java -Dversion=1.0 -Dpackaging=jar -->

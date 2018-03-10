@@ -40,10 +40,21 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 		publish("Running category: " + categoryName + " Name: " + selectionName);
 
 		final String[] windowInputArray = windowsInput.split(",");
+		final DailyDataCache localDailyDataCache = new DailyDataCache();
+
 		for (final String window : windowInputArray) {
-			final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
-					categoryName, selectionName, dailyDataCache, indices, openCLSrc, runContext);
-			bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+			BubbleIndex bubbleIndex = null;
+
+			try {
+				bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()), categoryName,
+						selectionName, localDailyDataCache, indices, openCLSrc, runContext);
+			} catch (final Exception ex) {
+				publish(ex.getMessage());
+			} finally {
+				if (bubbleIndex != null) {
+					bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+				}
+			}
 		}
 
 		bubbleIndexComputeGrid.deployTasks();
@@ -72,10 +83,21 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 		final String[] windowInputArray = windowsInput.split(",");
 
 		for (final String updateName : updateNames) {
+			final DailyDataCache localDailyDataCache = new DailyDataCache();
+
 			for (final String window : windowInputArray) {
-				final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
-						categoryName, updateName, dailyDataCache, indices, openCLSrc, runContext);
-				bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+				BubbleIndex bubbleIndex = null;
+
+				try {
+					bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()), categoryName,
+							updateName, localDailyDataCache, indices, openCLSrc, runContext);
+				} catch (final Exception ex) {
+					publish(ex.getMessage());
+				} finally {
+					if (bubbleIndex != null) {
+						bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+					}
+				}
 			}
 		}
 
@@ -99,11 +121,21 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 			final ArrayList<String> updateNames = myEntry.getValue().getComponents();
 
 			for (final String updateName : updateNames) {
+				final DailyDataCache localDailyDataCache = new DailyDataCache();
+
 				for (final String window : windowInputArray) {
-					final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
-							Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache, indices,
-							openCLSrc, runContext);
-					bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+					BubbleIndex bubbleIndex = null;
+
+					try {
+						bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
+								categoryName, updateName, localDailyDataCache, indices, openCLSrc, runContext);
+					} catch (final Exception ex) {
+						publish(ex.getMessage());
+					} finally {
+						if (bubbleIndex != null) {
+							bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+						}
+					}
 				}
 			}
 		}

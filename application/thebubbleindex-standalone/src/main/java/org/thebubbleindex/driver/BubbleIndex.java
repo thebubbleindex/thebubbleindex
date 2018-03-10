@@ -75,7 +75,7 @@ public class BubbleIndex implements Serializable {
 		if (runContext.isComputeGrid())
 			outputMessageList.add("Initializing The Bubble Index. Category Name = " + categoryName
 					+ ", Selection Name = " + selectionName + ", Omega = " + omega + ", M = " + mCoeff + ", TCrit = "
-					+ tCrit + " , + Window = " + window);
+					+ tCrit + ", Window = " + window);
 
 		this.omega = omega;
 		this.mCoeff = mCoeff;
@@ -99,7 +99,6 @@ public class BubbleIndex implements Serializable {
 			dailyPriceDoubleValues = dailyDataCache.getDailyPriceDoubleValues();
 
 			results = new ArrayList<Double>(dataSize);
-
 		} else {
 			dailyPriceData = new ArrayList<String>(10000);
 			dailyPriceDate = new ArrayList<String>(10000);
@@ -156,6 +155,7 @@ public class BubbleIndex implements Serializable {
 
 		if (!this.runContext.isStop())
 			Utilities.ReadValues(filePath, dailyPriceDate, dailyPriceData, false, false);
+		
 		dataSize = dailyPriceData.size();
 
 		dailyPriceDoubleValues = new double[dataSize];
@@ -214,11 +214,15 @@ public class BubbleIndex implements Serializable {
 					results.clear();
 				}
 			}
+			
+			if (!runContext.isStop())
+				outputMessageList.add("Completed processing for category: " + categoryName
+						+ ", selection: " + selectionName);
 		}
-		
+
 		// make sure, if the stop button is pressed that there are no results
 		if (runContext.isStop())
-			results.clear();
+			results.clear();		
 	}
 
 	/**
@@ -238,7 +242,7 @@ public class BubbleIndex implements Serializable {
 					outputMessageList.add("Writing output file: " + previousFilePath);
 					System.out.println("Writing output file: " + Name);
 				}
-				
+
 				try {
 					Logs.myLogger.info("Writing output file: {}", previousFilePath);
 
@@ -305,7 +309,11 @@ public class BubbleIndex implements Serializable {
 			// will be null
 		}
 
-		Utilities.displayOutput(runContext, "Output File Path: " + previousFilePath, false);
+		if (!runContext.isComputeGrid()) {
+			Utilities.displayOutput(runContext, "Output File Path: " + previousFilePath, false);
+		} else {
+			outputMessageList.add("Setting output File Path: " + previousFilePath);
+		}
 	}
 
 	/**

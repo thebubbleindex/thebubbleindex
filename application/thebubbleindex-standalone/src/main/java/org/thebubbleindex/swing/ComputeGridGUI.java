@@ -46,7 +46,6 @@ public class ComputeGridGUI extends GUI {
 	@Override
 	protected void runAllNamesActionPerformed(final ActionEvent evt) {
 		final DailyDataCache dailyDataCache = new DailyDataCache();
-
 		initializeVariables(dailyDataCache);
 		runnableGUI();
 
@@ -59,7 +58,6 @@ public class ComputeGridGUI extends GUI {
 	@Override
 	protected void runAllTypesActionPerformed(final ActionEvent evt) {
 		final DailyDataCache dailyDataCache = new DailyDataCache();
-
 		initializeVariables(dailyDataCache);
 		runnableGUI();
 
@@ -78,8 +76,8 @@ public class ComputeGridGUI extends GUI {
 	@Override
 	protected void ExitButtonActionPerformed(final ActionEvent evt) {
 		Logs.myLogger.info("Exit button clicked");
-		bubbleIndexComputeGrid.triggerStopAllTasksMessage();
 		bubbleIndexComputeGrid.shutdownGrid();
+		
 		System.exit(0);
 	}
 	
@@ -94,6 +92,7 @@ public class ComputeGridGUI extends GUI {
 	protected void StopRunningButtonActionPerformed(final ActionEvent evt) {
 		Logs.myLogger.info("Stop button clicked");
 		bubbleIndexComputeGrid.triggerStopAllTasksMessage();
+		runContext.setStop(true);
 	}
 
 	/**

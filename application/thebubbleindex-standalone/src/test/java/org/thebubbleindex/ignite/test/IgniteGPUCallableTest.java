@@ -1,5 +1,7 @@
 package org.thebubbleindex.ignite.test;
 
+import org.cactoos.io.ResourceOf;
+import org.cactoos.text.TextOf;
 import org.junit.Test;
 import org.thebubbleindex.computegrid.BubbleIndexComputeGrid;
 import org.thebubbleindex.computegrid.IgniteBubbleIndexComputeGrid;
@@ -8,9 +10,7 @@ import org.thebubbleindex.driver.DailyDataCache;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.runnable.RunContext;
-import org.thebubbleindex.runnable.RunIndex;
-
-import com.nativelibs4java.util.IOUtils;
+import org.thebubbleindex.testutil.TestUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class IgniteGPUCallableTest {
 
 		final RunContext runContext = new RunContext(false, true);
 		runContext.setThreadNumber(4);
-		
+
 		final DailyDataCache dailyDataCache = new DailyDataCache();
 
 		final String selectionName = "BITSTAMPUSD";
@@ -55,11 +55,9 @@ public class IgniteGPUCallableTest {
 		final double tCritDouble = 21.0;
 
 		final String pathRoot = folder + fileSep + folderType + fileSep + selectionName + fileSep + selectionName;
+		final ResourceOf dailyDataResource = new ResourceOf(pathRoot + "dailydata.csv");
 
-		final URL dailyDataUrl = getClass().getClassLoader().getResource(pathRoot + "dailydata.csv");
-		final Path dailyDataPath = new File(dailyDataUrl.toURI()).toPath();
-
-		final List<String> lines = Files.readAllLines(dailyDataPath, Charset.defaultCharset());
+		final List<String> lines = TestUtil.getLines(new TextOf(dailyDataResource).asString());
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final List<String> dailyPriceData = new ArrayList<String>();
 
@@ -76,17 +74,9 @@ public class IgniteGPUCallableTest {
 		dailyDataCache.setDailyPriceDoubleValues(dailyPriceValues);
 		dailyDataCache.setSelectionName(selectionName);
 
-		String openCLSrc = null;
-		try {
-			openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
-		} catch (final Exception ex) {
-			openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("GPUKernel.cl"));
-		}
-		
+		final String openCLSrc = new TextOf(new ResourceOf("GPUKernel.cl")).asString();
+
 		assert openCLSrc != null;
-		
-		bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
-		bubbleIndexComputeGrid.setIndices(indices);
 
 		Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}", folderType,
 				selectionName);
@@ -119,7 +109,7 @@ public class IgniteGPUCallableTest {
 
 		final RunContext runContext = new RunContext(false, true);
 		runContext.setThreadNumber(4);
-		
+
 		final DailyDataCache dailyDataCache = new DailyDataCache();
 
 		final String selectionName = "TSLA";
@@ -130,11 +120,9 @@ public class IgniteGPUCallableTest {
 		final double tCritDouble = 21.0;
 
 		final String pathRoot = folder + fileSep + folderType + fileSep + selectionName + fileSep + selectionName;
+		final ResourceOf dailyDataResource = new ResourceOf(pathRoot + "dailydata.csv");
 
-		final URL dailyDataUrl = getClass().getClassLoader().getResource(pathRoot + "dailydata.csv");
-		final Path dailyDataPath = new File(dailyDataUrl.toURI()).toPath();
-
-		final List<String> lines = Files.readAllLines(dailyDataPath, Charset.defaultCharset());
+		final List<String> lines = TestUtil.getLines(new TextOf(dailyDataResource).asString());
 		final List<String> dailyPriceDate = new ArrayList<String>();
 		final List<String> dailyPriceData = new ArrayList<String>();
 
@@ -151,17 +139,9 @@ public class IgniteGPUCallableTest {
 		dailyDataCache.setDailyPriceDoubleValues(dailyPriceValues);
 		dailyDataCache.setSelectionName(selectionName);
 
-		String openCLSrc = null;
-		try {
-			openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
-		} catch (final Exception ex) {
-			openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("GPUKernel.cl"));
-		}
-		
+		final String openCLSrc = new TextOf(new ResourceOf("GPUKernel.cl")).asString();
+
 		assert openCLSrc != null;
-		
-		bubbleIndexComputeGrid.setDailyDataCache(dailyDataCache);
-		bubbleIndexComputeGrid.setIndices(indices);
 
 		Logs.myLogger.info("Running single selection. Category Name = {}, Selection Name = {}", folderType,
 				selectionName);

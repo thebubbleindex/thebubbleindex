@@ -121,13 +121,12 @@ public class noGUI {
 			if (cmd.hasOption(computeGridShortOption)) {
 				if (cmd.hasOption(guiShortOption)) {
 					final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
-					
+
 					final RunContext runContext = new RunContext(true, true);
-					
+
 					ComputeGridGUI.ComputeGridGUImain(runContext, bubbleIndexComputeGrid);
 				} else {
 					final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
-					final DailyDataCache dailyDataCache = new DailyDataCache();
 					final Indices indices = new Indices();
 					final RunContext runContext = new RunContext(false, true);
 
@@ -141,7 +140,7 @@ public class noGUI {
 						Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
 						Utilities.displayOutput(runContext, "Error. OpenCL source file missing.", false);
 					}
-					
+
 					Utilities.displayOutput(runContext, "Working Dir: " + indices.getUserDir(), false);
 
 					final RunType type = RunType.valueOf(cmd.getOptionValue(runTypeShortOption));
@@ -161,12 +160,19 @@ public class noGUI {
 								categoryName, selectionName);
 
 						final String[] windowArray = windows.split(",");
+						final DailyDataCache dailyDataCache = new DailyDataCache();
 
 						for (final String window : windowArray) {
-							final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
-									Integer.parseInt(window.trim()), categoryName, selectionName, dailyDataCache,
-									indices, openCLSrc, runContext);
-							bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+							BubbleIndex bubbleIndex = null;
+
+							try {
+								bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
+										categoryName, selectionName, dailyDataCache, indices, openCLSrc, runContext);
+							} catch (final Exception ex) {
+							} finally {
+								if (bubbleIndex != null)
+									bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+							}
 						}
 
 						bubbleIndexComputeGrid.deployTasks();
@@ -194,11 +200,19 @@ public class noGUI {
 						final String[] windowArray = windows.split(",");
 
 						for (final String updateName : updateNames) {
+							final DailyDataCache dailyDataCache = new DailyDataCache();
+
 							for (final String window : windowArray) {
-								final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
-										Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache,
-										indices, openCLSrc, runContext);
-								bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+								BubbleIndex bubbleIndex = null;
+
+								try {
+									bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
+											categoryName, updateName, dailyDataCache, indices, openCLSrc, runContext);
+								} catch (final Exception ex) {
+								} finally {
+									if (bubbleIndex != null)
+										bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+								}
 							}
 						}
 
@@ -229,11 +243,21 @@ public class noGUI {
 							final ArrayList<String> updateNames = myEntry.getValue().getComponents();
 
 							for (final String updateName : updateNames) {
+								final DailyDataCache dailyDataCache = new DailyDataCache();
+
 								for (final String window : windowArray) {
-									final BubbleIndex bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
-											Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache,
-											indices, openCLSrc, runContext);
-									bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+									BubbleIndex bubbleIndex = null;
+
+									try {
+										bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
+												Integer.parseInt(window.trim()), categoryName, updateName,
+												dailyDataCache, indices, openCLSrc, runContext);
+									} catch (final Exception ex) {
+									} finally {
+										if (bubbleIndex != null)
+											bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(),
+													bubbleIndex);
+									}
 								}
 							}
 						}

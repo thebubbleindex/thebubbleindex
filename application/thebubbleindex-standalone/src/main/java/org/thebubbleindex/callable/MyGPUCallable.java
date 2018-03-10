@@ -297,12 +297,12 @@ public class MyGPUCallable implements Callable<Float> {
 
 			final float output = Temp;
 
+			final String outputString = "Name: " + selectionName + "  Date: " + displayPeriodString + "  Value: "
+					+ output + "  Window: " + numberOfDays;
 			if (runContext.isGUI() && !runContext.isComputeGrid()) {
-				bubbleIndexWorker.publishText(String.format("Name: %s    Date: %s    Value: %15.2f    Window: %d",
-						selectionName, displayPeriodString, output, numberOfDays));
+				bubbleIndexWorker.publishText(outputString);
 			} else {
-				System.out.println(String.format("Name: %s    Date: %s    Value: %15.2f    Window: %d", selectionName,
-						displayPeriodString, output, numberOfDays));
+				System.out.println(outputString);
 			}
 
 			Values.release();

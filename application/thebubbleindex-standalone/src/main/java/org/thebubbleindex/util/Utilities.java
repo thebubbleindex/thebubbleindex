@@ -192,7 +192,7 @@ public class Utilities implements Serializable {
 
 		} catch (final Exception ex) {
 			Logs.myLogger.error("Error while reading file = {}. {}", locationPath, ex);
-			throw new FailedToRunIndex(ex);
+			throw new FailedToRunIndex("Error while reading file = " + locationPath);
 		}
 	}
 
