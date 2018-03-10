@@ -2,6 +2,7 @@ package org.thebubbleindex.ignite.test;
 
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
+import org.junit.Before;
 import org.junit.Test;
 import org.thebubbleindex.computegrid.BubbleIndexComputeGrid;
 import org.thebubbleindex.computegrid.IgniteBubbleIndexComputeGrid;
@@ -17,8 +18,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -31,15 +35,37 @@ import static org.junit.Assert.assertEquals;
  */
 public class IgniteGPUCallableTest {
 
-	final double epsilon = 0.01;
-	final double epsilonAlt = 0.1;
-	final String fileSep = File.separator;
+	private final double epsilon = 0.01;
+	private final String fileSep = File.separator;
+	private Indices indices;
+	
+	@Before
+	public void cleanSlate() throws IOException {
+		final String targetPathRoot = getClass().getProtectionDomain().getCodeSource().getLocation().getPath()
+				.replaceFirst("test-classes/", "").replaceFirst("classes/", "") + "ProgramData";
+		final File targetDir = new File(targetPathRoot);
+		if (targetDir.exists()) {
+			Files.walkFileTree(targetDir.toPath(), new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+					Files.delete(file);
+					return FileVisitResult.CONTINUE;
+				}
 
+				@Override
+				public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+					Files.delete(dir);
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		}
+		
+		indices = new Indices();
+		indices.initialize();
+	}
+	
 	@Test
 	public void resultsShouldMatchBITSTAMPUSD() throws IOException, URISyntaxException {
-		final Indices indices = new Indices();
-		indices.initialize();
-
 		final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
 
 		final RunContext runContext = new RunContext(false, true);
@@ -102,9 +128,6 @@ public class IgniteGPUCallableTest {
 
 	@Test
 	public void resultsShouldMatchTSLA() throws IOException, URISyntaxException {
-		final Indices indices = new Indices();
-		indices.initialize();
-
 		final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
 
 		final RunContext runContext = new RunContext(false, true);

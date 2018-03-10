@@ -2,6 +2,7 @@ package org.thebubbleindex.callable.test;
 
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
+import org.junit.Before;
 import org.junit.Test;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.runnable.RunContext;
@@ -11,9 +12,11 @@ import org.thebubbleindex.testutil.TestUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -26,12 +29,38 @@ import static org.junit.Assert.assertEquals;
  */
 public class MyGPUCallableTest {
 
-	final double epsilon = 0.01;
-	final String fileSep = File.separator;
+	private final double epsilon = 0.01;
+	private final String fileSep = File.separator;
+	private Indices indices;
+	
+	@Before
+	public void cleanSlate() throws IOException {
+		final String targetPathRoot = getClass().getProtectionDomain().getCodeSource().getLocation().getPath()
+				.replaceFirst("test-classes/", "").replaceFirst("classes/", "") + "ProgramData";
+		
+		final File targetDir = new File(targetPathRoot);
+		if (targetDir.exists()) {
+			Files.walkFileTree(targetDir.toPath(), new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+					Files.delete(file);
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+					Files.delete(dir);
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		}
+		
+		indices = new Indices();
+		indices.initialize();
+	}
 
 	@Test
 	public void resultsShouldMatchBITSTAMPUSD() throws IOException, URISyntaxException {
-		final Indices indices = new Indices();
 		final RunContext runContext = new RunContext(false, false);
 
 		final String selectionName = "BITSTAMPUSD";
@@ -77,7 +106,6 @@ public class MyGPUCallableTest {
 
 	@Test
 	public void resultsShouldMatchTSLA() throws IOException, URISyntaxException {
-		final Indices indices = new Indices();
 		final RunContext runContext = new RunContext(false, false);
 
 		final String selectionName = "TSLA";
@@ -148,7 +176,7 @@ public class MyGPUCallableTest {
 		for (int i = 0; i < dataSize; i++) {
 			dailyPriceValues[i] = priceValues.get(i);
 		}
-		
+
 		final String openCLSrc = new TextOf(new ResourceOf("GPUKernel.cl")).asString();
 
 		runContext.setThreadNumber(4);
@@ -169,8 +197,6 @@ public class MyGPUCallableTest {
 
 	@Test
 	public void shouldUpdateExistingDataCorrectly() throws IOException, URISyntaxException {
-		final Indices indices = new Indices();
-		indices.initialize();
 		final RunContext runContext = new RunContext(false, false);
 
 		final List<String> dailyPriceData = new ArrayList<String>();
@@ -182,10 +208,11 @@ public class MyGPUCallableTest {
 		final String testFolder = "sample-results";
 
 		final String dailyDataPricePathRoot = testFolder + fileSep + selectionName + fileSep + selectionName;
-		final List<String> lines = TestUtil.getLines(new TextOf(new ResourceOf(dailyDataPricePathRoot + "dailydata-UPDATE.csv")).asString());
+		final List<String> lines = TestUtil
+				.getLines(new TextOf(new ResourceOf(dailyDataPricePathRoot + "dailydata-UPDATE.csv")).asString());
 
 		TestUtil.parseDailyData(lines, dailyPriceData, tempList);
-		moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
+		TestUtil.moveFiles(dailyDataPricePathRoot, windowsString, categoryName, selectionName);
 
 		final double omegaDouble = 6.28;
 		final double mCoeffDouble = 0.38;
@@ -229,16 +256,16 @@ public class MyGPUCallableTest {
 
 		final String previousFilePath = pathRoot + String.valueOf(window) + "days.csv";
 		byte[] previousFileBytes = null;
-		
+
 		try {
 			previousFileBytes = new TextOf(new ResourceOf(previousFilePath)).asString().getBytes();
-		} catch (final Exception ex) {	
+		} catch (final Exception ex) {
 		}
-		
+
 		final RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
 				previousFileBytes, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc,
 				runContext);
-		
+
 		runIndex.execIndexWithGPU();
 		compareResults(selectionName, window, results);
 		results.clear();
@@ -255,7 +282,7 @@ public class MyGPUCallableTest {
 		final RunIndex runIndex = new RunIndex(null, dailyPriceValues, dataSize, window, results, dailyPriceDate,
 				previousFileBytes, selectionName, omegaDouble, mCoeffDouble, tCritDouble, indices, openCLSrc,
 				runContext);
-		
+
 		runIndex.execIndexWithGPU();
 		compareResultsUpdate(selectionName, window, results);
 		results.clear();
@@ -263,10 +290,10 @@ public class MyGPUCallableTest {
 
 	private void compareResults(final String selectionName, final int window, final List<Double> results)
 			throws IOException, URISyntaxException {
-		final ResourceOf resultResource = new ResourceOf("sample-results" + fileSep + selectionName
-				+ fileSep + selectionName + String.valueOf(window) + "days.csv");
+		final ResourceOf resultResource = new ResourceOf("sample-results" + fileSep + selectionName + fileSep
+				+ selectionName + String.valueOf(window) + "days.csv");
 		final List<String> lines = TestUtil.getLines(new TextOf(resultResource).asString());
-		
+
 		int index = 0;
 		for (final String line : lines) {
 			if (index == 0) {
@@ -316,22 +343,6 @@ public class MyGPUCallableTest {
 			assertEquals(70712.703125, results.get(3), epsilon);
 			assertEquals(70699.453125, results.get(4), epsilon);
 			assertEquals(70579.2890625, results.get(5), epsilon);
-		}
-	}
-
-	private void moveFiles(final String dailyDataPricePathRoot, final String windowsString, final String categoryName,
-			final String selectionName) throws IOException {
-		final String targetPathRoot = getClass().getProtectionDomain().getCodeSource().getLocation().getPath()
-				.replaceFirst("test-classes/", "").replaceFirst("classes/", "") + "ProgramData" + fileSep + categoryName + fileSep + selectionName;
-		new File(targetPathRoot).mkdirs();
-		final String[] windows = windowsString.split(",");
-		for (final String window : windows) {
-			final String sourceURL = getClass().getProtectionDomain().getCodeSource().getLocation().getPath()
-					+ dailyDataPricePathRoot + String.valueOf(window) + "days.csv";
-			final Path source = new File(sourceURL).toPath();
-			final Path target = new File(targetPathRoot + fileSep + selectionName + String.valueOf(window) + "days.csv")
-					.toPath();
-			Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
 		}
 	}
 }

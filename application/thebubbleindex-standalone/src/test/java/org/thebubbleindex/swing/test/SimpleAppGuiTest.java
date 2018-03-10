@@ -71,13 +71,9 @@ public class SimpleAppGuiTest {
 	}
 	
 	// un-comment to debug
-	@Test
+	//@Test
 	public void shouldOpenGridGuiForDebugging()
 			throws InterruptedException, IOException, ParseException, URISyntaxException, ClassNotFoundException {
-
-//		final String targetPathRoot = getClass().getProtectionDomain().getCodeSource().getLocation().getPath()
-//				.replaceFirst("test-classes/", "") + "ProgramData";
-
 		final String targetPathRoot = System.getProperty("user.dir") + File.separator + "target" + File.separator + "ProgramData";
 		
 		final List<String> lines = new ArrayList<String>();

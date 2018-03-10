@@ -155,7 +155,7 @@ public class BubbleIndex implements Serializable {
 
 		if (!this.runContext.isStop())
 			Utilities.ReadValues(filePath, dailyPriceDate, dailyPriceData, false, false);
-		
+
 		dataSize = dailyPriceData.size();
 
 		dailyPriceDoubleValues = new double[dataSize];
@@ -214,15 +214,15 @@ public class BubbleIndex implements Serializable {
 					results.clear();
 				}
 			}
-			
+
 			if (!runContext.isStop())
-				outputMessageList.add("Completed processing for category: " + categoryName
-						+ ", selection: " + selectionName);
+				outputMessageList.add("Completed processing for category: " + categoryName + ", selection: "
+						+ selectionName + ", window: " + window);
 		}
 
 		// make sure, if the stop button is pressed that there are no results
 		if (runContext.isStop())
-			results.clear();		
+			results.clear();
 	}
 
 	/**
