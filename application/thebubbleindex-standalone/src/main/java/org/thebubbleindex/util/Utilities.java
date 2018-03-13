@@ -3,6 +3,7 @@ package org.thebubbleindex.util;
 import static info.yeppp.Core.Multiply_V64fV64f_V64f;
 import static info.yeppp.Core.Subtract_V64fV64f_V64f;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,6 +13,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.math3.util.FastMath;
@@ -304,5 +310,49 @@ public class Utilities implements Serializable {
 		writer.append(',');
 		writer.append("Date");
 		writer.append('\n');
+	}
+
+	public static byte[] zipBytes(final String filename, final byte[] input) throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final ZipOutputStream zos = new ZipOutputStream(baos);
+		final ZipEntry entry = new ZipEntry(filename);
+
+		entry.setSize(input.length);
+		zos.putNextEntry(entry);
+		zos.write(input);
+		zos.closeEntry();
+		zos.close();
+
+		return baos.toByteArray();
+	}
+
+	public static byte[] unZipBytes(final byte[] compressedData) throws IOException, DataFormatException {
+		final Inflater decompressor = new Inflater();
+		decompressor.setInput(compressedData);
+
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream(compressedData.length);
+
+		byte[] buf = new byte[1024];
+		while (!decompressor.finished()) {
+			int count = decompressor.inflate(buf);
+			bos.write(buf, 0, count);
+		}
+
+		bos.close();
+
+		return bos.toByteArray();
+	}
+
+	public static void convertDatesToIntArray(final List<String> dateStrings, final int[] dateInts) {
+		int index = 0;
+		for (final String dateString : dateStrings) {
+			final int dateInt = Integer.parseInt(dateString.replaceAll("-", ""));
+			dateInts[index++] = dateInt;
+		}
+	}
+
+	public static String getDateStringFromInt(final int dailyPriceDateIntValue) {
+		final String rawString = String.valueOf(dailyPriceDateIntValue);
+		return rawString.substring(0, 4) + "-" + rawString.substring(4, 6) + "-" + rawString.substring(6);
 	}
 }

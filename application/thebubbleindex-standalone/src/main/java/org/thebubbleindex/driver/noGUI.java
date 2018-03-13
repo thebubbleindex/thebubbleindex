@@ -163,10 +163,10 @@ public class noGUI {
 						final DailyDataCache dailyDataCache = new DailyDataCache();
 
 						for (final String window : windowArray) {
-							BubbleIndex bubbleIndex = null;
+							BubbleIndexGridTask bubbleIndex = null;
 
 							try {
-								bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
+								bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
 										categoryName, selectionName, dailyDataCache, indices, openCLSrc, runContext);
 							} catch (final Exception ex) {
 							} finally {
@@ -175,10 +175,8 @@ public class noGUI {
 							}
 						}
 
-						bubbleIndexComputeGrid.deployTasks();
-
-						final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-						for (final BubbleIndex result : results) {
+						final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
+						for (final BubbleIndexGridTask result : results) {
 							result.outputResults(null);
 						}
 
@@ -203,10 +201,10 @@ public class noGUI {
 							final DailyDataCache dailyDataCache = new DailyDataCache();
 
 							for (final String window : windowArray) {
-								BubbleIndex bubbleIndex = null;
+								BubbleIndexGridTask bubbleIndex = null;
 
 								try {
-									bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
+									bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
 											categoryName, updateName, dailyDataCache, indices, openCLSrc, runContext);
 								} catch (final Exception ex) {
 								} finally {
@@ -216,10 +214,8 @@ public class noGUI {
 							}
 						}
 
-						bubbleIndexComputeGrid.deployTasks();
-
-						final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-						for (final BubbleIndex result : results) {
+						final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
+						for (final BubbleIndexGridTask result : results) {
 							result.outputResults(null);
 						}
 
@@ -246,10 +242,10 @@ public class noGUI {
 								final DailyDataCache dailyDataCache = new DailyDataCache();
 
 								for (final String window : windowArray) {
-									BubbleIndex bubbleIndex = null;
+									BubbleIndexGridTask bubbleIndex = null;
 
 									try {
-										bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit,
+										bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit,
 												Integer.parseInt(window.trim()), categoryName, updateName,
 												dailyDataCache, indices, openCLSrc, runContext);
 									} catch (final Exception ex) {
@@ -262,10 +258,8 @@ public class noGUI {
 							}
 						}
 
-						bubbleIndexComputeGrid.deployTasks();
-
-						final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-						for (final BubbleIndex result : results) {
+						final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
+						for (final BubbleIndexGridTask result : results) {
 							result.outputResults(null);
 						}
 

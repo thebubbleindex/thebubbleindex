@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.thebubbleindex.computegrid.BubbleIndexComputeGrid;
 import org.thebubbleindex.computegrid.IgniteBubbleIndexComputeGrid;
-import org.thebubbleindex.driver.BubbleIndex;
+import org.thebubbleindex.driver.BubbleIndexGridTask;
 import org.thebubbleindex.driver.DailyDataCache;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
@@ -103,15 +103,13 @@ public class IgniteCPUCallableTest {
 		final String[] windowArray = new String[] { "52", "104", "153", "256", "512" };
 
 		for (final String window : windowArray) {
-			final BubbleIndex bubbleIndex = new BubbleIndex(omegaDouble, mCoeffDouble, tCritDouble,
+			final BubbleIndexGridTask bubbleIndex = new BubbleIndexGridTask(omegaDouble, mCoeffDouble, tCritDouble,
 					Integer.parseInt(window.trim()), folderType, selectionName, dailyDataCache, indices, null,
 					runContext);
 			bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
 		}
 
-		bubbleIndexComputeGrid.deployTasks();
-
-		final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
+		final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
 
 		compareResults(selectionName, results);
 		results.clear();
@@ -162,15 +160,13 @@ public class IgniteCPUCallableTest {
 		final String[] windowArray = new String[] { "52", "104", "153", "256", "512" };
 
 		for (final String window : windowArray) {
-			final BubbleIndex bubbleIndex = new BubbleIndex(omegaDouble, mCoeffDouble, tCritDouble,
+			final BubbleIndexGridTask bubbleIndex = new BubbleIndexGridTask(omegaDouble, mCoeffDouble, tCritDouble,
 					Integer.parseInt(window.trim()), folderType, selectionName, dailyDataCache, indices, null,
 					runContext);
 			bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
 		}
 
-		bubbleIndexComputeGrid.deployTasks();
-
-		final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
+		final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
 
 		compareResults(selectionName, results);
 		results.clear();
@@ -178,12 +174,12 @@ public class IgniteCPUCallableTest {
 		bubbleIndexComputeGrid.shutdownGrid();
 	}
 
-	private void compareResults(final String selectionName, final List<BubbleIndex> bubbleIndexResults)
+	private void compareResults(final String selectionName, final List<BubbleIndexGridTask> bubbleIndexResults)
 			throws IOException, URISyntaxException {
 		assert bubbleIndexResults.size() > 0;
 
-		for (final BubbleIndex bubbleIndex : bubbleIndexResults) {
-			final List<Double> results = bubbleIndex.getResults();
+		for (final BubbleIndexGridTask bubbleIndex : bubbleIndexResults) {
+			final double[] results = bubbleIndex.getResults();
 			final URL resultURL = getClass().getClassLoader().getResource("sample-results" + fileSep + selectionName
 					+ fileSep + selectionName + String.valueOf(bubbleIndex.getWindow()) + "days.csv");
 			final Path resultPath = new File(resultURL.toURI()).toPath();
@@ -202,7 +198,7 @@ public class IgniteCPUCallableTest {
 				lineScan.next();// date
 				lineScan.close();
 
-				assertEquals(expected, results.get(index - 1), epsilon * expected);
+				assertEquals(expected, results[index - 1], epsilon * expected);
 
 				index++;
 			}

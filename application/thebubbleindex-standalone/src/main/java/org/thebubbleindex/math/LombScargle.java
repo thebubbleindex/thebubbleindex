@@ -66,30 +66,32 @@ public class LombScargle {
 		this.mCoeffDouble = mCoeffDouble;
 		this.mCoeffFloat = (float) mCoeffDouble;
 
-		InputStream input = null;
-		try {
-			Logs.myLogger.info("Reading lombscargle.properties file.");
-			final Properties lsProperties = new Properties();
+		if (indices != null) {
+			InputStream input = null;
+			try {
+				Logs.myLogger.info("Reading lombscargle.properties file.");
+				final Properties lsProperties = new Properties();
 
-			input = new FileInputStream(indices.getUserDir() + indices.getFilePathSymbol()
-					+ indices.getProgramDataFolder() + indices.getFilePathSymbol() + "lombscargle.properties");
+				input = new FileInputStream(indices.getUserDir() + indices.getFilePathSymbol()
+						+ indices.getProgramDataFolder() + indices.getFilePathSymbol() + "lombscargle.properties");
 
-			lsProperties.load(input);
+				lsProperties.load(input);
 
-			this.freqSize = Integer.parseInt(lsProperties.getProperty("freqsize").trim());
-			this.qSize = Integer.parseInt(lsProperties.getProperty("qsize").trim());
-			this.hSize = Integer.parseInt(lsProperties.getProperty("hsize").trim());
+				this.freqSize = Integer.parseInt(lsProperties.getProperty("freqsize").trim());
+				this.qSize = Integer.parseInt(lsProperties.getProperty("qsize").trim());
+				this.hSize = Integer.parseInt(lsProperties.getProperty("hsize").trim());
 
-		} catch (final FileNotFoundException ex) {
-			Logs.myLogger.error("Using constructor values. Could not find lombscargle.properties file.");
-		} catch (final IOException ex) {
-			Logs.myLogger.error("Using constructor values. Error while reading lombscargle.properties file.");
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (final IOException ex) {
-					Logs.myLogger.error("Error while closing lombscargle.properties file. {}", ex);
+			} catch (final FileNotFoundException ex) {
+				Logs.myLogger.error("Using constructor values. Could not find lombscargle.properties file.");
+			} catch (final IOException ex) {
+				Logs.myLogger.error("Using constructor values. Error while reading lombscargle.properties file.");
+			} finally {
+				if (input != null) {
+					try {
+						input.close();
+					} catch (final IOException ex) {
+						Logs.myLogger.error("Error while closing lombscargle.properties file. {}", ex);
+					}
 				}
 			}
 		}

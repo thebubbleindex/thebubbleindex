@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+
 import org.thebubbleindex.computegrid.BubbleIndexComputeGrid;
 import org.thebubbleindex.driver.BubbleIndex;
+import org.thebubbleindex.driver.BubbleIndexGridTask;
 import org.thebubbleindex.driver.DailyDataCache;
 import org.thebubbleindex.driver.noGUI.RunType;
 import org.thebubbleindex.inputs.Indices;
@@ -43,10 +46,10 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 		final DailyDataCache localDailyDataCache = new DailyDataCache();
 
 		for (final String window : windowInputArray) {
-			BubbleIndex bubbleIndex = null;
+			BubbleIndexGridTask bubbleIndex = null;
 
 			try {
-				bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()), categoryName,
+				bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit, Integer.parseInt(window.trim()), categoryName,
 						selectionName, localDailyDataCache, indices, openCLSrc, runContext);
 			} catch (final Exception ex) {
 				publish(ex.getMessage());
@@ -57,10 +60,8 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 			}
 		}
 
-		bubbleIndexComputeGrid.deployTasks();
-
-		final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-		for (final BubbleIndex result : results) {
+		final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
+		for (final BubbleIndexGridTask result : results) {
 			result.outputResults(this);
 		}
 
@@ -86,10 +87,10 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 			final DailyDataCache localDailyDataCache = new DailyDataCache();
 
 			for (final String window : windowInputArray) {
-				BubbleIndex bubbleIndex = null;
+				BubbleIndexGridTask bubbleIndex = null;
 
 				try {
-					bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()), categoryName,
+					bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit, Integer.parseInt(window.trim()), categoryName,
 							updateName, localDailyDataCache, indices, openCLSrc, runContext);
 				} catch (final Exception ex) {
 					publish(ex.getMessage());
@@ -101,10 +102,8 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 			}
 		}
 
-		bubbleIndexComputeGrid.deployTasks();
-
-		final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-		for (final BubbleIndex result : results) {
+		final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
+		for (final BubbleIndexGridTask result : results) {
 			result.outputResults(this);
 		}
 	}
@@ -119,31 +118,34 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 		for (final Map.Entry<String, InputCategory> myEntry : indices.getCategoriesAndComponents().entrySet()) {
 			final String categoryName = myEntry.getKey();
 			final ArrayList<String> updateNames = myEntry.getValue().getComponents();
+			final Map<Integer, BubbleIndexGridTask> tempBubbleIndexTasks = new TreeMap<Integer, BubbleIndexGridTask>();
 
 			for (final String updateName : updateNames) {
 				final DailyDataCache localDailyDataCache = new DailyDataCache();
 
 				for (final String window : windowInputArray) {
-					BubbleIndex bubbleIndex = null;
+					BubbleIndexGridTask bubbleIndex = null;
 
 					try {
-						bubbleIndex = new BubbleIndex(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
+						bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
 								categoryName, updateName, localDailyDataCache, indices, openCLSrc, runContext);
 					} catch (final Exception ex) {
 						publish(ex.getMessage());
 					} finally {
 						if (bubbleIndex != null) {
-							bubbleIndexComputeGrid.addBubbleIndexTask(bubbleIndex.hashCode(), bubbleIndex);
+							tempBubbleIndexTasks.put(bubbleIndex.hashCode(), bubbleIndex);
 						}
 					}
 				}
 			}
+
+			bubbleIndexComputeGrid.addAllBubbleIndexTasks(tempBubbleIndexTasks);
+
+			publish("Added " + tempBubbleIndexTasks.size() + " tasks to cache.");
 		}
 
-		bubbleIndexComputeGrid.deployTasks();
-
-		final List<BubbleIndex> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-		for (final BubbleIndex result : results) {
+		final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
+		for (final BubbleIndexGridTask result : results) {
 			result.outputResults(this);
 		}
 	}

@@ -9,7 +9,7 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteMessaging;
 import org.apache.ignite.cache.CacheEntryProcessor;
 import org.apache.ignite.cluster.ClusterGroup;
-import org.thebubbleindex.driver.BubbleIndex;
+import org.thebubbleindex.driver.BubbleIndexGridTask;
 import org.thebubbleindex.runnable.RunContext;
 
 /**
@@ -17,7 +17,7 @@ import org.thebubbleindex.runnable.RunContext;
  * @author thebubbleindex
  *
  */
-public class IgniteBubbleIndexCacheEntryProcessor implements CacheEntryProcessor<Integer, BubbleIndex, BubbleIndex> {
+public class IgniteBubbleIndexCacheEntryProcessor implements CacheEntryProcessor<Integer, BubbleIndexGridTask, BubbleIndexGridTask> {
 	/**
 	 * 
 	 */
@@ -31,7 +31,7 @@ public class IgniteBubbleIndexCacheEntryProcessor implements CacheEntryProcessor
 	}
 
 	@Override
-	public BubbleIndex process(final MutableEntry<Integer, BubbleIndex> mutableEntry, final Object... args)
+	public BubbleIndexGridTask process(final MutableEntry<Integer, BubbleIndexGridTask> mutableEntry, final Object... args)
 			throws EntryProcessorException {
 		if (isResetTask) {
 			processTasks = true;
@@ -42,7 +42,7 @@ public class IgniteBubbleIndexCacheEntryProcessor implements CacheEntryProcessor
 			return null;
 		}
 
-		final BubbleIndex bubbleIndex = mutableEntry.getValue();
+		final BubbleIndexGridTask bubbleIndex = mutableEntry.getValue();
 		runContext = bubbleIndex.getRunContext();
 
 		final Ignite ignite = (Ignite) args[1];
