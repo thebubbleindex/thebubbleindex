@@ -1,6 +1,5 @@
 package org.thebubbleindex.computegrid;
 
-import java.util.List;
 import java.util.Map;
 
 import org.thebubbleindex.driver.BubbleIndexGridTask;
@@ -12,7 +11,7 @@ import org.thebubbleindex.driver.BubbleIndexGridTask;
  */
 public interface BubbleIndexComputeGrid {
 
-	List<BubbleIndexGridTask> executeBubbleIndexTasks();
+	void executeBubbleIndexTasks();
 
 	void addBubbleIndexTask(final Integer key, final BubbleIndexGridTask bubbleIndexTask);
 

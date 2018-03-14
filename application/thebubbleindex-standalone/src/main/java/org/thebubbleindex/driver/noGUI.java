@@ -1,11 +1,8 @@
 package org.thebubbleindex.driver;
 
-import com.nativelibs4java.util.IOUtils;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
@@ -28,6 +25,8 @@ import org.thebubbleindex.runnable.RunIndex;
 import org.thebubbleindex.swing.ComputeGridGUI;
 import org.thebubbleindex.swing.GUI;
 import org.thebubbleindex.util.Utilities;
+
+import com.nativelibs4java.util.IOUtils;
 
 /**
  * the noGUI class is the entry point of the application. The Bubble Index can
@@ -166,8 +165,9 @@ public class noGUI {
 							BubbleIndexGridTask bubbleIndex = null;
 
 							try {
-								bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
-										categoryName, selectionName, dailyDataCache, indices, openCLSrc, runContext);
+								bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit,
+										Integer.parseInt(window.trim()), categoryName, selectionName, dailyDataCache,
+										indices, openCLSrc, runContext);
 							} catch (final Exception ex) {
 							} finally {
 								if (bubbleIndex != null)
@@ -175,11 +175,7 @@ public class noGUI {
 							}
 						}
 
-						final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-						for (final BubbleIndexGridTask result : results) {
-							result.outputResults(null);
-						}
-
+						bubbleIndexComputeGrid.executeBubbleIndexTasks();
 						bubbleIndexComputeGrid.shutdownGrid();
 					} else if (type == RunType.Category) {
 						final String categoryName = cmd.getOptionValue(categoryShortOption);
@@ -204,8 +200,9 @@ public class noGUI {
 								BubbleIndexGridTask bubbleIndex = null;
 
 								try {
-									bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
-											categoryName, updateName, dailyDataCache, indices, openCLSrc, runContext);
+									bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit,
+											Integer.parseInt(window.trim()), categoryName, updateName, dailyDataCache,
+											indices, openCLSrc, runContext);
 								} catch (final Exception ex) {
 								} finally {
 									if (bubbleIndex != null)
@@ -214,11 +211,7 @@ public class noGUI {
 							}
 						}
 
-						final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-						for (final BubbleIndexGridTask result : results) {
-							result.outputResults(null);
-						}
-
+						bubbleIndexComputeGrid.executeBubbleIndexTasks();
 						bubbleIndexComputeGrid.shutdownGrid();
 					} else if (type == RunType.All) {
 						final String windows = cmd.getOptionValue(windowsShortOption);
@@ -258,11 +251,7 @@ public class noGUI {
 							}
 						}
 
-						final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-						for (final BubbleIndexGridTask result : results) {
-							result.outputResults(null);
-						}
-
+						bubbleIndexComputeGrid.executeBubbleIndexTasks();
 						bubbleIndexComputeGrid.shutdownGrid();
 					}
 				}

@@ -2,7 +2,6 @@ package org.thebubbleindex.swing;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -49,8 +48,8 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 			BubbleIndexGridTask bubbleIndex = null;
 
 			try {
-				bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit, Integer.parseInt(window.trim()), categoryName,
-						selectionName, localDailyDataCache, indices, openCLSrc, runContext);
+				bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
+						categoryName, selectionName, localDailyDataCache, indices, openCLSrc, runContext);
 			} catch (final Exception ex) {
 				publish(ex.getMessage());
 			} finally {
@@ -60,10 +59,7 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 			}
 		}
 
-		final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-		for (final BubbleIndexGridTask result : results) {
-			result.outputResults(this);
-		}
+		bubbleIndexComputeGrid.executeBubbleIndexTasks();
 
 		if (GRAPH_ON) {
 			Logs.myLogger.info("Graph selection box checked. Plotting first four time windows.");
@@ -90,8 +86,8 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 				BubbleIndexGridTask bubbleIndex = null;
 
 				try {
-					bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit, Integer.parseInt(window.trim()), categoryName,
-							updateName, localDailyDataCache, indices, openCLSrc, runContext);
+					bubbleIndex = new BubbleIndexGridTask(omega, mCoeff, tCrit, Integer.parseInt(window.trim()),
+							categoryName, updateName, localDailyDataCache, indices, openCLSrc, runContext);
 				} catch (final Exception ex) {
 					publish(ex.getMessage());
 				} finally {
@@ -102,10 +98,7 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 			}
 		}
 
-		final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-		for (final BubbleIndexGridTask result : results) {
-			result.outputResults(this);
-		}
+		bubbleIndexComputeGrid.executeBubbleIndexTasks();
 	}
 
 	@Override
@@ -144,9 +137,6 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 			publish("Added " + tempBubbleIndexTasks.size() + " tasks to cache.");
 		}
 
-		final List<BubbleIndexGridTask> results = bubbleIndexComputeGrid.executeBubbleIndexTasks();
-		for (final BubbleIndexGridTask result : results) {
-			result.outputResults(this);
-		}
+		bubbleIndexComputeGrid.executeBubbleIndexTasks();
 	}
 }

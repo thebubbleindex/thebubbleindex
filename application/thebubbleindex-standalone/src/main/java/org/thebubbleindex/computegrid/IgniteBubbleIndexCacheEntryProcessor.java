@@ -17,7 +17,8 @@ import org.thebubbleindex.runnable.RunContext;
  * @author thebubbleindex
  *
  */
-public class IgniteBubbleIndexCacheEntryProcessor implements CacheEntryProcessor<Integer, BubbleIndexGridTask, BubbleIndexGridTask> {
+public class IgniteBubbleIndexCacheEntryProcessor
+		implements CacheEntryProcessor<Integer, BubbleIndexGridTask, BubbleIndexGridTask> {
 	/**
 	 * 
 	 */
@@ -25,19 +26,19 @@ public class IgniteBubbleIndexCacheEntryProcessor implements CacheEntryProcessor
 	private static volatile boolean processTasks = true;
 	private RunContext runContext;
 	private boolean isResetTask;
-	
+
 	public IgniteBubbleIndexCacheEntryProcessor(final boolean isResetTask) {
 		this.isResetTask = isResetTask;
 	}
 
 	@Override
-	public BubbleIndexGridTask process(final MutableEntry<Integer, BubbleIndexGridTask> mutableEntry, final Object... args)
-			throws EntryProcessorException {
+	public BubbleIndexGridTask process(final MutableEntry<Integer, BubbleIndexGridTask> mutableEntry,
+			final Object... args) throws EntryProcessorException {
 		if (isResetTask) {
 			processTasks = true;
 			return null;
 		}
-		
+
 		if (args == null || args.length < 3 || args[0] == null || args[1] == null || args[2] == null) {
 			return null;
 		}
@@ -50,8 +51,6 @@ public class IgniteBubbleIndexCacheEntryProcessor implements CacheEntryProcessor
 		final IgniteMessaging terminationMessaging = ignite.message(ignite.cluster().forLocal());
 
 		terminationMessaging.localListen(terminationTopicName, (nodeId, msg) -> {
-			System.out.println("[msg: " + msg + ", nodeId: " + nodeId);
-
 			if (msg.toString().equals("STOP_ALL_TASKS")) {
 				runContext.setStop(true);
 				processTasks = false;
@@ -73,12 +72,14 @@ public class IgniteBubbleIndexCacheEntryProcessor implements CacheEntryProcessor
 		final ClusterGroup rmtGrp = ignite.cluster().forRemotes();
 		final List<String> textOutputs = bubbleIndex.getGUITextOutputsFromComputeGrid();
 
-		if (errorMessage != null) {
+		if (errorMessage != null && !runContext.isStop()) {
 			textOutputs.add(errorMessage);
 		}
 
-		for (final String textOutput : textOutputs) {
-			ignite.message(rmtGrp).send(rmtMsgTopicName, textOutput);
+		if (!runContext.isStop()) {
+			for (final String textOutput : textOutputs) {
+				ignite.message(rmtGrp).send(rmtMsgTopicName, textOutput);
+			}
 		}
 
 		return bubbleIndex;

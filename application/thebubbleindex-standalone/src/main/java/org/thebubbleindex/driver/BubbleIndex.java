@@ -277,6 +277,7 @@ public class BubbleIndex implements Serializable {
 		Logs.myLogger.info(
 				"Plotting. Category Name = {}, Selection Name = {}, Windows = {}," + " BegDate = {}, EndDate = {}",
 				categoryName, selectionName, windowsString, begDate.toString(), endDate.toString());
+
 		new BubbleIndexPlot(bubbleIndexWorker, categoryName, selectionName, windowsString, begDate, endDate,
 				isCustomRange, dailyPriceData, dailyPriceDate, indices, runContext);
 		new DerivativePlot(bubbleIndexWorker, categoryName, selectionName, windowsString, begDate, endDate,

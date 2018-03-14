@@ -43,7 +43,7 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	private final IgniteCache<Integer, BubbleIndexGridTask> bubbleIndexTaskCache;
 	private final IgniteMessaging textMessageOutputMessaging;
 	private final AtomicInteger numberOfLines = new AtomicInteger();
-	private Set<Integer> bubbleIndexTaskKeys = new HashSet<Integer>(100);
+	private List<Integer> bubbleIndexTaskKeys = new ArrayList<Integer>(100);
 
 	public IgniteBubbleIndexComputeGrid() {
 		final TcpDiscoveryMulticastIpFinder ipFinder = new TcpDiscoveryMulticastIpFinder();
@@ -73,7 +73,7 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 		bubbleIndexTaskKeys.add(key);
 		bubbleIndexTaskCache.put(key, bubbleIndexTask);
 	}
-	
+
 	@Override
 	public void addAllBubbleIndexTasks(final Map<Integer, BubbleIndexGridTask> bubbleIndexTaskMap) {
 		bubbleIndexTaskKeys.addAll(bubbleIndexTaskMap.keySet());
@@ -81,22 +81,25 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	}
 
 	@Override
-	public List<BubbleIndexGridTask> executeBubbleIndexTasks() {
-		final List<BubbleIndexGridTask> bubbleIndexResults = new ArrayList<BubbleIndexGridTask>(bubbleIndexTaskKeys.size());
-
+	public void executeBubbleIndexTasks() {
 		int cacheSize = bubbleIndexTaskCache.size(CachePeekMode.PRIMARY);
 		Logs.myLogger.log(Level.INFO, "Cache contains {} tasks.", cacheSize);
 		displayGridMessageOutput("Cache contains " + cacheSize + " tasks.");
 
-		// first run the tasks
-		final Map<Integer, EntryProcessorResult<BubbleIndexGridTask>> results = bubbleIndexTaskCache.invokeAll(bubbleIndexTaskKeys,
-				new IgniteBubbleIndexCacheEntryProcessor(false), GUI_DISPLAY_TEXT_TOPIC, ignite, TERMINATION_EVT_TOPIC,
-				BUBBLE_INDEX_TASK_CACHE_NAME);
+		final Set<Integer> tempBubbleIndexTaskKeySet = new HashSet<Integer>(bubbleIndexTaskKeys);
 
-		for (final EntryProcessorResult<BubbleIndexGridTask> bubbleIndex : results.values()) {
+		// first run the tasks
+		final Map<Integer, EntryProcessorResult<BubbleIndexGridTask>> results = bubbleIndexTaskCache.invokeAll(
+				tempBubbleIndexTaskKeySet, new IgniteBubbleIndexCacheEntryProcessor(false), GUI_DISPLAY_TEXT_TOPIC,
+				ignite, TERMINATION_EVT_TOPIC, BUBBLE_INDEX_TASK_CACHE_NAME);
+
+		Logs.myLogger.info("Outputting results...");
+
+		while (bubbleIndexTaskKeys.size() > 0) {
 			try {
-				final BubbleIndexGridTask bubbleIndexResult = bubbleIndex.get();
-				bubbleIndexResults.add(bubbleIndexResult);
+				final Integer integerResultKey = bubbleIndexTaskKeys.remove(0);
+				final EntryProcessorResult<BubbleIndexGridTask> bubbleIndexResult = results.get(integerResultKey);
+				bubbleIndexResult.get().outputResults(null);
 			} catch (final Exception ex) {
 				Logs.myLogger.log(Level.ERROR, ex);
 			}
@@ -104,15 +107,13 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 
 		// reset the processTask indicator to make sure this volatile static
 		// object is set to true in all nodes
-		bubbleIndexTaskCache.invokeAll(bubbleIndexTaskKeys, new IgniteBubbleIndexCacheEntryProcessor(true));
+		bubbleIndexTaskCache.invokeAll(tempBubbleIndexTaskKeySet, new IgniteBubbleIndexCacheEntryProcessor(true));
 
-		bubbleIndexTaskCache.clearAll(bubbleIndexTaskKeys);
+		bubbleIndexTaskCache.clearAll(tempBubbleIndexTaskKeySet);
 		bubbleIndexTaskKeys.clear();
 
 		cacheSize = bubbleIndexTaskCache.size(CachePeekMode.PRIMARY);
 		displayGridMessageOutput("Cleared tasks from cache. Cache now contains " + cacheSize + " tasks.");
-
-		return bubbleIndexResults;
 	}
 
 	@Override

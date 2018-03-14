@@ -66,7 +66,7 @@ public class ComputeGridGUI extends GUI {
 				dailyDataCache, indices, openCLSrc, runContext, bubbleIndexComputeGrid);
 		bubbleIndexGridWorker.execute();
 	}
-	
+
 	/**
 	 * ExitButtonActionPerformed Calls System.exit(0) upon clicking.
 	 * 
@@ -77,10 +77,10 @@ public class ComputeGridGUI extends GUI {
 	protected void ExitButtonActionPerformed(final ActionEvent evt) {
 		Logs.myLogger.info("Exit button clicked");
 		bubbleIndexComputeGrid.shutdownGrid();
-		
+
 		System.exit(0);
 	}
-	
+
 	/**
 	 * StopRunningButtonActionPerformed Changes the Stop variable in RunContext
 	 * to true. This should initiate a complete halt of any executing process.
@@ -103,7 +103,8 @@ public class ComputeGridGUI extends GUI {
 	 * @param tCrit
 	 * @param mCoeff
 	 */
-	public static void ComputeGridGUImain(final RunContext runContext, final BubbleIndexComputeGrid bubbleIndexComputeGrid) {
+	public static void ComputeGridGUImain(final RunContext runContext,
+			final BubbleIndexComputeGrid bubbleIndexComputeGrid) {
 		// <editor-fold defaultstate="collapsed" desc=" Look and feel setting
 		// code (optional) ">
 		/*
