@@ -1,8 +1,8 @@
 package org.thebubbleindex.computegrid;
 
-import java.util.Map;
-
 import org.thebubbleindex.driver.BubbleIndexGridTask;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 /**
  * 
@@ -15,7 +15,7 @@ public interface BubbleIndexComputeGrid {
 
 	void addBubbleIndexTask(final Integer key, final BubbleIndexGridTask bubbleIndexTask);
 
-	void addAllBubbleIndexTasks(final Map<Integer, BubbleIndexGridTask> bubbleIndexTasks);
+	void addAllBubbleIndexTasks(final TIntObjectHashMap<BubbleIndexGridTask> bubbleIndexTasks);
 
 	void shutdownGrid();
 

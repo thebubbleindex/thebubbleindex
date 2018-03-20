@@ -3,7 +3,6 @@ package org.thebubbleindex.swing;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.thebubbleindex.computegrid.BubbleIndexComputeGrid;
 import org.thebubbleindex.driver.BubbleIndex;
@@ -14,6 +13,8 @@ import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.inputs.InputCategory;
 import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.runnable.RunContext;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 /**
  *
@@ -110,8 +111,11 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 
 		for (final Map.Entry<String, InputCategory> myEntry : indices.getCategoriesAndComponents().entrySet()) {
 			final String categoryName = myEntry.getKey();
+			publish("Creating tasks for category: " + categoryName);
+
 			final ArrayList<String> updateNames = myEntry.getValue().getComponents();
-			final Map<Integer, BubbleIndexGridTask> tempBubbleIndexTasks = new TreeMap<Integer, BubbleIndexGridTask>();
+			final TIntObjectHashMap<BubbleIndexGridTask> tempBubbleIndexTasks = new TIntObjectHashMap<BubbleIndexGridTask>(
+					updateNames.size() * windowInputArray.length);
 
 			for (final String updateName : updateNames) {
 				final DailyDataCache localDailyDataCache = new DailyDataCache();
@@ -133,8 +137,8 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 			}
 
 			bubbleIndexComputeGrid.addAllBubbleIndexTasks(tempBubbleIndexTasks);
-
 			publish("Added " + tempBubbleIndexTasks.size() + " tasks to cache.");
+			tempBubbleIndexTasks.clear();
 		}
 
 		bubbleIndexComputeGrid.executeBubbleIndexTasks();

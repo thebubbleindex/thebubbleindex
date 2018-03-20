@@ -1,6 +1,6 @@
-# The Bubble Index
+# The Bubble Index - Compute Grid Version
 
-[Download Pre-Built Jar](https://bigttrott-thebubbleindex.netdna-ssl.com/Release/bubbleindex.zip)
+[Download Pre-Built Jar]()
 
 [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.google.code.gson/gson/badge.svg)](http://)
 
@@ -20,6 +20,8 @@ Feel free to comment, suggest changes, or point out bugs/problems.
 ## <a name="TOC-Overview"></a>Overview
 
 First make sure Java 8 JDK is installed and working on your computer (or JRE if not building).
+
+Download Apache Ignite and start a suitable number of nodes.
 
 ###### ProgramData Folder and its Subdirectories.
 

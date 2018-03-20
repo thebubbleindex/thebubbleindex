@@ -1,9 +1,7 @@
 package org.thebubbleindex.computegrid;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,6 +23,9 @@ import org.thebubbleindex.driver.BubbleIndexGridTask;
 import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.swing.GUI;
 
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 /**
  * To set up ignite: 1. Configure xml 2. Copy Bubble_Index.jar into the ignite
  * libs folder 3. Make sure JAVA_HOME is set, i.e. set JAVA_HOME=C:\Program
@@ -40,10 +41,9 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 
 	private final String address = "127.0.0.1:47500..47509";
 	private final Ignite ignite;
-	private final IgniteCache<Integer, BubbleIndexGridTask> bubbleIndexTaskCache;
 	private final IgniteMessaging textMessageOutputMessaging;
 	private final AtomicInteger numberOfLines = new AtomicInteger();
-	private List<Integer> bubbleIndexTaskKeys = new ArrayList<Integer>(100);
+	private final TIntArrayList bubbleIndexTaskKeys = new TIntArrayList();
 
 	public IgniteBubbleIndexComputeGrid() {
 		final TcpDiscoveryMulticastIpFinder ipFinder = new TcpDiscoveryMulticastIpFinder();
@@ -57,7 +57,6 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 		igniteConfiguration.setDiscoverySpi(discoverySpi);
 
 		ignite = Ignition.start(igniteConfiguration);
-		bubbleIndexTaskCache = ignite.getOrCreateCache(BUBBLE_INDEX_TASK_CACHE_NAME);
 
 		final ClusterGroup remoteNodeGroup = ignite.cluster().forRemotes();
 		textMessageOutputMessaging = ignite.message(remoteNodeGroup);
@@ -70,23 +69,40 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 
 	@Override
 	public void addBubbleIndexTask(final Integer key, final BubbleIndexGridTask bubbleIndexTask) {
+		final IgniteCache<Integer, BubbleIndexGridTask> bubbleIndexTaskCache = ignite
+				.getOrCreateCache(BUBBLE_INDEX_TASK_CACHE_NAME);
+
 		bubbleIndexTaskKeys.add(key);
 		bubbleIndexTaskCache.put(key, bubbleIndexTask);
 	}
 
 	@Override
-	public void addAllBubbleIndexTasks(final Map<Integer, BubbleIndexGridTask> bubbleIndexTaskMap) {
+	public void addAllBubbleIndexTasks(final TIntObjectHashMap<BubbleIndexGridTask> bubbleIndexTaskMap) {
+		final IgniteCache<Integer, BubbleIndexGridTask> bubbleIndexTaskCache = ignite
+				.getOrCreateCache(BUBBLE_INDEX_TASK_CACHE_NAME);
+
 		bubbleIndexTaskKeys.addAll(bubbleIndexTaskMap.keySet());
-		bubbleIndexTaskCache.putAll(bubbleIndexTaskMap);
+		final int[] keys = bubbleIndexTaskMap.keys();
+		for (int i = 0; i < keys.length; i++) {
+			final int key = keys[i];
+			bubbleIndexTaskCache.put(new Integer(key), bubbleIndexTaskMap.get(key));
+		}
 	}
 
 	@Override
 	public void executeBubbleIndexTasks() {
+		final IgniteCache<Integer, BubbleIndexGridTask> bubbleIndexTaskCache = ignite
+				.getOrCreateCache(BUBBLE_INDEX_TASK_CACHE_NAME);
+
 		int cacheSize = bubbleIndexTaskCache.size(CachePeekMode.PRIMARY);
 		Logs.myLogger.log(Level.INFO, "Cache contains {} tasks.", cacheSize);
 		displayGridMessageOutput("Cache contains " + cacheSize + " tasks.");
 
-		final Set<Integer> tempBubbleIndexTaskKeySet = new HashSet<Integer>(bubbleIndexTaskKeys);
+		final Set<Integer> tempBubbleIndexTaskKeySet = new HashSet<Integer>();
+		final int taskKeysSize = bubbleIndexTaskKeys.size();
+		for (int i = 0; i < taskKeysSize; i++) {
+			tempBubbleIndexTaskKeySet.add(new Integer(bubbleIndexTaskKeys.get(i)));
+		}
 
 		// first run the tasks
 		final Map<Integer, EntryProcessorResult<BubbleIndexGridTask>> results = bubbleIndexTaskCache.invokeAll(
@@ -95,9 +111,9 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 
 		Logs.myLogger.info("Outputting results...");
 
-		while (bubbleIndexTaskKeys.size() > 0) {
+		for (int i = 0; i < taskKeysSize; i++) {
 			try {
-				final Integer integerResultKey = bubbleIndexTaskKeys.remove(0);
+				final Integer integerResultKey = bubbleIndexTaskKeys.get(i);
 				final EntryProcessorResult<BubbleIndexGridTask> bubbleIndexResult = results.get(integerResultKey);
 				bubbleIndexResult.get().outputResults(null);
 			} catch (final Exception ex) {
