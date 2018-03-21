@@ -68,7 +68,7 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	}
 
 	@Override
-	public void addBubbleIndexTask(final Integer key, final BubbleIndexGridTask bubbleIndexTask) {
+	public synchronized void addBubbleIndexTask(final Integer key, final BubbleIndexGridTask bubbleIndexTask) {
 		final IgniteCache<Integer, BubbleIndexGridTask> bubbleIndexTaskCache = ignite
 				.getOrCreateCache(BUBBLE_INDEX_TASK_CACHE_NAME);
 
@@ -77,7 +77,7 @@ public class IgniteBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	}
 
 	@Override
-	public void addAllBubbleIndexTasks(final TIntObjectHashMap<BubbleIndexGridTask> bubbleIndexTaskMap) {
+	public synchronized void addAllBubbleIndexTasks(final TIntObjectHashMap<BubbleIndexGridTask> bubbleIndexTaskMap) {
 		final IgniteCache<Integer, BubbleIndexGridTask> bubbleIndexTaskCache = ignite
 				.getOrCreateCache(BUBBLE_INDEX_TASK_CACHE_NAME);
 

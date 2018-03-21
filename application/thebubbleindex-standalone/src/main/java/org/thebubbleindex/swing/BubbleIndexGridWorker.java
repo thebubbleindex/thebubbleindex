@@ -2,15 +2,12 @@ package org.thebubbleindex.swing;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
-
 import org.thebubbleindex.computegrid.BubbleIndexComputeGrid;
 import org.thebubbleindex.driver.BubbleIndex;
 import org.thebubbleindex.driver.BubbleIndexGridTask;
 import org.thebubbleindex.driver.DailyDataCache;
 import org.thebubbleindex.driver.noGUI.RunType;
 import org.thebubbleindex.inputs.Indices;
-import org.thebubbleindex.inputs.InputCategory;
 import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.runnable.RunContext;
 
@@ -80,7 +77,7 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 		final ArrayList<String> updateNames = indices.getCategoriesAndComponents().get(categoryName).getComponents();
 		final String[] windowInputArray = windowsInput.split(",");
 
-		for (final String updateName : updateNames) {
+		updateNames.parallelStream().forEach((updateName) -> {
 			final DailyDataCache localDailyDataCache = new DailyDataCache();
 
 			for (final String window : windowInputArray) {
@@ -97,7 +94,7 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 					}
 				}
 			}
-		}
+		});
 
 		bubbleIndexComputeGrid.executeBubbleIndexTasks();
 	}
@@ -109,7 +106,7 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 
 		final String[] windowInputArray = windowsInput.split(",");
 
-		for (final Map.Entry<String, InputCategory> myEntry : indices.getCategoriesAndComponents().entrySet()) {
+		indices.getCategoriesAndComponents().entrySet().parallelStream().forEach((myEntry) -> {
 			final String categoryName = myEntry.getKey();
 			publish("Creating tasks for category: " + categoryName);
 
@@ -139,7 +136,7 @@ public class BubbleIndexGridWorker extends BubbleIndexWorker {
 			bubbleIndexComputeGrid.addAllBubbleIndexTasks(tempBubbleIndexTasks);
 			publish("Added " + tempBubbleIndexTasks.size() + " tasks to cache.");
 			tempBubbleIndexTasks.clear();
-		}
+		});
 
 		bubbleIndexComputeGrid.executeBubbleIndexTasks();
 	}
