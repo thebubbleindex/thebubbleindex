@@ -21,7 +21,7 @@ Feel free to comment, suggest changes, or point out bugs/problems.
 
 First make sure Java 8 JDK is installed and working on your computer (or JRE if not building).
 
-Download Apache Ignite and start a suitable number of nodes.
+Download Apache Ignite and start a suitable number of nodes. Please see the example Ignite config.xml and ignite.bat/.sh scripts in src/test/resources/.
 
 ###### ProgramData Folder and its Subdirectories.
 
@@ -128,15 +128,15 @@ Make sure the program directory is set up as described in Installation. There is
 
 **GUI Mode**
 
-The GUI Mode can be started by simply double clicking the Bubble_Index.jar executable jar.
+The Compute Grid branch uses a command line parser. Thus the command line args are different than the master branch. The GUI and compute grid run modes are triggered by the presence or absense of the keys: -gui and -grid. The GUI Mode can be started by simply double clicking the Bubble_Index.jar executable jar.
 
-To start from command, enter:
+To start the compute grid via command, enter:
 ```
-java -jar Bubble_Index.jar
+java -jar Bubble_Index.jar -gui -grid
 ```
 command while in the folder containing the Bubble_Index.jar executable. Or Issue:
 ```
-java -jar /dir_path/Bubble_Index.jar
+java -jar /dir_path/Bubble_Index.jar -gui -grid
 ```
 To get started with The Bubble Index, the daily data must be downloaded or updated. This is all done automatically by clicking the **Update All** button.
 
@@ -168,7 +168,7 @@ The **Exit** button closing the program.
 
 2. Issue the appropriate command:
 ```
-java -jar Bubble_Index.jar noGUI RunType Category Selection Windows Threads T_Crit M Omega ForceCPU
+java -jar Bubble_Index.jar -type RunType -category Category -selection Selection -windows Windows -threads Threads -days T_Crit -mcoeff M -omega Omega -quandl quandlKey
 ```
 NOTE: Selection only applies if RunType=Single; Selection and Category do not apply if RunType=All
 
@@ -176,23 +176,23 @@ Examples:
 
 Run all entries in the Currencies category, 100 threads with CPU:
 ```
-java -jar Bubble_Index.jar noGUI Category Currencies 3000,3200,3500,3700,4000 100 21.0 0.38 6.28 true
+java -jar Bubble_Index.jar -category Currencies -windows 3000,3200,3500,3700,4000 -threads 100 -days 21.0 -mcoeff 0.38 -omega 6.28
 ```
 Run BITSTAMPUSD with 4 threads, GPU:
 ```
-java -jar Bubble_Index.jar noGUI Single Currencies BITSTAMPUSD 153,256 4 21.0 0.38 6.28 false
+java -jar Bubble_Index.jar -type Single -category Currencies -selection BITSTAMPUSD -windows 153,256 -threads 4 -days 21.0 -mcoeff 0.38 -omega 6.28
 ```
 Run All categories and all entries with 4 threads and CPU:
 ```
-java -jar Bubble_Index.jar noGUI All 512,1260 4 21.0 0.38 6.28 true
+java -jar Bubble_Index.jar -type All -windows 512,1260 -threads 4 -days 21.0 -mcoeff 0.38 -omega 6.28
 ```
 Update data:
 ```
-java -jar Bubble_Index.jar noGUI Update
+java -jar Bubble_Index.jar -update
 ```
 Update data with a specified Quandl API key:
 ```
-java -jar Bubble_Index.jar noGUI Update QuANdLkEy
+java -jar Bubble_Index.jar -update -quandl QuANdLkEy
 ```
 ## <a name="TOC-Data"></a>The Data
 
