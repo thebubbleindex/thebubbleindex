@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+import javax.jms.JMSException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -15,6 +17,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.ThreadContext;
 import org.thebubbleindex.computegrid.BubbleIndexComputeGrid;
 import org.thebubbleindex.computegrid.IgniteBubbleIndexComputeGrid;
+import org.thebubbleindex.computegrid.XAPBubbleIndexComputeGrid;
 import org.thebubbleindex.data.UpdateData;
 import org.thebubbleindex.exception.FailedToRunIndex;
 import org.thebubbleindex.inputs.Indices;
@@ -41,7 +44,8 @@ public class noGUI {
 		Single, Category, All, Update
 	}
 
-	private static final String computeGridShortOption = "g";
+	private static final String igniteComputeGridShortOption = "i";
+	private static final String xapComputeGridShortOption = "x";
 	private static final String guiShortOption = "u";
 	private static final String categoryShortOption = "c";
 	private static final String selectionShortOption = "s";
@@ -60,7 +64,7 @@ public class noGUI {
 	 * "" indicates a string input.
 	 * <p>
 	 * <ol>
-	 * <li>Input either "noGUI" - runs in terminal, "GUI" - runs GUI JSwing</li>
+	 * <li>Either "noGUI" - runs in terminal, "GUI" - runs GUI JSwing</li>
 	 * <li>RunType Enumerator: input one of these strings: {"Single",
 	 * "Category", "All", "Update"}</li>
 	 * <li>Category name: input the name of category. Example: "Currencies"</li>
@@ -77,16 +81,18 @@ public class noGUI {
 	 * <p>
 	 * Command line example:
 	 * <p>
-	 * java -jar Bubble_Index.jar noGUI Category Currencies
-	 * 700,800,900,1000,1500,2000,2200,2700 100 21.0 0.38 6.28 true
+	 * java -jar Bubble_Index.jar -type Category -category Currencies -windows
+	 * 700,800,900,1000,1500,2000,2200,2700 -threads 100 -days 21.0 -mcoeff 0.38
+	 * -omega 6.28
 	 * 
 	 * @param args
 	 *            Command line arguments
 	 * @throws IOException
 	 * @throws ClassNotFoundException
+	 * @throws JMSException
 	 * 
 	 */
-	public static void main(final String[] args) throws ClassNotFoundException, IOException {
+	public static void main(final String[] args) throws ClassNotFoundException, IOException, JMSException {
 		String openCLSrc = null;
 
 		final Date startTime = new Date();
@@ -117,15 +123,17 @@ public class noGUI {
 				return;
 			}
 
-			if (cmd.hasOption(computeGridShortOption)) {
+			if (cmd.hasOption(igniteComputeGridShortOption) || cmd.hasOption(xapComputeGridShortOption)) {
 				if (cmd.hasOption(guiShortOption)) {
-					final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
+					final BubbleIndexComputeGrid bubbleIndexComputeGrid = cmd.hasOption(xapComputeGridShortOption)
+							? new XAPBubbleIndexComputeGrid() : new IgniteBubbleIndexComputeGrid();
 
 					final RunContext runContext = new RunContext(true, true);
 
 					ComputeGridGUI.ComputeGridGUImain(runContext, bubbleIndexComputeGrid);
 				} else {
-					final BubbleIndexComputeGrid bubbleIndexComputeGrid = new IgniteBubbleIndexComputeGrid();
+					final BubbleIndexComputeGrid bubbleIndexComputeGrid = cmd.hasOption(xapComputeGridShortOption)
+							? new XAPBubbleIndexComputeGrid() : new IgniteBubbleIndexComputeGrid();
 					final Indices indices = new Indices();
 					final RunContext runContext = new RunContext(false, true);
 
@@ -383,9 +391,15 @@ public class noGUI {
 		guiInputOption.setRequired(false);
 		options.addOption(guiInputOption);
 
-		final Option computeGridInputOption = new Option(computeGridShortOption, "grid", false, "compute grid");
-		computeGridInputOption.setRequired(false);
-		options.addOption(computeGridInputOption);
+		final Option igniteComputeGridInputOption = new Option(igniteComputeGridShortOption, "ignite", false,
+				"ignite compute grid");
+		igniteComputeGridInputOption.setRequired(false);
+		options.addOption(igniteComputeGridInputOption);
+
+		final Option xapComputeGridInputOption = new Option(xapComputeGridShortOption, "xap", false,
+				"xap compute grid");
+		xapComputeGridInputOption.setRequired(false);
+		options.addOption(xapComputeGridInputOption);
 
 		final Option categoryNameInputOption = new Option(categoryShortOption, "category", true, "category name");
 		categoryNameInputOption.setRequired(false);
