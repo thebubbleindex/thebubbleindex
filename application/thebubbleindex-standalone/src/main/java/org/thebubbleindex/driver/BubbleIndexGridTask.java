@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.thebubbleindex.exception.FailedToRunIndex;
 import org.thebubbleindex.inputs.Indices;
@@ -14,41 +15,49 @@ import org.thebubbleindex.runnable.RunIndex;
 import org.thebubbleindex.swing.BubbleIndexWorker;
 import org.thebubbleindex.util.Utilities;
 
+import com.gigaspaces.annotation.pojo.SpaceClass;
+import com.gigaspaces.annotation.pojo.SpaceId;
+import com.gigaspaces.annotation.pojo.SpaceProperty;
+import com.gigaspaces.annotation.pojo.SpaceRouting;
+
 /**
- * BubbleIndex class is the central logic component of the application. Provides
+ * BubbleIndexGridTask class is the central logic component of the application. Provides
  * variable initialization, reads input files and stores results obtained in the
  * Run for a single time window.
- * 
+ *
  * @author thebubbleindex
  */
+@SpaceClass
 public class BubbleIndexGridTask implements Serializable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3982328478460890140L;
-	private final List<String> outputMessageList = new ArrayList<String>(200);
-	private final String categoryName;
-	private final String selectionName;
+	private static final long serialVersionUID = 1741595830806069916L;
+	private List<String> outputMessageList = new ArrayList<String>(200);
+	private String categoryName;
+	private String selectionName;
 
 	private String previousFilePath;
 
 	private byte[] previousFileBytes;
 	private String filePath;
 	private String savePath;
-	private final String openCLSrc;
+	private String openCLSrc;
 
-	private final double omega;
-	private final double mCoeff;
-	private final double tCrit;
-	private final int window;
-	private final int dataSize;
+	private double omega;
+	private double mCoeff;
+	private double tCrit;
+	private int window;
+	private int dataSize;
 
-	private final int[] dailyPriceDateInt;
+	private int[] dailyPriceDateInt;
 	private double[] results;
 
-	private final double[] dailyPriceDoubleValues;
-	private final RunContext runContext;
+	private double[] dailyPriceDoubleValues;
+	private RunContext runContext;
+
+	private String id;
 
 	/**
 	 * BubbleIndexGridTask constructor
@@ -86,7 +95,7 @@ public class BubbleIndexGridTask implements Serializable {
 			Utilities.convertDatesToIntArray(dailyPriceDate, dailyPriceDateInt);
 
 			dailyPriceDoubleValues = dailyDataCache.getDailyPriceDoubleValues();
-			dataSize = dailyPriceDoubleValues.length;
+			dataSize = new Integer(dailyPriceDoubleValues.length);
 		} else {
 			final List<String> dailyPriceData = new ArrayList<String>(10000);
 			final List<String> dailyPriceDate = new ArrayList<String>(10000);
@@ -101,7 +110,7 @@ public class BubbleIndexGridTask implements Serializable {
 			dailyDataCache.setDailyPriceData(new ArrayList<String>(dailyPriceData));
 			dailyDataCache.setDailyPriceDate(new ArrayList<String>(dailyPriceDate));
 
-			dataSize = dailyPriceData.size();
+			dataSize = new Integer(dailyPriceData.size());
 
 			dailyPriceDoubleValues = new double[dataSize];
 
@@ -151,10 +160,25 @@ public class BubbleIndexGridTask implements Serializable {
 		if (!this.runContext.isStop())
 			convertPrices(dailyPriceData);
 	}
+	
+	public BubbleIndexGridTask() {
+		omega = -1.0;
+		mCoeff = -10000.0;
+		window = -1;
+		tCrit = -1.0;
+		dataSize = -1;
+		dailyPriceDateInt = null;
+		dailyPriceDoubleValues = null;
+
+		this.categoryName = null;
+		this.selectionName = null;
+		this.openCLSrc = null;
+		this.runContext = null;
+	}
 
 	/**
-	 * runBubbleIndex Core run method. Provides a GPU and CPU version. Catches
-	 * any errors which the Run methods may throw.
+	 * runBubbleIndex Core run method. Provides a GPU and CPU version. Catches any
+	 * errors which the Run methods may throw.
 	 * 
 	 * @param bubbleIndexWorker
 	 */
@@ -173,7 +197,7 @@ public class BubbleIndexGridTask implements Serializable {
 			for (final int dailyPriceDateIntValue : dailyPriceDateInt) {
 				dailyPriceDate.add(Utilities.getDateStringFromInt(dailyPriceDateIntValue));
 			}
-
+			
 			final RunIndex runIndex = new RunIndex(bubbleIndexWorker, dailyPriceDoubleValues, dataSize, window,
 					resultsList, dailyPriceDate, previousFileBytes, selectionName, omega, mCoeff, tCrit, null,
 					openCLSrc, runContext);
@@ -286,8 +310,8 @@ public class BubbleIndexGridTask implements Serializable {
 	}
 
 	/**
-	 * setFilePaths helper method to create the file paths which contain the
-	 * daily data and any previously existing runs.
+	 * setFilePaths helper method to create the file paths which contain the daily
+	 * data and any previously existing runs.
 	 * 
 	 */
 	private void setFilePaths(final Indices indices) {
@@ -341,10 +365,6 @@ public class BubbleIndexGridTask implements Serializable {
 		}
 	}
 
-	public int getWindow() {
-		return window;
-	}
-
 	public double[] getResults() {
 		outputMessageList.add("Completed with " + (results != null ? results.length : 0) + " results.");
 		return results;
@@ -356,5 +376,163 @@ public class BubbleIndexGridTask implements Serializable {
 
 	public RunContext getRunContext() {
 		return runContext;
+	}
+
+	@SpaceId(autoGenerate = true)
+	@SpaceRouting
+	public String getId() {
+		return id;
+	}
+
+	public void setId(final String id) {
+		this.id = id;
+	}
+
+	public List<String> getOutputMessageList() {
+		return outputMessageList;
+	}
+
+	public void setOutputMessageList(final List<String> outputMessageList) {
+		this.outputMessageList = outputMessageList;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(final String categoryName) {
+		this.categoryName = categoryName;
+	}
+
+	public String getSelectionName() {
+		return selectionName;
+	}
+
+	public void setSelectionName(final String selectionName) {
+		this.selectionName = selectionName;
+	}
+
+	public String getPreviousFilePath() {
+		return previousFilePath;
+	}
+
+	public void setPreviousFilePath(final String previousFilePath) {
+		this.previousFilePath = previousFilePath;
+	}
+
+	public byte[] getPreviousFileBytes() {
+		return previousFileBytes;
+	}
+
+	public void setPreviousFileBytes(final byte[] previousFileBytes) {
+		this.previousFileBytes = previousFileBytes;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(final String filePath) {
+		this.filePath = filePath;
+	}
+
+	public String getSavePath() {
+		return savePath;
+	}
+
+	public void setSavePath(final String savePath) {
+		this.savePath = savePath;
+	}
+
+	public String getOpenCLSrc() {
+		return openCLSrc;
+	}
+
+	public void setOpenCLSrc(final String openCLSrc) {
+		this.openCLSrc = openCLSrc;
+	}
+
+	@SpaceProperty(nullValue="-1.0")
+	public double getOmega() {
+		return omega;
+	}
+
+	public void setOmega(final double omega) {
+		this.omega = omega;
+	}
+
+	@SpaceProperty(nullValue="-10000.0")
+	public double getmCoeff() {
+		return mCoeff;
+	}
+
+	public void setmCoeff(final double mCoeff) {
+		this.mCoeff = mCoeff;
+	}
+
+	@SpaceProperty(nullValue="-1.0")
+	public double gettCrit() {
+		return tCrit;
+	}
+
+	public void settCrit(final double tCrit) {
+		this.tCrit = tCrit;
+	}
+
+	@SpaceProperty(nullValue="-1")
+	public int getDataSize() {
+		return dataSize;
+	}
+
+	public void setDataSize(final int dataSize) {
+		this.dataSize = dataSize;
+	}
+
+	public int[] getDailyPriceDateInt() {
+		return dailyPriceDateInt;
+	}
+
+	public void setDailyPriceDateInt(final int[] dailyPriceDateInt) {
+		this.dailyPriceDateInt = dailyPriceDateInt;
+	}
+
+	public double[] getDailyPriceDoubleValues() {
+		return dailyPriceDoubleValues;
+	}
+
+	public void setDailyPriceDoubleValues(final double[] dailyPriceDoubleValues) {
+		this.dailyPriceDoubleValues = dailyPriceDoubleValues;
+	}
+
+	@SpaceProperty(nullValue="-1")
+	public int getWindow() {
+		return window;
+	}
+	
+	public void setWindow(final int window) {
+		this.window = window;
+	}
+
+	public void setResults(final double[] results) {
+		this.results = results;
+	}
+
+	public void setRunContext(final RunContext runContext) {
+		this.runContext = runContext;
+	}
+
+	@Override
+	public String toString() {
+		return "BubbleIndexGridTask [outputMessageList=" + outputMessageList + ", categoryName=" + categoryName
+				+ ", selectionName=" + selectionName + ", previousFilePath=" + previousFilePath + ", previousFileBytes="
+				+ Arrays.toString(previousFileBytes) + ", filePath=" + filePath + ", savePath=" + savePath
+				+ ", openCLSrc=" + openCLSrc + ", omega=" + omega + ", mCoeff=" + mCoeff + ", tCrit=" + tCrit
+				+ ", window=" + window + ", dataSize=" + dataSize + ", dailyPriceDateInt="
+				+ Arrays.toString(dailyPriceDateInt) + ", results=" + Arrays.toString(results)
+				+ ", dailyPriceDoubleValues=" + Arrays.toString(dailyPriceDoubleValues) + ", runContext=" + runContext
+				+ ", id=" + id + ", getWindow()=" + getWindow() + ", getResults()=" + Arrays.toString(getResults())
+				+ ", getGUITextOutputsFromComputeGrid()=" + getGUITextOutputsFromComputeGrid() + ", getRunContext()="
+				+ getRunContext() + ", getId()=" + getId() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
+				+ "]";
 	}
 }

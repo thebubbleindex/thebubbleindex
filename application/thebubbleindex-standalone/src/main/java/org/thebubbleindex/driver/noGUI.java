@@ -124,16 +124,17 @@ public class noGUI {
 			}
 
 			if (cmd.hasOption(igniteComputeGridShortOption) || cmd.hasOption(xapComputeGridShortOption)) {
+				final String lookupServiceName = cmd.getOptionValue(xapComputeGridShortOption);
 				if (cmd.hasOption(guiShortOption)) {
 					final BubbleIndexComputeGrid bubbleIndexComputeGrid = cmd.hasOption(xapComputeGridShortOption)
-							? new XAPBubbleIndexComputeGrid() : new IgniteBubbleIndexComputeGrid();
+							? new XAPBubbleIndexComputeGrid(lookupServiceName) : new IgniteBubbleIndexComputeGrid();
 
 					final RunContext runContext = new RunContext(true, true);
 
 					ComputeGridGUI.ComputeGridGUImain(runContext, bubbleIndexComputeGrid);
 				} else {
 					final BubbleIndexComputeGrid bubbleIndexComputeGrid = cmd.hasOption(xapComputeGridShortOption)
-							? new XAPBubbleIndexComputeGrid() : new IgniteBubbleIndexComputeGrid();
+							? new XAPBubbleIndexComputeGrid(lookupServiceName) : new IgniteBubbleIndexComputeGrid();
 					final Indices indices = new Indices();
 					final RunContext runContext = new RunContext(false, true);
 
@@ -396,7 +397,7 @@ public class noGUI {
 		igniteComputeGridInputOption.setRequired(false);
 		options.addOption(igniteComputeGridInputOption);
 
-		final Option xapComputeGridInputOption = new Option(xapComputeGridShortOption, "xap", false,
+		final Option xapComputeGridInputOption = new Option(xapComputeGridShortOption, "xap", true,
 				"xap compute grid");
 		xapComputeGridInputOption.setRequired(false);
 		options.addOption(xapComputeGridInputOption);
