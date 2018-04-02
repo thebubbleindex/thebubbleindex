@@ -60,13 +60,13 @@ public class noGUI {
 	/**
 	 * main The entry point of the application.
 	 * <p>
-	 * Accepts command line arguments. The order of the arguments is important.
-	 * "" indicates a string input.
+	 * Accepts command line arguments. The order of the arguments is important. ""
+	 * indicates a string input.
 	 * <p>
 	 * <ol>
 	 * <li>Either "noGUI" - runs in terminal, "GUI" - runs GUI JSwing</li>
-	 * <li>RunType Enumerator: input one of these strings: {"Single",
-	 * "Category", "All", "Update"}</li>
+	 * <li>RunType Enumerator: input one of these strings: {"Single", "Category",
+	 * "All", "Update"}</li>
 	 * <li>Category name: input the name of category. Example: "Currencies"</li>
 	 * <li>Windows: input the integer value of windows to run, separated by
 	 * comma</li>
@@ -75,8 +75,8 @@ public class noGUI {
 	 * <li>Critical Time: input the double value of the critical time</li>
 	 * <li>M coefficient: input the double value of the M coefficient</li>
 	 * <li>Omega: input the double value of the omega variable</li>
-	 * <li>Force CPU processing: input either "true" or "false". True will not
-	 * run GPU contexts.</li>
+	 * <li>Force CPU processing: input either "true" or "false". True will not run
+	 * GPU contexts.</li>
 	 * </ol>
 	 * <p>
 	 * Command line example:
@@ -127,14 +127,16 @@ public class noGUI {
 				final String lookupServiceName = cmd.getOptionValue(xapComputeGridShortOption);
 				if (cmd.hasOption(guiShortOption)) {
 					final BubbleIndexComputeGrid bubbleIndexComputeGrid = cmd.hasOption(xapComputeGridShortOption)
-							? new XAPBubbleIndexComputeGrid(lookupServiceName) : new IgniteBubbleIndexComputeGrid();
+							? new XAPBubbleIndexComputeGrid(lookupServiceName)
+							: new IgniteBubbleIndexComputeGrid();
 
 					final RunContext runContext = new RunContext(true, true);
 
 					ComputeGridGUI.ComputeGridGUImain(runContext, bubbleIndexComputeGrid);
 				} else {
 					final BubbleIndexComputeGrid bubbleIndexComputeGrid = cmd.hasOption(xapComputeGridShortOption)
-							? new XAPBubbleIndexComputeGrid(lookupServiceName) : new IgniteBubbleIndexComputeGrid();
+							? new XAPBubbleIndexComputeGrid(lookupServiceName)
+							: new IgniteBubbleIndexComputeGrid();
 					final Indices indices = new Indices();
 					final RunContext runContext = new RunContext(false, true);
 
@@ -397,8 +399,7 @@ public class noGUI {
 		igniteComputeGridInputOption.setRequired(false);
 		options.addOption(igniteComputeGridInputOption);
 
-		final Option xapComputeGridInputOption = new Option(xapComputeGridShortOption, "xap", true,
-				"xap compute grid");
+		final Option xapComputeGridInputOption = new Option(xapComputeGridShortOption, "xap", true, "xap compute grid");
 		xapComputeGridInputOption.setRequired(false);
 		options.addOption(xapComputeGridInputOption);
 

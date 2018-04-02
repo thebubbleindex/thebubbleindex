@@ -46,7 +46,7 @@ public class BubbleIndexTaskFinalizerPollingContainer {
 				.createTopicConnection();
 		messageTopicSession = messageTopicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		messageTopicPublisher = messageTopicSession.createPublisher(taskMessageTopic);
-		
+
 		messageTopicConnection.start();
 	}
 
@@ -58,7 +58,9 @@ public class BubbleIndexTaskFinalizerPollingContainer {
 	@SpaceDataEvent
 	public void processTask(final BubbleIndexGridTask task) {
 		logger.log(Level.INFO, "BubbleIndexTaskFinalizerPollingContainer PROCESSING: {0}. Total processed: {1}",
-				new Object[] { task.getId(), numberOfTasks.get() });
+				new Object[] { task.getId(), numberOfTasks.incrementAndGet() });
+
+		task.getGUITextOutputsFromComputeGrid().clear();
 
 		try {
 			task.outputResults(null);
@@ -69,14 +71,13 @@ public class BubbleIndexTaskFinalizerPollingContainer {
 		final List<String> textOutputs = task.getGUITextOutputsFromComputeGrid();
 		for (final String textOutput : textOutputs) {
 			try {
-				final TextMessage msg = messageTopicSession.createTextMessage(textOutput);
+				final TextMessage msg = messageTopicSession
+						.createTextMessage(task.getCategoryName() + ", " + task.getSelectionName() + ": " + textOutput);
 				messageTopicPublisher.send(msg);
 			} catch (final JMSException ex) {
 				logger.log(Level.SEVERE, null, ex);
 			}
 		}
-
-		numberOfTasks.incrementAndGet();
 	}
 
 	@ReceiveHandler

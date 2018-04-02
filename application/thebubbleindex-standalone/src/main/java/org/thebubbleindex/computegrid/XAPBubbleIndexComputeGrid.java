@@ -67,6 +67,8 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	private final AtomicInteger numberOfLines = new AtomicInteger();
 	private final XAPCounter pendingTasksInProcessCounter;
 
+	private boolean stopButtonPressed;
+
 	public XAPBubbleIndexComputeGrid(final String lookupServiceName) throws JMSException {
 		this.lookupServiceName = lookupServiceName;
 		pendingTaskSpace = new GigaSpaceConfigurer(
@@ -109,7 +111,7 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 
 		// create info message topic connection for the
 		// COMPLETED_TASK_SPACE_NAME
-		taskMessageCompletedSpaceTopicConnection = admin.getTopicConnectionFactory(pendingTaskSpace.getSpace())
+		taskMessageCompletedSpaceTopicConnection = admin.getTopicConnectionFactory(completedTaskSpace.getSpace())
 				.createTopicConnection();
 		taskMessageCompletedSpaceTopicSession = taskMessageCompletedSpaceTopicConnection.createTopicSession(false,
 				Session.AUTO_ACKNOWLEDGE);
@@ -142,7 +144,7 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	 */
 	@Override
 	public void executeBubbleIndexTasks() {
-		pendingTasksInProcessCounter.unset(PENDING_TASKS_IN_PROCESS_COUNTER_NAME);
+		stopButtonPressed = false;
 
 		int pendingTaskCount = pendingTaskSpace.count(new SQLQuery<BubbleIndexGridTask>(BubbleIndexGridTask.class, ""));
 		int completedTaskCount;
@@ -152,10 +154,14 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 				"Executing tasks... Currently " + pendingTaskCount + " tasks in the pending task space.");
 
 		do {
-			try {
-				Thread.sleep((pendingTaskCount + 1) * 5000);
-			} catch (final InterruptedException ex) {
-				Logs.myLogger.log(Level.ERROR, ex);
+			for (int i = 0; i < 50; i++) {
+				if (stopButtonPressed) break;
+				
+				try {
+					Thread.sleep(100);
+				} catch (final InterruptedException ex) {
+					Logs.myLogger.log(Level.ERROR, ex);
+				}
 			}
 
 			try {
@@ -170,7 +176,7 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 
 			displayGridMessageOutput("Executing tasks... Currently " + pendingTaskCount
 					+ " tasks in the pending task space. With " + tasksInProcess + " tasks in progress.");
-		} while (pendingTaskCount > 0 || completedTaskCount > 0 || tasksInProcess > 0);
+		} while (!stopButtonPressed && (pendingTaskCount > 0 || completedTaskCount > 0 || tasksInProcess > 0));		
 	}
 
 	@Override
@@ -218,6 +224,9 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 
 	@Override
 	public void triggerStopAllTasksMessage() {
+		displayGridMessageOutput("Stopping all tasks, please wait...");
+		stopButtonPressed = true;
+
 		try {
 			final TextMessage msg = stopMessagePendingSpaceTopicSession.createTextMessage(STOP_ALL_TASKS_MESSAGE);
 			stopMessagePendingSpaceTopicPublisher.send(msg);
@@ -225,7 +234,7 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 			Logs.myLogger.log(Level.ERROR, ex);
 		}
 
-		pendingTaskSpace.clear(null);
+		pendingTaskSpace.clear(new SQLQuery<BubbleIndexGridTask>(BubbleIndexGridTask.class, ""));
 	}
 
 	/**

@@ -21,9 +21,9 @@ import com.gigaspaces.annotation.pojo.SpaceProperty;
 import com.gigaspaces.annotation.pojo.SpaceRouting;
 
 /**
- * BubbleIndexGridTask class is the central logic component of the application. Provides
- * variable initialization, reads input files and stores results obtained in the
- * Run for a single time window.
+ * BubbleIndexGridTask class is the central logic component of the application.
+ * Provides variable initialization, reads input files and stores results
+ * obtained in the Run for a single time window.
  *
  * @author thebubbleindex
  */
@@ -160,7 +160,7 @@ public class BubbleIndexGridTask implements Serializable {
 		if (!this.runContext.isStop())
 			convertPrices(dailyPriceData);
 	}
-	
+
 	public BubbleIndexGridTask() {
 		omega = -1.0;
 		mCoeff = -10000.0;
@@ -197,7 +197,7 @@ public class BubbleIndexGridTask implements Serializable {
 			for (final int dailyPriceDateIntValue : dailyPriceDateInt) {
 				dailyPriceDate.add(Utilities.getDateStringFromInt(dailyPriceDateIntValue));
 			}
-			
+
 			final RunIndex runIndex = new RunIndex(bubbleIndexWorker, dailyPriceDoubleValues, dataSize, window,
 					resultsList, dailyPriceDate, previousFileBytes, selectionName, omega, mCoeff, tCrit, null,
 					openCLSrc, runContext);
@@ -273,6 +273,7 @@ public class BubbleIndexGridTask implements Serializable {
 	public void outputResults(final BubbleIndexWorker bubbleIndexWorker) {
 		if (dataSize > window) {
 			if (results != null) {
+				outputMessageList.add("Completed with " + (results != null ? results.length : 0) + " results.");
 
 				final String Name = selectionName + window + "days.csv";
 
@@ -366,7 +367,6 @@ public class BubbleIndexGridTask implements Serializable {
 	}
 
 	public double[] getResults() {
-		outputMessageList.add("Completed with " + (results != null ? results.length : 0) + " results.");
 		return results;
 	}
 
@@ -452,7 +452,7 @@ public class BubbleIndexGridTask implements Serializable {
 		this.openCLSrc = openCLSrc;
 	}
 
-	@SpaceProperty(nullValue="-1.0")
+	@SpaceProperty(nullValue = "-1.0")
 	public double getOmega() {
 		return omega;
 	}
@@ -461,7 +461,7 @@ public class BubbleIndexGridTask implements Serializable {
 		this.omega = omega;
 	}
 
-	@SpaceProperty(nullValue="-10000.0")
+	@SpaceProperty(nullValue = "-10000.0")
 	public double getmCoeff() {
 		return mCoeff;
 	}
@@ -470,7 +470,7 @@ public class BubbleIndexGridTask implements Serializable {
 		this.mCoeff = mCoeff;
 	}
 
-	@SpaceProperty(nullValue="-1.0")
+	@SpaceProperty(nullValue = "-1.0")
 	public double gettCrit() {
 		return tCrit;
 	}
@@ -479,7 +479,7 @@ public class BubbleIndexGridTask implements Serializable {
 		this.tCrit = tCrit;
 	}
 
-	@SpaceProperty(nullValue="-1")
+	@SpaceProperty(nullValue = "-1")
 	public int getDataSize() {
 		return dataSize;
 	}
@@ -504,11 +504,11 @@ public class BubbleIndexGridTask implements Serializable {
 		this.dailyPriceDoubleValues = dailyPriceDoubleValues;
 	}
 
-	@SpaceProperty(nullValue="-1")
+	@SpaceProperty(nullValue = "-1")
 	public int getWindow() {
 		return window;
 	}
-	
+
 	public void setWindow(final int window) {
 		this.window = window;
 	}
@@ -530,9 +530,6 @@ public class BubbleIndexGridTask implements Serializable {
 				+ ", window=" + window + ", dataSize=" + dataSize + ", dailyPriceDateInt="
 				+ Arrays.toString(dailyPriceDateInt) + ", results=" + Arrays.toString(results)
 				+ ", dailyPriceDoubleValues=" + Arrays.toString(dailyPriceDoubleValues) + ", runContext=" + runContext
-				+ ", id=" + id + ", getWindow()=" + getWindow() + ", getResults()=" + Arrays.toString(getResults())
-				+ ", getGUITextOutputsFromComputeGrid()=" + getGUITextOutputsFromComputeGrid() + ", getRunContext()="
-				+ getRunContext() + ", getId()=" + getId() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ "]";
+				+ ", id=" + id + "]";
 	}
 }

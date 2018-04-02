@@ -44,14 +44,10 @@ import com.j_spaces.jms.utils.GSJMSAdmin;
 public class BubbleIndexTaskWorkerPollingContainer {
 	private final Logger logger = Logger.getLogger(BubbleIndexTaskWorkerPollingContainer.class.getName());
 	private final AtomicInteger numberOfTasks = new AtomicInteger();
-
 	private final GigaSpace completedTaskSpace;
-	
 	private final TopicSubscriber stopMessageTopicSubscriber;
-	
 	private final TopicPublisher messageTopicPublisher;
 	private final TopicSession messageTopicSession;
-
 	private final XAPCounter pendingTasksInProcessCounter;
 	private RunContext runContext;
 
@@ -74,11 +70,9 @@ public class BubbleIndexTaskWorkerPollingContainer {
 
 		stopMessageTopicSubscriber.setMessageListener(new MessageListener() {
 			public void onMessage(final Message msg) {
-				System.out.println("recieved message of type: " + msg.getClass());
 				if (msg instanceof TextMessage) {
 					final TextMessage txtMsg = (TextMessage) msg;
 					try {
-						System.out.println("Recieved stop message");
 						if (runContext != null && txtMsg.getText()
 								.equalsIgnoreCase(XAPBubbleIndexComputeGrid.STOP_ALL_TASKS_MESSAGE)) {
 							runContext.setStop(true);
@@ -97,7 +91,7 @@ public class BubbleIndexTaskWorkerPollingContainer {
 
 		messageTopicConnection.start();
 		stopMessageTopicConnection.start();
-		
+
 		pendingTasksInProcessCounter = new XAPCounter(pendingTaskSpace, "id",
 				XAPBubbleIndexComputeGrid.PENDING_TASKS_IN_PROCESS_COUNTER_NAME, 0);
 	}
@@ -110,7 +104,7 @@ public class BubbleIndexTaskWorkerPollingContainer {
 	@SpaceDataEvent
 	public void processTask(final BubbleIndexGridTask task) {
 		logger.log(Level.INFO, "BubbleIndexTaskWorkerPollingContainer PROCESSING: {0}. Total processed: {1}",
-				new Object[] { task.getId(), numberOfTasks.get() });
+				new Object[] { task.getId(), numberOfTasks.incrementAndGet() });
 		pendingTasksInProcessCounter.increment(XAPBubbleIndexComputeGrid.PENDING_TASKS_IN_PROCESS_COUNTER_NAME, 1);
 		runContext = task.getRunContext();
 
@@ -126,7 +120,8 @@ public class BubbleIndexTaskWorkerPollingContainer {
 		final List<String> textOutputs = task.getGUITextOutputsFromComputeGrid();
 		for (final String textOutput : textOutputs) {
 			try {
-				final TextMessage msg = messageTopicSession.createTextMessage(textOutput);
+				final TextMessage msg = messageTopicSession
+						.createTextMessage(task.getCategoryName() + ", " + task.getSelectionName() + ": " + textOutput);
 				messageTopicPublisher.send(msg);
 			} catch (final JMSException ex) {
 				logger.log(Level.SEVERE, null, ex);
@@ -134,7 +129,6 @@ public class BubbleIndexTaskWorkerPollingContainer {
 		}
 
 		runContext = null;
-		numberOfTasks.incrementAndGet();
 		pendingTasksInProcessCounter.decrement(XAPBubbleIndexComputeGrid.PENDING_TASKS_IN_PROCESS_COUNTER_NAME, 1);
 	}
 
