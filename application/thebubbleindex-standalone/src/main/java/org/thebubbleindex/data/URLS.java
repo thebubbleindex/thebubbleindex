@@ -83,8 +83,8 @@ public class URLS {
 		httpRequest.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
 		// Example:
-		// ..."CrumbStore":{"crumb":"993z4JVU9XQ"},"MarketSummaryStore"...
-		final String crumbSearchString = "\"CrumbStore\":{\"crumb\":\"";
+		// ..."bkt":"finance-US-en-US-def","crumb":"wbgfBtCFUkT","device":"featurephone"...
+		final String crumbSearchString = "bkt\":\"finance-US-en-US-def\",\"crumb\":\"";
 
 		if (yahooCookie == null || yahooCrumb == null) {
 
@@ -109,7 +109,12 @@ public class URLS {
 
 				yahooCookie = response.getFirstHeader("Set-Cookie").getValue().split(";")[0];
 
-				final int crumbStartPosition = result.indexOf(crumbSearchString) + crumbSearchString.length();
+				final int startIndexOfCrumb = result.indexOf(crumbSearchString);
+				if (startIndexOfCrumb == -1) {
+					throw new RuntimeException("Failed to find crumbSearchString: " + crumbSearchString);
+				}
+
+				final int crumbStartPosition = startIndexOfCrumb + crumbSearchString.length();
 				final int crumbEndPosition = result.substring(crumbStartPosition).indexOf("\"") + crumbStartPosition;
 
 				yahooCrumb = result.substring(crumbStartPosition, crumbEndPosition);
