@@ -32,8 +32,8 @@ public class YahooCrumbTest {
 		String cookie = null;
 
 		// Example:
-		// ..."CrumbStore":{"crumb":"993z4JVU9XQ"},"MarketSummaryStore"...
-		final String crumbSearchString = "\"CrumbStore\":{\"crumb\":\"";
+		// ..."bkt":"finance-US-en-US-def","crumb":"wbgfBtCFUkT","device":"featurephone"...
+		final String crumbSearchString = "bkt\":\"finance-US-en-US-def\",\"crumb\":\"";
 
 		for (int i = 0; i < maxRetry; i++) {
 			final HttpClient client = HttpClientBuilder.create().build();
@@ -52,7 +52,12 @@ public class YahooCrumbTest {
 			cookie = response.getFirstHeader("Set-Cookie").getValue().split(";")[0];
 			System.out.println("Cookie: " + cookie);
 
-			final int crumbStartPosition = result.indexOf(crumbSearchString) + crumbSearchString.length();
+			final int startIndexOfCrumb = result.indexOf(crumbSearchString);
+			if (startIndexOfCrumb == -1) {
+				throw new RuntimeException("Failed to find crumbSearchString: " + crumbSearchString);
+			}
+
+			final int crumbStartPosition = startIndexOfCrumb + crumbSearchString.length();
 			final int crumbEndPosition = result.substring(crumbStartPosition).indexOf("\"") + crumbStartPosition;
 
 			System.out.println("Crumb Start Position: " + crumbStartPosition);
