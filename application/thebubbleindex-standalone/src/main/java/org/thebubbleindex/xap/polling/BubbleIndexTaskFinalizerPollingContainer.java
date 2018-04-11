@@ -1,6 +1,7 @@
 package org.thebubbleindex.xap.polling;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,10 +45,13 @@ public class BubbleIndexTaskFinalizerPollingContainer {
 
 		final TopicConnection messageTopicConnection = admin.getTopicConnectionFactory(completedTaskSpace.getSpace())
 				.createTopicConnection();
+		messageTopicConnection.setClientID(String.valueOf(UUID.randomUUID().getMostSignificantBits()));
 		messageTopicSession = messageTopicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		messageTopicPublisher = messageTopicSession.createPublisher(taskMessageTopic);
 
 		messageTopicConnection.start();
+		
+		logger.info("Started BubbleIndexTaskFinalizerPollingContainer...");
 	}
 
 	@EventTemplate
@@ -73,7 +77,7 @@ public class BubbleIndexTaskFinalizerPollingContainer {
 			try {
 				final TextMessage msg = messageTopicSession
 						.createTextMessage(task.getCategoryName() + ", " + task.getSelectionName() + ": " + textOutput);
-				messageTopicPublisher.send(msg);
+				messageTopicPublisher.publish(msg);
 			} catch (final JMSException ex) {
 				logger.log(Level.SEVERE, null, ex);
 			}

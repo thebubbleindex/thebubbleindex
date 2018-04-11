@@ -23,7 +23,6 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.math3.util.FastMath;
 import org.thebubbleindex.exception.FailedToRunIndex;
-import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.runnable.RunContext;
 import org.thebubbleindex.swing.GUI;
 
@@ -61,8 +60,6 @@ public class Utilities implements Serializable {
 					GUI.OutputText.append(displayText + "\n");
 				}
 			});
-		} else if (!runContext.isComputeGrid()) {
-			Logs.myLogger.info("{}", displayText);
 		} else {
 			System.out.println(displayText);
 		}
@@ -198,7 +195,8 @@ public class Utilities implements Serializable {
 			}
 
 		} catch (final Exception ex) {
-			Logs.myLogger.error("Error while reading file = {}. {}", locationPath, ex);
+			System.out.println(ex);
+			System.out.println("Error while reading file = " + locationPath);
 			throw new FailedToRunIndex("Error while reading file = " + locationPath);
 		}
 	}
@@ -248,7 +246,8 @@ public class Utilities implements Serializable {
 				index++;
 			}
 		} catch (final Exception ex) {
-			Logs.myLogger.error("Error while reading bytes of file.", ex);
+			System.out.println(ex);
+			System.out.println("Error while reading bytes of file.");
 			throw new FailedToRunIndex(ex);
 		}
 	}
@@ -290,7 +289,8 @@ public class Utilities implements Serializable {
 			writer.close();
 
 		} catch (final IOException ex) {
-			Logs.myLogger.error("save path = {}. {}", savePath, ex);
+			System.out.println(ex);
+			System.out.println("Save path = " + savePath);
 		} finally {
 			if (writer != null) {
 				writer.close();
@@ -348,7 +348,7 @@ public class Utilities implements Serializable {
 
 		return baos.toByteArray();
 	}
-
+	
 	public static void convertDatesToIntArray(final List<String> dateStrings, final int[] dateInts) {
 		int index = 0;
 		for (final String dateString : dateStrings) {

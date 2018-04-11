@@ -7,7 +7,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<ignite.version>2.3.0</ignite.version>
-		<xap.version>12.2.1</xap.version>
+		<xap.version>12.3.0</xap.version>
 	</properties>
 	<repositories>
 		<repository>

@@ -1,5 +1,6 @@
 package org.thebubbleindex.computegrid;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jms.JMSException;
@@ -44,7 +45,6 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	public static final String TASK_MESSAGE_TOPIC_NAME = "taskMessageTopic";
 	public static final String STOP_ALL_TASKS_MESSAGE = "STOP_ALL_TASKS";
 	public static final String PENDING_TASKS_IN_PROCESS_COUNTER_NAME = "tasksInProcess";
-	private final String lookupServiceName;
 
 	// Stop message topics
 	private final TopicConnection stopMessagePendingSpaceTopicConnection;
@@ -70,13 +70,10 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	private boolean stopButtonPressed;
 
 	public XAPBubbleIndexComputeGrid(final String lookupServiceName) throws JMSException {
-		this.lookupServiceName = lookupServiceName;
 		pendingTaskSpace = new GigaSpaceConfigurer(
-				new UrlSpaceConfigurer("jini://" + this.lookupServiceName + "/*/" + PENDING_TASK_SPACE_NAME))
-						.gigaSpace();
+				new UrlSpaceConfigurer("jini://" + lookupServiceName + "/*/" + PENDING_TASK_SPACE_NAME)).gigaSpace();
 		completedTaskSpace = new GigaSpaceConfigurer(
-				new UrlSpaceConfigurer("jini://" + this.lookupServiceName + "/*/" + COMPLETED_TASK_SPACE_NAME))
-						.gigaSpace();
+				new UrlSpaceConfigurer("jini://" + lookupServiceName + "/*/" + COMPLETED_TASK_SPACE_NAME)).gigaSpace();
 
 		final GSJMSAdmin admin = GSJMSAdmin.getInstance();
 		final Topic stopMessageTopic = admin.getTopic(STOP_MESSAGE_TOPIC_NAME);
@@ -85,6 +82,7 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 		// create stop message topic connection for the PENDING_TASK_SPACE_NAME
 		stopMessagePendingSpaceTopicConnection = admin.getTopicConnectionFactory(pendingTaskSpace.getSpace())
 				.createTopicConnection();
+		stopMessagePendingSpaceTopicConnection.setClientID(String.valueOf(UUID.randomUUID().getMostSignificantBits()));
 		stopMessagePendingSpaceTopicSession = stopMessagePendingSpaceTopicConnection.createTopicSession(false,
 				Session.AUTO_ACKNOWLEDGE);
 		stopMessagePendingSpaceTopicPublisher = stopMessagePendingSpaceTopicSession.createPublisher(stopMessageTopic);
@@ -92,6 +90,7 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 		// create info message topic connection for the PENDING_TASK_SPACE_NAME
 		taskMessagePendingSpaceTopicConnection = admin.getTopicConnectionFactory(pendingTaskSpace.getSpace())
 				.createTopicConnection();
+		taskMessagePendingSpaceTopicConnection.setClientID(String.valueOf(UUID.randomUUID().getMostSignificantBits()));
 		taskMessagePendingSpaceTopicSession = taskMessagePendingSpaceTopicConnection.createTopicSession(false,
 				Session.AUTO_ACKNOWLEDGE);
 		taskMessagePendingSpaceTopicSubscriber = taskMessagePendingSpaceTopicSession.createSubscriber(taskMessageTopic);
@@ -113,6 +112,8 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 		// COMPLETED_TASK_SPACE_NAME
 		taskMessageCompletedSpaceTopicConnection = admin.getTopicConnectionFactory(completedTaskSpace.getSpace())
 				.createTopicConnection();
+		taskMessageCompletedSpaceTopicConnection
+				.setClientID(String.valueOf(UUID.randomUUID().getMostSignificantBits()));
 		taskMessageCompletedSpaceTopicSession = taskMessageCompletedSpaceTopicConnection.createTopicSession(false,
 				Session.AUTO_ACKNOWLEDGE);
 		taskMessageCompletedSpaceTopicSubscriber = taskMessageCompletedSpaceTopicSession
@@ -155,12 +156,20 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 
 		do {
 			for (int i = 0; i < 50; i++) {
-				if (stopButtonPressed) break;
-				
-				try {
-					Thread.sleep(100);
-				} catch (final InterruptedException ex) {
-					Logs.myLogger.log(Level.ERROR, ex);
+				if (stopButtonPressed) {
+					try {
+						Thread.sleep(100);
+					} catch (final InterruptedException ex) {
+						Logs.myLogger.log(Level.ERROR, ex);
+					}
+
+					break;
+				} else {
+					try {
+						Thread.sleep(100);
+					} catch (final InterruptedException ex) {
+						Logs.myLogger.log(Level.ERROR, ex);
+					}
 				}
 			}
 
@@ -176,7 +185,7 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 
 			displayGridMessageOutput("Executing tasks... Currently " + pendingTaskCount
 					+ " tasks in the pending task space. With " + tasksInProcess + " tasks in progress.");
-		} while (!stopButtonPressed && (pendingTaskCount > 0 || completedTaskCount > 0 || tasksInProcess > 0));		
+		} while (pendingTaskCount > 0 || completedTaskCount > 0 || tasksInProcess > 0);
 	}
 
 	@Override
@@ -226,15 +235,14 @@ public class XAPBubbleIndexComputeGrid implements BubbleIndexComputeGrid {
 	public void triggerStopAllTasksMessage() {
 		displayGridMessageOutput("Stopping all tasks, please wait...");
 		stopButtonPressed = true;
+		pendingTaskSpace.clear(new SQLQuery<BubbleIndexGridTask>(BubbleIndexGridTask.class, ""));
 
 		try {
 			final TextMessage msg = stopMessagePendingSpaceTopicSession.createTextMessage(STOP_ALL_TASKS_MESSAGE);
-			stopMessagePendingSpaceTopicPublisher.send(msg);
+			stopMessagePendingSpaceTopicPublisher.publish(msg);
 		} catch (final JMSException ex) {
 			Logs.myLogger.log(Level.ERROR, ex);
 		}
-
-		pendingTaskSpace.clear(new SQLQuery<BubbleIndexGridTask>(BubbleIndexGridTask.class, ""));
 	}
 
 	/**

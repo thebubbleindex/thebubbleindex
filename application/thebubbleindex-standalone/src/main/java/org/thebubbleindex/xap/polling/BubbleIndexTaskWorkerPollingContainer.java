@@ -1,6 +1,7 @@
 package org.thebubbleindex.xap.polling;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,6 +65,7 @@ public class BubbleIndexTaskWorkerPollingContainer {
 
 		final TopicConnection stopMessageTopicConnection = admin.getTopicConnectionFactory(pendingTaskSpace.getSpace())
 				.createTopicConnection();
+		stopMessageTopicConnection.setClientID(String.valueOf(UUID.randomUUID().getMostSignificantBits()));
 		final TopicSession stopMessageTopicSession = stopMessageTopicConnection.createTopicSession(false,
 				Session.AUTO_ACKNOWLEDGE);
 		stopMessageTopicSubscriber = stopMessageTopicSession.createSubscriber(stopMessageTopic);
@@ -72,6 +74,8 @@ public class BubbleIndexTaskWorkerPollingContainer {
 			public void onMessage(final Message msg) {
 				if (msg instanceof TextMessage) {
 					final TextMessage txtMsg = (TextMessage) msg;
+					System.out.println("Message received of type: " + msg);
+					
 					try {
 						if (runContext != null && txtMsg.getText()
 								.equalsIgnoreCase(XAPBubbleIndexComputeGrid.STOP_ALL_TASKS_MESSAGE)) {
@@ -86,14 +90,18 @@ public class BubbleIndexTaskWorkerPollingContainer {
 
 		final TopicConnection messageTopicConnection = admin.getTopicConnectionFactory(pendingTaskSpace.getSpace())
 				.createTopicConnection();
+		messageTopicConnection.setClientID(String.valueOf(UUID.randomUUID().getMostSignificantBits()));
 		messageTopicSession = messageTopicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
 		messageTopicPublisher = messageTopicSession.createPublisher(taskMessageTopic);
 
 		messageTopicConnection.start();
 		stopMessageTopicConnection.start();
 
+		// initialize the counter if it is not already in the space
 		pendingTasksInProcessCounter = new XAPCounter(pendingTaskSpace, "id",
 				XAPBubbleIndexComputeGrid.PENDING_TASKS_IN_PROCESS_COUNTER_NAME, 0);
+
+		logger.info("Started BubbleIndexTaskWorkerPollingContainer...");
 	}
 
 	@EventTemplate
@@ -122,7 +130,7 @@ public class BubbleIndexTaskWorkerPollingContainer {
 			try {
 				final TextMessage msg = messageTopicSession
 						.createTextMessage(task.getCategoryName() + ", " + task.getSelectionName() + ": " + textOutput);
-				messageTopicPublisher.send(msg);
+				messageTopicPublisher.publish(msg);
 			} catch (final JMSException ex) {
 				logger.log(Level.SEVERE, null, ex);
 			}

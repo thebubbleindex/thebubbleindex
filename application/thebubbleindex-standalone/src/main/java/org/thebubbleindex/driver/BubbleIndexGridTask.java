@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import org.thebubbleindex.exception.FailedToRunIndex;
 import org.thebubbleindex.inputs.Indices;
-import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.runnable.RunContext;
 import org.thebubbleindex.runnable.RunIndex;
 import org.thebubbleindex.swing.BubbleIndexWorker;
@@ -208,8 +207,6 @@ public class BubbleIndexGridTask implements Serializable {
 						outputMessageList.add("Executing GPU Run. Category Name = " + categoryName
 								+ ", Selection Name = " + selectionName);
 
-					Logs.myLogger.info("Executing GPU Run. Category Name = {}, Selection Name = {}", categoryName,
-							selectionName);
 					runIndex.execIndexWithGPU();
 
 					results = new double[resultsList.size()];
@@ -218,8 +215,6 @@ public class BubbleIndexGridTask implements Serializable {
 						results[index++] = result.doubleValue();
 					}
 				} catch (final FailedToRunIndex er) {
-					Logs.myLogger.info("Category Name = {}, Selection Name = {}, Window = {}. {}", categoryName,
-							selectionName, window, er);
 					if (runContext.isGUI() && !runContext.isComputeGrid()) {
 						bubbleIndexWorker.publishText(er.getMessage());
 					} else {
@@ -232,8 +227,6 @@ public class BubbleIndexGridTask implements Serializable {
 				}
 			} else {
 				try {
-					Logs.myLogger.info("Executing CPU Run. Category Name = {}, Selection Name = {}", categoryName,
-							selectionName);
 					runIndex.execIndexWithCPU();
 
 					results = new double[resultsList.size()];
@@ -242,8 +235,6 @@ public class BubbleIndexGridTask implements Serializable {
 						results[index++] = result.doubleValue();
 					}
 				} catch (final FailedToRunIndex er) {
-					Logs.myLogger.error("Category Name = {}, Selection Name = {}, Window = {}. {}", categoryName,
-							selectionName, window, er);
 					if (runContext.isGUI() && !runContext.isComputeGrid()) {
 						bubbleIndexWorker.publishText("Error: " + er);
 					} else {
@@ -285,8 +276,6 @@ public class BubbleIndexGridTask implements Serializable {
 				}
 
 				try {
-					Logs.myLogger.info("Writing output file: {}", previousFilePath);
-
 					final List<String> dailyPriceDate = new ArrayList<String>(dailyPriceDateInt.length);
 					final List<Double> resultsList = new ArrayList<Double>();
 
@@ -301,8 +290,6 @@ public class BubbleIndexGridTask implements Serializable {
 					Utilities.WriteCSV(savePath, resultsList, dataSize - window, Name, dailyPriceDate,
 							new File(previousFilePath).exists());
 				} catch (final IOException ex) {
-					Logs.myLogger.error("Failed to write csv output. Save path = {}. {}", savePath, ex);
-
 					if (runContext.isComputeGrid())
 						outputMessageList.add("Failed to write csv output." + ex.getMessage());
 				}
@@ -361,7 +348,7 @@ public class BubbleIndexGridTask implements Serializable {
 			try {
 				dailyPriceDoubleValues[i] = Double.parseDouble(dailyPriceData.get(i));
 			} catch (final NumberFormatException ex) {
-				Logs.myLogger.error("Number Format Exception. Code 030. " + ex);
+				System.out.println("Number Format Exception. Code 030. " + ex);
 			}
 		}
 	}
