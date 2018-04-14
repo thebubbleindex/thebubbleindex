@@ -31,7 +31,6 @@ import org.thebubbleindex.computegrid.XAPCounter;
 import org.thebubbleindex.driver.BubbleIndexGridTask;
 import org.thebubbleindex.runnable.RunContext;
 
-import com.j_spaces.core.client.SQLQuery;
 import com.j_spaces.jms.utils.GSJMSAdmin;
 
 /**
@@ -74,8 +73,7 @@ public class BubbleIndexTaskWorkerPollingContainer {
 			public void onMessage(final Message msg) {
 				if (msg instanceof TextMessage) {
 					final TextMessage txtMsg = (TextMessage) msg;
-					System.out.println("Message received of type: " + msg);
-					
+
 					try {
 						if (runContext != null && txtMsg.getText()
 								.equalsIgnoreCase(XAPBubbleIndexComputeGrid.STOP_ALL_TASKS_MESSAGE)) {
@@ -105,8 +103,8 @@ public class BubbleIndexTaskWorkerPollingContainer {
 	}
 
 	@EventTemplate
-	public SQLQuery<BubbleIndexGridTask> unprocessedData() {
-		return new SQLQuery<BubbleIndexGridTask>(BubbleIndexGridTask.class, "");
+	public BubbleIndexGridTask unprocessedData() {
+		return new BubbleIndexGridTask();
 	}
 
 	@SpaceDataEvent

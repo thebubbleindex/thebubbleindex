@@ -19,8 +19,8 @@ public class YahooCrumbTest {
 
 	/*
 	 * Converting VBA logic from:
-	 * http://www.signalsolver.com/wp-content/uploads/2017/06/EmulateURL-V1.0b.
-	 * txt to Java.
+	 * http://www.signalsolver.com/wp-content/uploads/2017/06/EmulateURL-V1.0b. txt
+	 * to Java.
 	 * 
 	 */
 

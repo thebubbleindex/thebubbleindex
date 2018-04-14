@@ -71,11 +71,6 @@ public class BubbleIndexGridTask implements Serializable {
 	public BubbleIndexGridTask(final double omega, final double mCoeff, final double tCrit, final int window,
 			final String categoryName, final String selectionName, final DailyDataCache dailyDataCache,
 			final Indices indices, final String openCLSrc, final RunContext runContext) {
-		if (runContext.isComputeGrid())
-			outputMessageList.add("Initializing The Bubble Index. Category Name = " + categoryName
-					+ ", Selection Name = " + selectionName + ", Omega = " + omega + ", M = " + mCoeff + ", TCrit = "
-					+ tCrit + ", Window = " + window);
-
 		this.omega = omega;
 		this.mCoeff = mCoeff;
 		this.tCrit = tCrit;
@@ -166,13 +161,7 @@ public class BubbleIndexGridTask implements Serializable {
 		window = -1;
 		tCrit = -1.0;
 		dataSize = -1;
-		dailyPriceDateInt = null;
-		dailyPriceDoubleValues = null;
-
-		this.categoryName = null;
-		this.selectionName = null;
-		this.openCLSrc = null;
-		this.runContext = null;
+		outputMessageList = null;
 	}
 
 	/**

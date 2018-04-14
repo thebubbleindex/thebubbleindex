@@ -26,7 +26,6 @@ import org.openspaces.events.polling.receive.SingleTakeReceiveOperationHandler;
 import org.thebubbleindex.computegrid.XAPBubbleIndexComputeGrid;
 import org.thebubbleindex.driver.BubbleIndexGridTask;
 
-import com.j_spaces.core.client.SQLQuery;
 import com.j_spaces.jms.utils.GSJMSAdmin;
 
 @Polling(concurrentConsumers = 1, maxConcurrentConsumers = 4)
@@ -55,8 +54,8 @@ public class BubbleIndexTaskFinalizerPollingContainer {
 	}
 
 	@EventTemplate
-	public SQLQuery<BubbleIndexGridTask> unprocessedData() {
-		return new SQLQuery<BubbleIndexGridTask>(BubbleIndexGridTask.class, "");
+	public BubbleIndexGridTask unprocessedData() {
+		return new BubbleIndexGridTask();
 	}
 
 	@SpaceDataEvent

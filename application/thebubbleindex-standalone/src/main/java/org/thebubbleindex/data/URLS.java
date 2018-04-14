@@ -368,9 +368,8 @@ public class URLS {
 				}
 
 				/*
-				 * Reverse Yahoo Data - No longer need to reverse the order as
-				 * of new Yahoo Crumb API - July 2017 if (YAHOO) {
-				 * Collections.reverse(dateData);
+				 * Reverse Yahoo Data - No longer need to reverse the order as of new Yahoo
+				 * Crumb API - July 2017 if (YAHOO) { Collections.reverse(dateData);
 				 * Collections.reverse(priceData); }
 				 */
 			}
