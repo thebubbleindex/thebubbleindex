@@ -102,7 +102,7 @@ public class noGUI {
 
 				try {
 					Logs.myLogger.info("Reading OpenCL source file.");
-					openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("GPUKernel.cl"));
+					openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
 				} catch (final IOException ex) {
 					Logs.myLogger.error("IOException Exception. Failed to read OpenCL source file. {}", ex);
 					Utilities.displayOutput(runContext, "Error. OpenCL source file missing.", false);
