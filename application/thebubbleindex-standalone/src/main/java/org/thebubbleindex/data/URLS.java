@@ -146,7 +146,7 @@ public class URLS {
 		final String urlEvents = "history";
 		url = "https://query1.finance.yahoo.com/v7/finance/download/" + yahooSymbol + dataName + "?period1="
 				+ unixStartDate + "&period2=" + unixEndDate + "&interval=" + urlInterval + "&events=" + urlEvents
-				+ "&crumb=" + yahooCrumb;
+				+ "&includeAdjustedClose=true&crumb=" + yahooCrumb;
 	}
 
 	@Override
