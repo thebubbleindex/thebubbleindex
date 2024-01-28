@@ -172,7 +172,7 @@ public class URLS {
 	public void setQuandlUrl(final String dataset, final String name, final String quandlKey) {
 		this.quandlDataset = dataset;
 		this.quandlName = name;
-		url = "https://www.quandl.com/api/v1/datasets/" + quandlDataset + "/" + quandlName + ".csv?sort_order=asc";
+		url = "https://www.quandl.com/api/v3/datasets/" + quandlDataset + "/" + quandlName + "/data.csv?sort_order=asc";
 		if (quandlKey.trim().length() > 0) {
 			url = url + "&api_key=" + quandlKey.trim();
 		}
