@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
@@ -50,7 +51,6 @@ public class URLS {
 	private int quandlColumn;
 	private UpdateWorker updateWorker;
 	private boolean overwrite;
-	private String yahooCrumb = null;
 	private String yahooCookie = null;
 	private final Indices indices;
 	private final RunContext runContext;
@@ -78,63 +78,32 @@ public class URLS {
 	public void setYahooUrl() {
 
 		final String yahooSymbol = isYahooIndex ? "%5E" : "";
-		final int maxRetry = 7;
 		final HttpGet httpRequest = new HttpGet("https://finance.yahoo.com/lookup?s=rubbish");
 		httpRequest.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
-		// Example:
-		// ..."bkt":"finance-US-en-US-def","crumb":"wbgfBtCFUkT","device":"featurephone"...
-		final String crumbSearchString = "bkt\":\"finance-US-en-US-def\",\"crumb\":\"";
+		if (yahooCookie == null) {
+			final HttpClient client = HttpClientBuilder.create().build();
 
-		if (yahooCookie == null || yahooCrumb == null) {
-
-			for (int i = 0; i < maxRetry; i++) {
-				final HttpClient client = HttpClientBuilder.create().build();
-
-				HttpResponse response = null;
-				try {
-					response = client.execute(httpRequest);
-				} catch (final IOException ex) {
-					Logs.myLogger.error(ex);
-					continue;
-				}
-
-				String result = null;
-				try {
-					result = EntityUtils.toString(response.getEntity());
-				} catch (final ParseException | IOException ex) {
-					Logs.myLogger.error(ex);
-					continue;
-				}
-
-				yahooCookie = response.getFirstHeader("Set-Cookie").getValue().split(";")[0];
-
-				final int startIndexOfCrumb = result.indexOf(crumbSearchString);
-				if (startIndexOfCrumb == -1) {
-					throw new RuntimeException("Failed to find crumbSearchString: " + crumbSearchString);
-				}
-
-				final int crumbStartPosition = startIndexOfCrumb + crumbSearchString.length();
-				final int crumbEndPosition = result.substring(crumbStartPosition).indexOf("\"") + crumbStartPosition;
-
-				yahooCrumb = result.substring(crumbStartPosition, crumbEndPosition);
-
-				if (yahooCrumb.length() == 11) {
-					break;
-				} else {
-					yahooCrumb = null;
-				}
+			HttpResponse response = null;
+			try {
+				response = client.execute(httpRequest);
+			} catch (final IOException ex) {
+				Logs.myLogger.error(ex);
 			}
 
-			if (yahooCrumb == null) {
-				Logs.myLogger.error("Failed to obtain valid crumb after " + maxRetry + " retries.");
-				url = "";
-				return;
+			String result = null;
+			try {
+				result = EntityUtils.toString(response.getEntity());
+			} catch (final ParseException | IOException ex) {
+				Logs.myLogger.error(ex);
 			}
+
+			final Header setCookieHeader = response.getFirstHeader("Set-Cookie");
+			yahooCookie = setCookieHeader != null ? setCookieHeader.getValue().split(";")[0] : "cookie";
 		}
 
-		if (yahooCookie == null || yahooCrumb == null) {
-			Logs.myLogger.error("Failed to find valid cookie or crumb.");
+		if (yahooCookie == null) {
+			Logs.myLogger.error("Failed to find valid cookie.");
 			url = "";
 			return;
 		}
@@ -146,7 +115,7 @@ public class URLS {
 		final String urlEvents = "history";
 		url = "https://query1.finance.yahoo.com/v7/finance/download/" + yahooSymbol + dataName + "?period1="
 				+ unixStartDate + "&period2=" + unixEndDate + "&interval=" + urlInterval + "&events=" + urlEvents
-				+ "&includeAdjustedClose=true&crumb=" + yahooCrumb;
+				+ "&includeAdjustedClose=true";
 	}
 
 	@Override
