@@ -1,25 +1,58 @@
 # The Bubble Index
 
 [Download Pre-Built Jar](https://cdn.thebubbleindex.com/Release/bubbleindex.zip)
+[![License: GPL](https://img.shields.io/badge/License-GPL-blue.svg)](LICENSE)
 
-[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.google.code.gson/gson/badge.svg)](http://)
+The Bubble Index is a Java application designed to monitor LPPL (Log-Periodic Power Law) oscillations in financial markets. All results can be viewed at: https://www.thebubbleindex.com
 
-The Bubble Index, a Java application designed to monitor LPPL Oscillations in financial markets. All results can be viewed at: https://www.thebubbleindex.com
-
-For information on the algorithm see: http://arxiv.org/abs/cond-mat/0201458
+For information on the algorithm see: https://arxiv.org/abs/cond-mat/0201458
 
 Feel free to comment, suggest changes, or point out bugs/problems.
 
-1. [Overview](#TOC-Overview)
-2. [Getting Started](#TOC-Getting-Started)
-3. [The Data](#TOC-Data)
-4. [The Graphs](#TOC-Graphs)
-5. [Utilities](#TOC-Utilities)
-6. [Compiling From Source](#TOC-Compiling-from-Source)
+1. [Prerequisites](#TOC-Prerequisites)
+2. [Project Structure](#TOC-Project-Structure)
+3. [Overview](#TOC-Overview)
+4. [Getting Started](#TOC-Getting-Started)
+5. [The Data](#TOC-Data)
+6. [The Graphs](#TOC-Graphs)
+7. [Utilities](#TOC-Utilities)
+8. [Compiling From Source](#TOC-Compiling-from-Source)
+9. [Contributing](#TOC-Contributing)
+
+## <a name="TOC-Prerequisites"></a>Prerequisites
+
+| Requirement | Version | Notes |
+|---|---|---|
+| Java JDK | 21 or later | Required to build and run; JRE 21+ is sufficient to run the pre-built jar |
+| Apache Maven | 3.6+ | Required only if building from source |
+| OpenCL-compatible GPU | — | Optional; enables GPU-accelerated computation |
+
+## <a name="TOC-Project-Structure"></a>Project Structure
+
+```
+thebubbleindex/
+├── application/
+│   ├── thebubbleindex-standalone/   # Main application (Maven, Java 21)
+│   │   ├── src/main/java/           # Application source code
+│   │   ├── src/main/resources/      # OpenCL kernel files & bundled libs
+│   │   ├── src/main/external-resources/ProgramData/  # Sample ProgramData (copied to build output)
+│   │   └── src/test/                # JUnit tests
+│   └── original-standalone/         # Legacy NetBeans project (reference only)
+├── utilities/                       # Post-processing Maven utilities (Java 8)
+│   ├── CreateD3Files/               # Generates D3.js time-series files
+│   ├── composite-files/             # Generates composite index files
+│   ├── CreateXYZFiles/              # Converts output to (x,y,z) format for 3D tools
+│   └── CreateHTML3DJson/            # Generates 3D HTML/JSON visualisations
+├── website/                         # Spring Boot web application
+├── LICENSE
+└── README.md
+```
 
 ## <a name="TOC-Overview"></a>Overview
 
-First make sure Java 8 JDK is installed and working on your computer (or JRE if not building).
+First make sure Java 21 JDK is installed and working on your computer (or JRE 21+ if not building).
+
+> **Tip:** A sample `ProgramData` folder with example configuration files is included in the build output under `application/thebubbleindex-standalone/target/thebubbleindex/`. You can use it as a starting point instead of creating everything manually.
 
 ###### ProgramData Folder and its Subdirectories.
 
@@ -75,7 +108,7 @@ To update the data, there must be an UpdateCategories.csv file in the ProgramDat
 
 And the contents and format of the UpdateSelection.csv should be like this:
 
-*Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex,Overwite*
+*Name,DataSource,QuandlDataset,QuandlName,QuandlColumn(startindex=1),isYahooIndex,Overwrite*
 *TSLA,Yahoo,NA,NA,0,FALSE,TRUE*
 
 The **Name** value must be the string corresponding to the individual folder for this time series in the ProgramData sub-directories.
@@ -94,7 +127,7 @@ The **QuandlName** value must be the name string in the url of the time series o
 
 The **QuandlColumn** value must be the integer representing the column location of the closing or settle price if the data is obtained from Quandl or NA if not.
 
-The **isYahooIndex** value must be set to TRUE if the time series is a Yahoo Finance Index, i.e. its quote contains the carrot symbol ^ or set to FALSE if not an index.
+The **isYahooIndex** value must be set to TRUE if the time series is a Yahoo Finance Index, i.e. its quote contains the caret symbol `^`, or set to FALSE if not an index.
 
 The **Overwrite** value must be set to TRUE if the time series values will overwrite any existing data, or set to FALSE if this is not desired.
 
@@ -146,7 +179,7 @@ Enter the desired model parameters for Omega, M, and T_critical. The default val
 
 ###### Run a Single Time Series
 
-Choose the desired time series from the drop down selection boxes. Adjust the model window lengths if desired. Click **Run**. Wait for the program to calculate the values. If this is the first run, it may take several hours depending on the hardware available. After completion, the GUI will say "Done." If the **Plot Graph** check box was selected, a two windows should appear. One contains The Bubble Index values plotted with the daily values. The other is a graph of the derivatives. (Warning: Times series with dates before 1900 will NOT plot)
+Choose the desired time series from the drop down selection boxes. Adjust the model window lengths if desired. Click **Run**. Wait for the program to calculate the values. If this is the first run, it may take several hours depending on the hardware available. After completion, the GUI will say "Done." If the **Plot Graph** check box was selected, two windows should appear. One contains The Bubble Index values plotted with the daily values. The other is a graph of the derivatives. (Warning: Time series with dates before 1900 will NOT plot)
 
 ###### Run All Names
 
@@ -158,7 +191,7 @@ Click the **Run All Types** button. The program will Run through all the types i
 
 The **Stop** button may be used to stop the calculation of a single time series.
 
-The **Exit** button closing the program.
+The **Exit** button closes the program.
 
 **Non-GUI Command Line Mode**
 
@@ -214,7 +247,7 @@ To run a single window length, simply input that number, ex. 1764, into ALL of t
 
 As part of the algorithm and to make The Bubble Index values comparable for all price trajectories, all price time series are adjusted internally to begin at 100. Thus, all values of the same window are comparable. In other words, TSLA512days.csv values can be directly compared with DJIA512days.csv.
 
-If for any reason an error or problem repeatedly occurs simple delete the .csv files and start over with the **Update All** button.
+If for any reason an error or problem repeatedly occurs, simply delete the .csv files and start over with the **Update All** button.
 
 ## <a name="TOC-Graphs"></a>The Graphs
 
@@ -229,23 +262,23 @@ If you want a custom date range, enter the correct date range in the date range 
 
 ## <a name="TOC-Utilities"></a>Utilities
 
-In the Utilities section, there are several Maven projects: CreateCompositeFiles, CreateD3Files, CreateXYZFiles, and CreateHTML3DFiles.
+The `utilities/` directory contains several Maven projects. Each must be built before use (see [Compiling From Source](#TOC-Compiling-from-Source) for the general build steps; run `mvn clean compile assembly:single` inside each utility's directory).
 
-**CreateD3Files.jar** - Creates D3 timeseries to be used by D3 JavaScript.
+**CreateD3Files** (`utilities/CreateD3Files/`) — Creates D3 time-series files to be used by D3 JavaScript visualisations.
 
 Place the jar in the same directory as the ProgramData folder and execute the following command from the terminal or command prompt:
 ```
 java -jar CreateD3Files.jar
 ```
 
-**CreateCompositeFiles.jar** - Creates the Composite Files and their associated D3 timeseries.
+**CreateCompositeFiles** (`utilities/composite-files/`) — Creates the Composite Files and their associated D3 time-series.
 
 Place the jar in the same directory as the ProgramData folder and execute the following command from the terminal or command prompt:
 ```
 java -jar CreateCompositeFiles.jar
 ```
 
-**CreateXYZFiles** - Convert the combined windows file (created above) into the (x, y, z, description) file format in order to be processed by 3DFieldPro.
+**CreateXYZFiles** (`utilities/CreateXYZFiles/`) — Converts the combined windows file into the `(x, y, z, description)` format for use with 3D programs such as 3DFieldPro.
 
 Place jar in the same directory as the ProgramData folder. This utility will take the combined file and create a new file which contains all the entries in the (x, y, z, string) format which many 3D programs prefer.
 
@@ -254,25 +287,44 @@ Now navigate to the folder and execute the following command from the terminal o
 java -jar CreateXYZFiles.jar
 ```
 
-**CreateHTML3DFiles** - 
+**CreateHTML3DJson** (`utilities/CreateHTML3DJson/`) — Generates 3D HTML/JSON visualisation files.
 
+> **Note:** This utility requires several custom JARs to be installed into your local Maven repository before building. See the comments in `utilities/CreateHTML3DJson/pom.xml` for the required `mvn install:install-file` commands.
 
-Now navigate to the folder and execute the following command from the terminal or command prompt:
+Navigate to the folder and execute the following command from the terminal or command prompt (the jar name comes from the Maven `finalName` in the pom.xml):
 ```
-java -jar CreateHTML3DFiles.jar
+java -jar CreateJSON3DFiles.jar
 ```
 
 ## <a name="TOC-Compiling-from-Source"></a>Compiling From Source
 
-Make sure JDK and Maven is installed and issue these commands:
+Make sure **Java 21 JDK** and **Maven 3.6+** are installed, then run the following from inside the `application/thebubbleindex-standalone/` directory:
+
 ```
+# Install the bundled Yeppp! SIMD library into your local Maven repository
 mvn install:install-file -Dfile=${project.basedir}/src/main/resources/yeppp-bundle.jar -DgroupId=yeppp -DartifactId=yeppp-java -Dversion=1.0 -Dpackaging=jar
 
+# Build the executable jar (output: target/thebubbleindex/Bubble_Index.jar)
 mvn clean compile assembly:single
 ```
+
+The compiled jar and a ready-to-use sample `ProgramData` folder will be placed in `target/thebubbleindex/`.
+
+To build any of the utilities, run the same Maven commands from within the respective utility directory (e.g. `utilities/CreateD3Files/`).
+
+## <a name="TOC-Contributing"></a>Contributing
+
+Contributions, bug reports, and feature requests are welcome!
+
+1. **Fork** the repository and create a feature branch from `master`.
+2. Make your changes with clear, focused commits.
+3. Run the existing JUnit tests: `mvn test` from the `application/thebubbleindex-standalone/` directory.
+4. Open a **Pull Request** describing what you changed and why.
+
+Please report bugs or suggest improvements via [GitHub Issues](https://github.com/thebubbleindex/thebubbleindex/issues).
 
 ### *License*
 
 The Bubble Index is released under the [GNU GENERAL PUBLIC LICENSE](LICENSE).
 
-Copyright 2016 The Bubble Index
+Copyright 2016–2025 The Bubble Index
