@@ -33,7 +33,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.SegmentedTimeline;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -41,8 +40,8 @@ import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.ui.RectangleEdge;
-import org.jfree.ui.RectangleInsets;
+import org.jfree.chart.ui.RectangleEdge;
+import org.jfree.chart.ui.RectangleInsets;
 import org.thebubbleindex.exception.FailedToRunIndex;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.logging.Logs;
@@ -260,8 +259,8 @@ public class DerivativePlot {
 		final XYItemRenderer r = plot.getRenderer();
 		if (r instanceof XYLineAndShapeRenderer) {
 			final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-			renderer.setBaseShapesVisible(false);
-			renderer.setBaseShapesFilled(false);
+			renderer.setDefaultShapesVisible(false);
+			renderer.setDefaultShapesFilled(false);
 			renderer.setDrawSeriesLineAsPath(true);
 			renderer.setSeriesPaint(0, Color.WHITE);
 			renderer.setSeriesPaint(1, Color.GREEN);
@@ -270,8 +269,8 @@ public class DerivativePlot {
 		}
 
 		final XYLineAndShapeRenderer renderer2 = new XYLineAndShapeRenderer();
-		renderer2.setBaseShapesVisible(false);
-		renderer2.setBaseShapesFilled(false);
+		renderer2.setDefaultShapesVisible(false);
+		renderer2.setDefaultShapesFilled(false);
 		renderer2.setDrawSeriesLineAsPath(true);
 		renderer2.setSeriesPaint(0, Color.YELLOW);
 		plot.setRenderer(1, renderer2);
@@ -282,7 +281,6 @@ public class DerivativePlot {
 			// Set the horizontal range
 			axis.setRange(begDate, endDate);
 		}
-		axis.setTimeline(SegmentedTimeline.newMondayThroughFridayTimeline());
 
 		return new ChartPanel(chart);
 	}
