@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+	<Properties>
+		<Property name="log-path">logs-thebubbleindex</Property>
+		<Property name="user-name">$${env:USERNAME}</Property>
+		<Property name="user-dir">$${sys:java.io.tmpdir}</Property>
+	</Properties>
+	<Appenders>
+		<Console name="console-log" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+		</Console>
+		<RollingFile name="infoLogger-windows"
+			fileName="${user-dir}${log-path}/${user-name}-thebubbleindex-info-${date:yyyy-MM-dd}.log"
+			immediateFlush="true" append="false"
+			filePattern="${user-dir}${log-path}/${user-name}-thebubbleindex-info-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level - %msg%n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingFile>
+		<RollingFile name="errorLogger-windows"
+			fileName="${user-dir}${log-path}/${user-name}-thebubbleindex-errors-${date:yyyy-MM-dd}.log"
+			immediateFlush="true" append="false"
+			filePattern="${user-dir}${log-path}/${user-name}-thebubbleindex-errors-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout
+				pattern="%d{yyy-MM-dd HH:mm:ss.SSS} %class{36} %L %M %-5level - %msg%n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingFile>
+		<RollingFile name="infoLogger-linux"
+			fileName="${user-dir}/${log-path}/thebubbleindex-info-${date:yyyy-MM-dd}.log"
+			immediateFlush="true" append="false"
+			filePattern="${user-dir}/${log-path}/thebubbleindex-info-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level - %msg%n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingFile>
+		<RollingFile name="errorLogger-linux"
+			fileName="${user-dir}/${log-path}/thebubbleindex-errors-${date:yyyy-MM-dd}.log"
+			immediateFlush="true" append="false"
+			filePattern="${user-dir}/${log-path}/thebubbleindex-errors-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout
+				pattern="%d{yyy-MM-dd HH:mm:ss.SSS} %class{36} %L %M %-5level - %msg%n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="mylogger-windows" level="ALL" additivity="true">
+			<AppenderRef ref="infoLogger-windows" level="info" />
+			<AppenderRef ref="errorLogger-windows" level="error" />
+		</Logger>
+		<Logger name="mylogger-linux" level="ALL" additivity="true">
+			<AppenderRef ref="infoLogger-linux" level="info" />
+			<AppenderRef ref="errorLogger-linux" level="error" />
+		</Logger>
+		<Root level="INFO" additivity="false">
+			<AppenderRef ref="console-log" />
+		</Root>
+	</Loggers>
+</Configuration>

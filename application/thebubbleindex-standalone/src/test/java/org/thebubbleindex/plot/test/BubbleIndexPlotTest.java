@@ -21,9 +21,10 @@ import org.thebubbleindex.runnable.RunContext;
 import org.thebubbleindex.testutil.TestUtil;
 
 /**
- * 
- * @author thebubbleindex
+ * Tests that verify {@link BubbleIndexPlot} creates and renders the chart
+ * panel without errors using known test data.
  *
+ * @author thebubbleindex
  */
 public class BubbleIndexPlotTest {
 	final String fileSep = File.separator;

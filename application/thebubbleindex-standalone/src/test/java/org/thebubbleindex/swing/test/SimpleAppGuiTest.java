@@ -15,6 +15,12 @@ import java.util.List;
 import org.junit.Test;
 import org.thebubbleindex.driver.noGUI;
 
+/**
+ * Manual / debug test that launches the full Swing GUI application to allow
+ * interactive inspection during development. The {@code @Test} annotation is
+ * intentionally commented out so that this test does not run as part of the
+ * automated test suite.
+ */
 public class SimpleAppGuiTest {
 	final String fileSep = File.separator;
 

@@ -34,17 +34,26 @@ public class MyCPUCallable implements Callable<Double> {
 	private final RunContext runContext;
 
 	/**
-	 * MyCPUCallable constructor
-	 * 
-	 * @param bubbleIndexWorker
-	 * @param index
-	 * @param numberOfDays
-	 * @param lombScargle
-	 * @param tCritDouble
-	 * @param mCoeffDouble
-	 * @param dailyPriceValues
-	 * @param displayPeriodString
-	 * @param selectionName
+	 * MyCPUCallable constructor.
+	 *
+	 * @param bubbleIndexWorker   the Swing worker used to publish per-date
+	 *                            output messages, or {@code null} in headless
+	 *                            mode
+	 * @param index               the zero-based offset into
+	 *                            {@code dailyPriceValues} that marks the start
+	 *                            of the data window for this calculation
+	 * @param numberOfDays        the size of the time window in days
+	 * @param lombScargle         the pre-computed Lomb-Scargle parameters and
+	 *                            helper methods
+	 * @param tCritDouble         the critical time offset (t<sub>c</sub>) used
+	 *                            to build the time-value array
+	 * @param dailyPriceValues    the full price series as an array of doubles
+	 * @param displayPeriodString the date string of the end of the window,
+	 *                            used for display purposes
+	 * @param selectionName       the name of the financial instrument being
+	 *                            analysed
+	 * @param runContext          shared run-time state (stop flag, GUI mode,
+	 *                            etc.)
 	 */
 	public MyCPUCallable(final BubbleIndexWorker bubbleIndexWorker, final int index, final int numberOfDays,
 			final LombScargle lombScargle, final double tCritDouble, final double[] dailyPriceValues,
@@ -63,9 +72,15 @@ public class MyCPUCallable implements Callable<Double> {
 	}
 
 	/**
-	 * call method to execute the calculation.
-	 * 
-	 * @return the value of The Bubble Index at a specific date
+	 * call executes the Bubble Index calculation for a single date on the CPU.
+	 * The method normalises the selected price window, fits the log-periodic
+	 * power-law equation via linear regression, and then computes the maximum
+	 * Lomb-Scargle spectral density of the H,Q derivative over all test
+	 * frequencies and (H, Q) pairs.
+	 *
+	 * @return the Bubble Index value for the date corresponding to
+	 *         {@code index + window}, or {@code 0.0} if the time series is all
+	 *         zeros or a stop signal has been issued
 	 */
 	@Override
 	public Double call() {

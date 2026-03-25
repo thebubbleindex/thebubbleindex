@@ -14,6 +14,10 @@ import java.util.List;
 import org.junit.Test;
 import org.thebubbleindex.util.Utilities;
 
+/**
+ * Tests that verify {@link Utilities#ReadValues} correctly parses two-column
+ * CSV/TSV daily-data files into separate date and value lists.
+ */
 public class ReadValuesTest {
 
 	@Test

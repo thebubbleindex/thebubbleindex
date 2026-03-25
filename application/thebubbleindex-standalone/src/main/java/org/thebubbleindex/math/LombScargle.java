@@ -47,13 +47,22 @@ public class LombScargle {
 	public final double mCoeffDouble;
 
 	/**
-	 * LombScargle constructor
-	 * 
-	 * @param freqSize
-	 * @param qSize
-	 * @param hSize
-	 * @param omegaDouble
-	 * @param mCoeffDouble
+	 * LombScargle constructor. Initialises all test-frequency, Q, H, and
+	 * pre-computed coefficient arrays. Attempts to override the default
+	 * {@code freqSize}, {@code qSize}, and {@code hSize} values with those
+	 * found in a {@code lombscargle.properties} file in the program data
+	 * folder.
+	 *
+	 * @param freqSize     the default number of test frequencies for the
+	 *                     Lomb-Scargle periodogram
+	 * @param qSize        the default number of Q parameter values
+	 * @param hSize        the default number of H parameter values
+	 * @param omegaDouble  the angular frequency &omega; of the log-periodic
+	 *                     oscillation
+	 * @param mCoeffDouble the power-law exponent m of the log-periodic
+	 *                     power-law equation
+	 * @param indices      application index configuration, used to locate the
+	 *                     optional properties file
 	 */
 	public LombScargle(final int freqSize, final int qSize, final int hSize, final double omegaDouble,
 			final double mCoeffDouble, final Indices indices) {
@@ -140,13 +149,15 @@ public class LombScargle {
 	}
 
 	/**
-	 * hqDerivative calculates the the largest value of the periodogram given
-	 * all test values of H and Q.
-	 * 
-	 * @param TimeValues
-	 * @param Coef
-	 * @param SIZE
-	 * @return
+	 * hqDerivative calculates the maximum Lomb-Scargle spectral density of the
+	 * H,Q derivative over all configured (H, Q) parameter pairs. This maximum
+	 * value is the Bubble Index score for a single date.
+	 *
+	 * @param TimeValues array of time values for the current window
+	 * @param Coef       the three fitted coefficients [A, B, C] from the
+	 *                   log-periodic power-law linear regression
+	 * @param SIZE       the number of data points in the window
+	 * @return the maximum Lomb-Scargle spectral density across all (H, Q) pairs
 	 */
 	public double hqDerivative(final double[] TimeValues, final double[] Coef, final int SIZE) {
 
@@ -230,12 +241,17 @@ public class LombScargle {
 	}
 
 	/**
-	 * computeLombScargle computes the Lomb-Scargle periodogram for CPU version
-	 * 
-	 * @param TimeValues
-	 * @param TimeSeries
-	 * @param SpectralDensity
-	 * @param SIZE
+	 * computeLombScargle computes the Lomb-Scargle periodogram for the given
+	 * time series and populates the spectral-density array. The implementation
+	 * uses the tau-shifted formulation so that the estimator is independent of
+	 * the time-sampling pattern.
+	 *
+	 * @param TimeValues     the time coordinates of each observation
+	 * @param TimeSeries     the data values corresponding to each time
+	 *                       coordinate
+	 * @param SpectralDensity output array that will be filled with the
+	 *                        normalised power at each test frequency
+	 * @param SIZE           the number of data points in the series
 	 */
 	public void computeLombScargle(final double[] TimeValues, final double[] TimeSeries, final double[] SpectralDensity,
 			final int SIZE) {

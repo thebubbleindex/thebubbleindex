@@ -13,9 +13,13 @@ import java.util.TreeMap;
 import org.thebubbleindex.logging.Logs;
 
 /**
+ * Indices manages the application's category and component configuration. It
+ * locates the program data folder relative to the application JAR, reads the
+ * top-level category list, and builds the full mapping of categories to their
+ * individual {@link InputCategory} components.
  *
  * @author thebubbleindex
- * 
+ *
  */
 public class Indices {
 
@@ -25,6 +29,12 @@ public class Indices {
 	private final String filePathSymbol = File.separator;
 	private final Map<String, InputCategory> categoriesAndComponents = new TreeMap<String, InputCategory>();
 
+	/**
+	 * initialize reads the category list file and populates the
+	 * {@code categoriesAndComponents} map with all known categories and their
+	 * associated component selections. If the program data folder or category
+	 * list file do not yet exist they are created automatically.
+	 */
 	public void initialize() {
 
 		Logs.myLogger.info("Initializing categories and selections.");
@@ -77,6 +87,12 @@ public class Indices {
 		}
 	}
 
+	/**
+	 * getCategoriesAsArray returns the names of all known categories as a
+	 * sorted String array.
+	 *
+	 * @return an array of category name strings in alphabetical order
+	 */
 	public String[] getCategoriesAsArray() {
 		final String[] categories = new String[categoriesAndComponents.size()];
 		int index = 0;
@@ -100,26 +116,64 @@ public class Indices {
 		return jarFile.getParent() + filePathSymbol;
 	}
 
+	/**
+	 * getUserDir returns the absolute directory path that contains the
+	 * application JAR file. All program data is stored relative to this
+	 * directory.
+	 *
+	 * @return the application working directory path, ending with a file
+	 *         separator
+	 */
 	public String getUserDir() {
 		return userDir;
 	}
 
+	/**
+	 * setUserDir overrides the detected user directory with the given path.
+	 * Typically used in testing to redirect file I/O to a temporary location.
+	 *
+	 * @param userDir the directory path to use as the application root
+	 */
 	public void setUserDir(final String userDir) {
 		this.userDir = userDir;
 	}
 
+	/**
+	 * getProgramDataFolder returns the name of the sub-folder within
+	 * {@code userDir} where all application data is stored.
+	 *
+	 * @return the program data folder name (e.g. "ProgramData")
+	 */
 	public String getProgramDataFolder() {
 		return programDataFolder;
 	}
 
+	/**
+	 * getCategoryList returns the file name of the top-level category list CSV.
+	 *
+	 * @return the category list file name (e.g. "CategoryList.csv")
+	 */
 	public String getCategoryList() {
 		return categoryList;
 	}
 
+	/**
+	 * getFilePathSymbol returns the platform-specific file path separator
+	 * character used when constructing directory paths.
+	 *
+	 * @return the file separator string (e.g. "/" on Unix, "\" on Windows)
+	 */
 	public String getFilePathSymbol() {
 		return filePathSymbol;
 	}
 
+	/**
+	 * getCategoriesAndComponents returns the full mapping of category names to
+	 * their {@link InputCategory} objects, which in turn hold the list of
+	 * individual component selection names.
+	 *
+	 * @return a sorted map of category name to {@link InputCategory}
+	 */
 	public Map<String, InputCategory> getCategoriesAndComponents() {
 		return categoriesAndComponents;
 	}

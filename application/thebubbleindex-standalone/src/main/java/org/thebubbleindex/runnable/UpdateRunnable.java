@@ -12,6 +12,11 @@ import org.thebubbleindex.logging.Logs;
 import org.thebubbleindex.swing.UpdateWorker;
 
 /**
+ * UpdateRunnable is a {@link Callable} that fetches and persists the latest
+ * daily price data for a single selection from a configured data source (Yahoo
+ * Finance, FRED, or Quandl). One instance is created per selection and
+ * submitted to a thread pool so that multiple selections can be updated in
+ * parallel.
  *
  * @author thebubbleindex
  */
@@ -31,16 +36,30 @@ public class UpdateRunnable implements Callable<Integer> {
 	private final RunContext runContext;
 
 	/**
-	 * 
-	 * @param updateWorker
-	 * @param Category
-	 * @param Selections
-	 * @param Sources
-	 * @param quandlDataSet
-	 * @param quandlDataName
-	 * @param quandlColumn
-	 * @param isYahooIndex
-	 * @param quandlKey
+	 * UpdateRunnable constructor.
+	 *
+	 * @param updateWorker   the GUI worker used to publish progress messages,
+	 *                       or {@code null} when running in headless mode
+	 * @param Category       the category name of the selection
+	 * @param Selections     the selection name (ticker symbol or data series
+	 *                       identifier)
+	 * @param Sources        the data source identifier (e.g. "YAHOO",
+	 *                       "QUANDL", "FED")
+	 * @param quandlDataSet  the Quandl dataset code (used only when the source
+	 *                       is "QUANDL")
+	 * @param quandlDataName the Quandl data name within the dataset (used only
+	 *                       when the source is "QUANDL")
+	 * @param quandlColumn   the zero-based column index to read from the
+	 *                       Quandl response (used only when the source is
+	 *                       "QUANDL")
+	 * @param isYahooIndex   {@code true} if the selection is a Yahoo Finance
+	 *                       index symbol (e.g. "^GSPC") that requires the
+	 *                       "%5E" URL prefix
+	 * @param quandlKey      the Quandl API key
+	 * @param overwrite      {@code true} to overwrite any existing local data
+	 *                       file; {@code false} to append only new records
+	 * @param indices        application index configuration
+	 * @param runContext     shared run-time state (stop flag, GUI mode, etc.)
 	 */
 	public UpdateRunnable(final UpdateWorker updateWorker, final String Category, final String Selections,
 			final String Sources, final String quandlDataSet, final String quandlDataName, final int quandlColumn,
@@ -62,8 +81,11 @@ public class UpdateRunnable implements Callable<Integer> {
 	}
 
 	/**
-	 * 
-	 * @return
+	 * call downloads the latest price data for the configured selection,
+	 * parses the response, and writes the result to the local data file.
+	 *
+	 * @return {@code 0} on success, {@code 1} if an error occurred during the
+	 *         download or file write operation
 	 */
 	@Override
 	public Integer call() {
