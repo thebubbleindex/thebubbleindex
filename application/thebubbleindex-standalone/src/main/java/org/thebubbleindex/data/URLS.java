@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +23,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -126,15 +124,17 @@ public class URLS {
 				Logs.myLogger.error(ex);
 			}
 
-			String result = null;
-			try {
-				result = EntityUtils.toString(response.getEntity());
-			} catch (final ParseException | IOException ex) {
-				Logs.myLogger.error(ex);
-			}
+			if (response != null) {
+				try {
+					// Consume the entity body to allow the connection to be released
+					EntityUtils.consume(response.getEntity());
+				} catch (final IOException ex) {
+					Logs.myLogger.error(ex);
+				}
 
-			final Header setCookieHeader = response.getFirstHeader("Set-Cookie");
-			yahooCookie = setCookieHeader != null ? setCookieHeader.getValue().split(";")[0] : "cookie";
+				final Header setCookieHeader = response.getFirstHeader("Set-Cookie");
+				yahooCookie = setCookieHeader != null ? setCookieHeader.getValue().split(";")[0] : "cookie";
+			}
 		}
 
 		if (yahooCookie == null) {
@@ -496,19 +496,18 @@ public class URLS {
 
 			dailydata.createNewFile();
 
-			final FileWriter writer = new FileWriter(dailydata);
-
-			for (int i = 0; i < olddateData.size(); i++) {
-				writer.write(String.format("%s\t%s%n", olddateData.get(i), oldpriceData.get(i)));
-			}
-
-			if (match > 0) {
-				for (int i = match + 1; i < dateData.size(); i++) {
-					writer.write(String.format("%s\t%s%n", dateData.get(i), priceData.get(i)));
+			try (final FileWriter writer = new FileWriter(dailydata)) {
+				for (int i = 0; i < olddateData.size(); i++) {
+					writer.write(String.format("%s\t%s%n", olddateData.get(i), oldpriceData.get(i)));
 				}
+
+				if (match > 0) {
+					for (int i = match + 1; i < dateData.size(); i++) {
+						writer.write(String.format("%s\t%s%n", dateData.get(i), priceData.get(i)));
+					}
+				}
+				writer.flush();
 			}
-			writer.flush();
-			writer.close();
 
 		} else {
 

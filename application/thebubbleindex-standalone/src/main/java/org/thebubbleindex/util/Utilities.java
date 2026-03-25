@@ -217,10 +217,7 @@ public class Utilities {
 	public static void WriteCSV(final String savePath, final List<Double> Results, final int PERIODS,
 			final String FileName, final List<String> dailyPriceDate, final boolean UPDATE) throws IOException {
 
-		FileWriter writer = null;
-
-		try {
-			writer = new FileWriter(savePath + File.separator + FileName, UPDATE);
+		try (final FileWriter writer = new FileWriter(savePath + File.separator + FileName, UPDATE)) {
 
 			if (!UPDATE) {
 				addHeader(writer);
@@ -237,14 +234,9 @@ public class Utilities {
 			}
 
 			writer.flush();
-			writer.close();
 
 		} catch (final IOException ex) {
 			Logs.myLogger.error("save path = {}. {}", savePath, ex);
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 

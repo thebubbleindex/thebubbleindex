@@ -127,7 +127,7 @@ public class UpdateData {
 						ex);
 			}
 
-			final Integer finalErrorNumber = new Integer(errors);
+			final Integer finalErrorNumber = errors;
 			errorsPerCategory.put(category, finalErrorNumber);
 		}
 		checkForErrors(errorsPerCategory);
@@ -160,10 +160,11 @@ public class UpdateData {
 			final Path filepath = new File(indices.getUserDir() + indices.getProgramDataFolder()
 					+ indices.getFilePathSymbol() + updateCategories).toPath();
 			Logs.myLogger.info("Filepath: {}", filepath);
-			final BufferedReader reader = Files.newBufferedReader(filepath, Charset.defaultCharset());
-			String line;
-			while ((line = reader.readLine()) != null) {
-				categories.add(line);
+			try (final BufferedReader reader = Files.newBufferedReader(filepath, Charset.defaultCharset())) {
+				String line;
+				while ((line = reader.readLine()) != null) {
+					categories.add(line);
+				}
 			}
 
 		} catch (final IOException ex) {
@@ -221,22 +222,23 @@ public class UpdateData {
 			final Path filepath = updateFile.toPath();
 			Logs.myLogger.info("Filepath: {}", filepath);
 
-			final BufferedReader reader = Files.newBufferedReader(filepath, Charset.defaultCharset());
+			try (final BufferedReader reader = Files.newBufferedReader(filepath, Charset.defaultCharset())) {
 
-			// These files have headers
-			String line = reader.readLine();
-			while ((line = reader.readLine()) != null) {
-				final String[] splits = line.split(",");
-				Selections.add(splits[0]);
-				DataTypes.add(splits[1]);
-				quandlDataSet.add(splits[2]);
-				quandlDataName.add(splits[3]);
-				quandlColumn.add(Integer.parseInt(splits[4]));
-				isYahooIndex.add(Boolean.parseBoolean(splits[5]));
-				if (splits.length > 6) {
-					overwrite.add(Boolean.parseBoolean(splits[6]));
-				} else {
-					overwrite.add(new Boolean(false));
+				// These files have headers
+				String line = reader.readLine();
+				while ((line = reader.readLine()) != null) {
+					final String[] splits = line.split(",");
+					Selections.add(splits[0]);
+					DataTypes.add(splits[1]);
+					quandlDataSet.add(splits[2]);
+					quandlDataName.add(splits[3]);
+					quandlColumn.add(Integer.parseInt(splits[4]));
+					isYahooIndex.add(Boolean.parseBoolean(splits[5]));
+					if (splits.length > 6) {
+						overwrite.add(Boolean.parseBoolean(splits[6]));
+					} else {
+						overwrite.add(Boolean.FALSE);
+					}
 				}
 			}
 

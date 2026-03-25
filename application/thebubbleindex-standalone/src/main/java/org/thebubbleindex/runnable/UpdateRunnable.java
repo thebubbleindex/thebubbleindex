@@ -118,8 +118,8 @@ public class UpdateRunnable implements Callable<Integer> {
 				} catch (final IOException ex) {
 					Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, ex);
 					return 1;
-				} catch (final Throwable th) {
-					Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, th);
+				} catch (final Exception ex) {
+					Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, ex);
 					return 1;
 				}
 			}
@@ -138,8 +138,8 @@ public class UpdateRunnable implements Callable<Integer> {
 					} catch (final IOException ex) {
 						Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, ex);
 						return 1;
-					} catch (final Throwable th) {
-						Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, th);
+					} catch (final Exception ex) {
+						Logs.myLogger.error("Category = {}, Selections = {}. {}", category, selections, ex);
 						return 1;
 					}
 				} else {
