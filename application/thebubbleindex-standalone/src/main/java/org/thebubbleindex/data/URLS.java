@@ -35,7 +35,8 @@ import org.thebubbleindex.swing.UpdateWorker;
 /**
  * URLS manages the download URL construction and the full data-retrieval
  * pipeline for a single financial time series. It supports three data sources:
- * Yahoo Finance, the Federal Reserve Economic Data (FRED) service, and Quandl.
+ * Yahoo Finance, the Federal Reserve Economic Data (FRED) service, and Nasdaq
+ * Data Link (formerly Quandl).
  * <p>
  * A typical usage sequence is:
  * <ol>
@@ -169,19 +170,19 @@ public class URLS {
 	}
 
 	/**
-	 * setQuandlUrl constructs the Quandl API v3 download URL for the given
-	 * dataset and series. If a non-empty API key is provided it is appended to
-	 * the URL.
+	 * setQuandlUrl constructs the Nasdaq Data Link API v3 download URL for the
+	 * given dataset and series. If a non-empty API key is provided it is
+	 * appended to the URL.
 	 *
-	 * @param dataset   the Quandl dataset code (e.g. "WIKI")
+	 * @param dataset   the Nasdaq Data Link dataset code (e.g. "WIKI")
 	 * @param name      the data series name within the dataset (e.g. "AAPL")
-	 * @param quandlKey the Quandl API key, or an empty string for anonymous
-	 *                  access
+	 * @param quandlKey the Nasdaq Data Link API key, or an empty string for
+	 *                  anonymous access
 	 */
 	public void setQuandlUrl(final String dataset, final String name, final String quandlKey) {
 		this.quandlDataset = dataset;
 		this.quandlName = name;
-		url = "https://www.quandl.com/api/v3/datasets/" + quandlDataset + "/" + quandlName + "/data.csv?sort_order=asc";
+		url = "https://data.nasdaq.com/api/v3/datasets/" + quandlDataset + "/" + quandlName + "/data.csv?order=asc";
 		if (quandlKey.trim().length() > 0) {
 			url = url + "&api_key=" + quandlKey.trim();
 		}
