@@ -260,7 +260,6 @@ public class RunIndex {
 			Logs.myLogger.info("Previous file: {} is blank. Trying to delete it.", previousFilePath);
 			try {
 				Files.delete(new File(previousFilePath).toPath());
-				execIndexWithCPU();
 			} catch (final IOException e) {
 				Logs.myLogger.info("Previous file: {} is blank. Failed to delete it.", previousFilePath);
 			}

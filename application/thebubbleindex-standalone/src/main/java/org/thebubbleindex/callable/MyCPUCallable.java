@@ -106,7 +106,7 @@ public class MyCPUCallable implements Callable<Double> {
 
 			// Return 0.0 if the timeseries === 0
 			if (!containsNonZeroDouble) {
-				return new Double(0.0);
+				return 0.0;
 			}
 
 			final double[] tempFour = new double[numberOfDays];
