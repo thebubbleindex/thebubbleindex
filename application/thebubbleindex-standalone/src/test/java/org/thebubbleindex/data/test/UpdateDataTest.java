@@ -24,9 +24,10 @@ import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.runnable.RunContext;
 
 /**
- * 
- * @author thebubbleindex
+ * Tests that verify the Yahoo Finance data download, parsing, and local
+ * persistence logic in {@link URLS} and {@link UpdateData}.
  *
+ * @author thebubbleindex
  */
 public class UpdateDataTest {
 

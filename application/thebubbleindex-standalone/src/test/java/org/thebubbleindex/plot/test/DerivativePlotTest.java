@@ -21,9 +21,10 @@ import org.thebubbleindex.plot.DerivativePlot;
 import org.thebubbleindex.runnable.RunContext;
 
 /**
- * 
- * @author thebubbleindex
+ * Tests that verify {@link DerivativePlot} creates and renders the derivative
+ * chart panel without errors using known test data.
  *
+ * @author thebubbleindex
  */
 public class DerivativePlotTest {
 	final String fileSep = File.separator;

@@ -8,6 +8,10 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.Test;
 import org.thebubbleindex.util.Utilities;
 
+/**
+ * Tests that verify {@link Utilities#LinearFit} correctly solves the
+ * least-squares linear regression for the log-periodic power-law equation.
+ */
 public class LinearFitTest {
 	final double epsilon = 0.0000000001;
 

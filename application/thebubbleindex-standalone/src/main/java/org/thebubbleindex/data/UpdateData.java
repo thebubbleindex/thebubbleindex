@@ -24,6 +24,12 @@ import org.thebubbleindex.runnable.UpdateRunnable;
 import org.thebubbleindex.swing.UpdateWorker;
 
 /**
+ * UpdateData orchestrates the parallel download and local persistence of daily
+ * price data for all selections listed in the update configuration files. It
+ * reads the top-level {@value #updateCategories} file to discover which
+ * categories should be updated, then for each category it reads the
+ * corresponding {@value #updateSelectionFile} to build the list of individual
+ * {@link UpdateRunnable} tasks submitted to a thread pool.
  *
  * @author thebubbleindex
  */
@@ -32,11 +38,24 @@ public class UpdateData {
 	private final List<String> categories = new ArrayList<String>(45);
 	private final UpdateWorker updateWorker;
 	private String quandlKey = "";
+	/** Name of the CSV file that lists which categories to update. */
 	public final static String updateCategories = "UpdateCategories.csv";
+	/** Name of the CSV file within each category folder that lists the selections to update. */
 	public final static String updateSelectionFile = "UpdateSelection.csv";
 	private final Indices indices;
 	private final RunContext runContext;
 
+	/**
+	 * UpdateData constructor. Reads the update-categories configuration file
+	 * and initialises the list of categories to process.
+	 *
+	 * @param updateWorker the GUI worker used to publish progress messages, or
+	 *                     {@code null} when running in headless mode
+	 * @param quandlKey    the Quandl API key used to authenticate Quandl
+	 *                     requests, or an empty string if Quandl is not used
+	 * @param indices      application index configuration
+	 * @param runContext   shared run-time state (stop flag, GUI mode, etc.)
+	 */
 	public UpdateData(final UpdateWorker updateWorker, final String quandlKey, final Indices indices,
 			final RunContext runContext) {
 		this.updateWorker = updateWorker;
@@ -47,6 +66,12 @@ public class UpdateData {
 		init();
 	}
 
+	/**
+	 * run processes each configured category in turn: it reads the per-category
+	 * selection list, submits one {@link UpdateRunnable} per selection to the
+	 * thread pool, waits for all tasks to complete, and finally reports any
+	 * errors that occurred.
+	 */
 	public void run() {
 		Logs.myLogger.info("Running update.");
 
@@ -114,7 +139,9 @@ public class UpdateData {
 	}
 
 	/**
-	 * 
+	 * init reads the {@value #updateCategories} file and populates the
+	 * {@code categories} list. If the file does not exist it is created as an
+	 * empty file.
 	 */
 	private void init() {
 		try {
@@ -150,14 +177,24 @@ public class UpdateData {
 	}
 
 	/**
-	 * 
-	 * @param Category
-	 * @param Selections
-	 * @param DataTypes
-	 * @param quandlDataSet
-	 * @param quandlDataName
-	 * @param quandlColumn
-	 * @param isYahooIndex
+	 * readCategoryList reads the {@value #updateSelectionFile} for the given
+	 * category and populates the parallel output lists with the per-selection
+	 * configuration. If the file does not exist it is created with a header
+	 * row.
+	 *
+	 * @param Category       the category name, used to locate the selection
+	 *                       file on disk
+	 * @param Selections     output list populated with selection names
+	 * @param DataTypes      output list populated with data source identifiers
+	 *                       (e.g. "YAHOO", "QUANDL", "FED")
+	 * @param quandlDataSet  output list populated with Quandl dataset codes
+	 * @param quandlDataName output list populated with Quandl series names
+	 * @param quandlColumn   output list populated with one-based Quandl column
+	 *                       indices
+	 * @param isYahooIndex   output list populated with flags indicating whether
+	 *                       each selection is a Yahoo index symbol
+	 * @param overwrite      output list populated with flags indicating whether
+	 *                       to overwrite existing local data files
 	 */
 	private void readCategoryList(final String Category, final List<String> Selections, final List<String> DataTypes,
 			final List<String> quandlDataSet, final List<String> quandlDataName, final List<Integer> quandlColumn,
@@ -222,7 +259,11 @@ public class UpdateData {
 	}
 
 	/**
-	 * 
+	 * checkForErrors logs and displays the per-category error counts collected
+	 * during the update run.
+	 *
+	 * @param errorsPerCategory a map from category name to the number of
+	 *                          selection update failures in that category
 	 */
 	private void checkForErrors(final Map<String, Integer> errorsPerCategory) {
 		for (final Map.Entry<String, Integer> errors : errorsPerCategory.entrySet()) {

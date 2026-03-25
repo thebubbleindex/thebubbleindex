@@ -96,6 +96,29 @@ public class DerivativePlot {
 		ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", true));
 	}
 
+	/**
+	 * DerivativePlot constructor. Parses the comma-separated window string,
+	 * builds the derivative chart, and schedules the chart window to be
+	 * displayed on the Swing Event Dispatch Thread.
+	 *
+	 * @param bubbleIndexWorker the Swing worker used to publish progress
+	 *                          messages, or {@code null} in headless mode
+	 * @param categoryName      the category name of the selection
+	 * @param selectionName     the name of the individual financial instrument
+	 * @param windowsString     comma-separated list of time-window sizes (days)
+	 *                          — only the first four distinct values are used
+	 * @param begDate           the start date for a custom date range
+	 * @param endDate           the end date for a custom date range
+	 * @param isCustomRange     {@code true} to restrict the chart to the
+	 *                          supplied date range
+	 * @param dailyPriceData    the raw price values read from the daily data
+	 *                          file
+	 * @param dailyPriceDate    the date strings corresponding to each price
+	 *                          value, in "yyyy-MM-dd" format
+	 * @param indices           application index configuration
+	 * @param runContext        shared run-time state (GUI mode, stop flag,
+	 *                          etc.)
+	 */
 	public DerivativePlot(final BubbleIndexWorker bubbleIndexWorker, final String categoryName,
 			final String selectionName, final String windowsString, final Date begDate, Date endDate,
 			final boolean isCustomRange, final List<String> dailyPriceData, final List<String> dailyPriceDate,
@@ -265,9 +288,10 @@ public class DerivativePlot {
 	}
 
 	/*
-	 * createDataset the Price Data time series
-	 * 
-	 * @return dataset containing the Price time series
+	 * createDataset builds the price data time series, optionally filtered to
+	 * the custom date range.
+	 *
+	 * @return dataset containing the price time series
 	 */
 	private XYDataset createDataset() {
 		Logs.myLogger.info("Creating data set for the price data.");
@@ -302,9 +326,13 @@ public class DerivativePlot {
 	}
 
 	/**
-	 * createDerivDataset create the dataset containing derivative values
-	 * 
-	 * @return
+	 * createDerivDataset builds the time-series dataset containing the
+	 * first-order discrete derivatives of the Bubble Index for each configured
+	 * time window. Derivative values are clamped to the range {@code [-0.5,
+	 * 0.5]} for display purposes. Data is read from the previously saved CSV
+	 * results files.
+	 *
+	 * @return the dataset containing one derivative time series per window
 	 */
 	private XYDataset createDerivDataset() {
 		Logs.myLogger.info("Creating derivative data set for each window.");
@@ -389,10 +417,12 @@ public class DerivativePlot {
 	}
 
 	/**
-	 * getDateValues
-	 * 
-	 * @param DateValues
-	 * @param DateString
+	 * getDateValues parses a date string of the form "yyyy-MM-dd" and writes
+	 * the year, month, and day as integers into the provided array.
+	 *
+	 * @param DateValues a three-element array that will receive
+	 *                   [year, month, day]
+	 * @param DateString the date string to parse in "yyyy-MM-dd" format
 	 */
 	public void getDateValues(final int[] DateValues, final String DateString) {
 		// format of string is YYYY-MM-DD
@@ -410,10 +440,11 @@ public class DerivativePlot {
 	}
 
 	/**
-	 * listToDouble
-	 * 
-	 * @param DataListString
-	 * @param DataListDouble
+	 * listToDouble converts a list of price strings to a list of Double values.
+	 *
+	 * @param DataListString the list of price strings to convert
+	 * @param DataListDouble the output list that will be populated with the
+	 *                       parsed Double values
 	 */
 	private void listToDouble(final List<String> DataListString, final List<Double> DataListDouble) {
 		for (String DataListString1 : DataListString) {

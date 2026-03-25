@@ -5,6 +5,10 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.thebubbleindex.util.Utilities;
 
+/**
+ * Tests that verify {@link Utilities#DataReverse(double[], int)} correctly
+ * reverses the order of elements in a double array.
+ */
 public class DataReverseTest {
 
 	final double epsilon = 0.0000000001;

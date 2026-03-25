@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.Scanner;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Tests that verify the CPU-based Bubble Index calculation produces results
+ * that match known-good reference values within a small numerical tolerance.
+ */
 public class MyCPUCallableTest {
 
 	final double epsilon = 0.01;

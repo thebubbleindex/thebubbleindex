@@ -7,6 +7,11 @@ import java.util.Random;
 import org.junit.Test;
 import org.thebubbleindex.util.Utilities;
 
+/**
+ * Tests that verify {@link Utilities#Normalize(double[], int)} correctly
+ * normalises a price series so that it begins at 100 and is expressed in
+ * log space.
+ */
 public class NormalizeTest {
 	final double epsilon = 0.0000000001;
 

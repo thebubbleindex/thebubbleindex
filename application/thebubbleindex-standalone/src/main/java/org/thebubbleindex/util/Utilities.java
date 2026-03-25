@@ -25,15 +25,28 @@ import no.uib.cipr.matrix.Matrix;
 import no.uib.cipr.matrix.Vector;
 
 /**
+ * Utilities provides a collection of static helper methods used throughout the
+ * application for data manipulation, file I/O, and numerical computations.
+ * These include normalising price series, reversing arrays, performing linear
+ * regression, reading and writing CSV files, and routing output to either the
+ * GUI or standard output.
  *
  * @author thebubbleindex
  */
 public class Utilities {
 
 	/**
-	 * 
-	 * @param displayText
-	 * @param resetTextArea
+	 * displayOutput routes a text message to the appropriate output channel.
+	 * In GUI mode the message is appended to the Swing output text area on the
+	 * Event Dispatch Thread; the text area is cleared automatically once the
+	 * line count exceeds 200 to prevent unbounded memory growth. In headless
+	 * mode the message is written to the application log.
+	 *
+	 * @param runContext    the current run context, used to determine the
+	 *                      output mode and track line counts
+	 * @param displayText   the text message to display
+	 * @param resetTextArea {@code true} to clear the GUI text area before
+	 *                      appending the message
 	 */
 	public static void displayOutput(final RunContext runContext, final String displayText,
 			final boolean resetTextArea) {

@@ -21,6 +21,11 @@ import java.util.List;
 import java.util.Scanner;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Tests that verify the GPU-based Bubble Index calculation produces results
+ * that match known-good reference values within a small numerical tolerance.
+ * Tests fall back gracefully when no GPU context is available.
+ */
 public class MyGPUCallableTest {
 
 	final double epsilon = 0.01;

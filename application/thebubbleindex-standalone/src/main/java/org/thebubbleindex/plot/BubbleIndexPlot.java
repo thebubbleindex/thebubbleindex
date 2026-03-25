@@ -52,6 +52,10 @@ import org.thebubbleindex.swing.BubbleIndexWorker;
 import org.thebubbleindex.util.Utilities;
 
 /**
+ * BubbleIndexPlot creates and displays an interactive JFreeChart time-series
+ * chart that plots The Bubble Index values for up to four time windows together
+ * with the underlying price series. A real-time tooltip overlay shows the
+ * index and price values nearest to the mouse cursor.
  *
  * @author thebubbleindex
  */
@@ -89,6 +93,29 @@ public class BubbleIndexPlot {
 		ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", true));
 	}
 
+	/**
+	 * BubbleIndexPlot constructor. Parses the comma-separated window string,
+	 * builds the chart, and schedules the chart window to be displayed on the
+	 * Swing Event Dispatch Thread.
+	 *
+	 * @param bubbleIndexWorker the Swing worker used to publish progress
+	 *                          messages, or {@code null} in headless mode
+	 * @param categoryName      the category name of the selection
+	 * @param selectionName     the name of the individual financial instrument
+	 * @param windowsString     comma-separated list of time-window sizes (days)
+	 *                          — only the first four distinct values are used
+	 * @param begDate           the start date for a custom date range
+	 * @param endDate           the end date for a custom date range
+	 * @param isCustomRange     {@code true} to restrict the chart to the
+	 *                          supplied date range
+	 * @param dailyPriceData    the raw price values read from the daily data
+	 *                          file
+	 * @param dailyPriceDate    the date strings corresponding to each price
+	 *                          value, in "yyyy-MM-dd" format
+	 * @param indices           application index configuration
+	 * @param runContext        shared run-time state (GUI mode, stop flag,
+	 *                          etc.)
+	 */
 	public BubbleIndexPlot(final BubbleIndexWorker bubbleIndexWorker, final String categoryName,
 			final String selectionName, final String windowsString, final Date begDate, final Date endDate,
 			final boolean isCustomRange, final List<String> dailyPriceData, final List<String> dailyPriceDate,
@@ -130,8 +157,10 @@ public class BubbleIndexPlot {
 	}
 
 	/**
-	 * 
-	 * @param title
+	 * drawBubbleIndexPlot creates and displays the chart window. This method
+	 * must be called on the Swing Event Dispatch Thread.
+	 *
+	 * @param title the window and chart title
 	 */
 	public void drawBubbleIndexPlot(final String title) {
 		// get the screen size as a java dimension
@@ -277,8 +306,10 @@ public class BubbleIndexPlot {
 	}
 
 	/**
-	 * 
-	 * @return
+	 * createDataset2 builds the time-series dataset containing the raw price
+	 * data for the selection, optionally filtered to the custom date range.
+	 *
+	 * @return the dataset containing the price time series
 	 */
 	private XYDataset createDataset2() {
 		Logs.myLogger.info("Creating data set for the price data.");
@@ -313,9 +344,13 @@ public class BubbleIndexPlot {
 	}
 
 	/**
-	 * 
-	 * @return
-	 * @throws FailedToRunIndex
+	 * createDataset builds the time-series dataset containing the Bubble Index
+	 * values for each configured time window. Values are normalised relative to
+	 * a standard window-specific baseline so that all windows are comparable on
+	 * a single axis. Each window's data is read from the previously saved CSV
+	 * results file.
+	 *
+	 * @return the dataset containing one Bubble Index time series per window
 	 */
 	private XYDataset createDataset() {
 		Logs.myLogger.info("Creating data set for each window.");
@@ -388,9 +423,12 @@ public class BubbleIndexPlot {
 	}
 
 	/**
-	 * 
-	 * @param DateValues
-	 * @param DateString
+	 * getDateValues parses a date string of the form "yyyy-MM-dd" and writes
+	 * the year, month, and day as integers into the provided array.
+	 *
+	 * @param DateValues a three-element array that will receive
+	 *                   [year, month, day]
+	 * @param DateString the date string to parse in "yyyy-MM-dd" format
 	 */
 	public void getDateValues(final int[] DateValues, final String DateString) {
 		// format of string is YYYY-MM-DD
@@ -406,9 +444,11 @@ public class BubbleIndexPlot {
 	}
 
 	/**
-	 * 
-	 * @param DataListString
-	 * @param DataListDouble
+	 * listToDouble converts a list of price strings to a list of Double values.
+	 *
+	 * @param DataListString the list of price strings to convert
+	 * @param DataListDouble the output list that will be populated with the
+	 *                       parsed Double values
 	 */
 	private void listToDouble(final List<String> DataListString, final List<Double> DataListDouble) {
 		for (final String DataListString1 : DataListString) {

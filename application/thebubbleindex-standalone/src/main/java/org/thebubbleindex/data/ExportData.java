@@ -8,6 +8,8 @@ import java.util.List;
 import org.thebubbleindex.logging.Logs;
 
 /**
+ * ExportData provides utility methods for writing Bubble Index results to CSV
+ * files on disk.
  *
  * @author thebubbleindex
  */

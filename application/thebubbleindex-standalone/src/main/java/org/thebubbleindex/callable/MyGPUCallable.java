@@ -73,21 +73,34 @@ public class MyGPUCallable implements Callable<Float> {
 	private final RunContext runContext;
 
 	/**
-	 * MyGPUCallable constructor
-	 * 
-	 * @param bubbleIndexWorker
-	 * @param index
-	 * @param numberOfDays
-	 * @param lombScargle
-	 * @param context
-	 * @param queue
-	 * @param program
-	 * @param kernel
-	 * @param byteOrder
-	 * @param tCritDouble
-	 * @param dailyPriceValues
-	 * @param selectionName
-	 * @param displayPeriodString
+	 * MyGPUCallable constructor.
+	 *
+	 * @param bubbleIndexWorker   the Swing worker used to publish per-date
+	 *                            output messages, or {@code null} in headless
+	 *                            mode
+	 * @param index               the zero-based offset into
+	 *                            {@code dailyPriceValues} that marks the start
+	 *                            of the data window for this calculation
+	 * @param numberOfDays        the size of the time window in days
+	 * @param lombScargle         the pre-computed Lomb-Scargle parameters
+	 *                            shared across all GPU callables in a run
+	 * @param context             the OpenCL context for the target GPU device
+	 * @param queue               the command queue associated with the context
+	 * @param program             the compiled OpenCL program containing the
+	 *                            kernel
+	 * @param kernel              the OpenCL kernel that performs the H,Q
+	 *                            derivative and periodogram computation
+	 * @param byteOrder           the native byte order of the GPU device,
+	 *                            used when allocating NIO buffers
+	 * @param tCritDouble         the critical time offset (t<sub>c</sub>) used
+	 *                            to build the time-value array
+	 * @param dailyPriceValues    the full price series as an array of doubles
+	 * @param selectionName       the name of the financial instrument being
+	 *                            analysed
+	 * @param displayPeriodString the date string of the end of the window,
+	 *                            used for display purposes
+	 * @param runContext          shared run-time state (stop flag, GUI mode,
+	 *                            etc.)
 	 */
 	public MyGPUCallable(final BubbleIndexWorker bubbleIndexWorker, final int index, final int numberOfDays,
 			final LombScargle lombScargle, final CLContext context, final CLQueue queue, final CLProgram program,
@@ -126,12 +139,15 @@ public class MyGPUCallable implements Callable<Float> {
 	}
 
 	/**
-	 * call method to execute the calculation.
-	 * <p>
-	 * The method sets up variables and then passes the final calculation to the
-	 * GPU device.
-	 * 
-	 * @return the value of The Bubble Index at a specific date
+	 * call executes the Bubble Index calculation for a single date using a GPU
+	 * device via OpenCL. The method performs the CPU-side matrix setup (price
+	 * normalisation, linear regression, and H,Q derivative array construction),
+	 * then offloads the Lomb-Scargle periodogram computation to the GPU kernel
+	 * and returns the maximum spectral density value across all (H, Q) pairs.
+	 *
+	 * @return the Bubble Index value for the date corresponding to
+	 *         {@code index + window}, or {@code 0.0f} if the time series is all
+	 *         zeros, a GPU exception occurred, or a stop signal has been issued
 	 */
 	@Override
 	public Float call() {

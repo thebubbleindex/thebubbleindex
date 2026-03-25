@@ -35,10 +35,27 @@ import org.thebubbleindex.runnable.RunContext;
 import org.thebubbleindex.swing.UpdateWorker;
 
 /**
+ * URLS manages the download URL construction and the full data-retrieval
+ * pipeline for a single financial time series. It supports three data sources:
+ * Yahoo Finance, the Federal Reserve Economic Data (FRED) service, and Quandl.
+ * <p>
+ * A typical usage sequence is:
+ * <ol>
+ *   <li>Construct a {@code URLS} instance.</li>
+ *   <li>Call the appropriate {@code set*Url()} method to configure the download
+ *       URL.</li>
+ *   <li>Call {@link #readURL_file(ByteArrayOutputStream)} to download the raw
+ *       data into a byte stream.</li>
+ *   <li>Call {@link #parseAndCleanDataStream} to parse and de-duplicate the
+ *       downloaded data.</li>
+ *   <li>Call {@link #updateData} to merge the new records into the existing
+ *       local daily-data file.</li>
+ * </ol>
  *
  * @author thebubbleindex
  */
 public class URLS {
+	/** Name of the daily data file appended to every selection folder. */
 	public static final String dailyDataFile = "dailydata.csv";
 
 	private String dataName;
@@ -55,25 +72,43 @@ public class URLS {
 	private final Indices indices;
 	private final RunContext runContext;
 
+	/**
+	 * URLS constructor.
+	 *
+	 * @param indices    application index configuration used to build local
+	 *                   file paths
+	 * @param runContext shared run-time state (stop flag, GUI mode, etc.)
+	 */
 	public URLS(final Indices indices, final RunContext runContext) {
 		this.indices = indices;
 		this.runContext = runContext;
 	}
 
+	/**
+	 * setUpdateWorker sets the GUI worker used to publish progress messages
+	 * during the download. May be {@code null} in headless (non-GUI) mode.
+	 *
+	 * @param updateWorker the GUI worker, or {@code null}
+	 */
 	public void setUpdateWorker(final UpdateWorker updateWorker) {
 		this.updateWorker = updateWorker;
 	}
 
 	/**
-	 * 
-	 * @param dataName
+	 * setDataName sets the selection name (ticker symbol or series identifier)
+	 * used when constructing the data download URL.
+	 *
+	 * @param dataName the selection name
 	 */
 	public void setDataName(final String dataName) {
 		this.dataName = dataName;
 	}
 
 	/**
-	 * 
+	 * setYahooUrl constructs the Yahoo Finance v7 historical-data download URL
+	 * for the configured selection. A session cookie is obtained from the Yahoo
+	 * Finance lookup page and cached for subsequent calls. The URL covers all
+	 * available history from the Unix epoch to today at daily interval.
 	 */
 	public void setYahooUrl() {
 
@@ -126,17 +161,22 @@ public class URLS {
 	}
 
 	/**
-	 * 
+	 * setFEDUrl constructs the FRED (Federal Reserve Economic Data) download
+	 * URL for the configured data name.
 	 */
 	public void setFEDUrl() {
 		url = "https://research.stlouisfed.org/fred2/series/" + dataName + "/downloaddata/" + dataName + ".csv";
 	}
 
 	/**
-	 * 
-	 * @param dataset
-	 * @param name
-	 * @param quandlKey
+	 * setQuandlUrl constructs the Quandl API v3 download URL for the given
+	 * dataset and series. If a non-empty API key is provided it is appended to
+	 * the URL.
+	 *
+	 * @param dataset   the Quandl dataset code (e.g. "WIKI")
+	 * @param name      the data series name within the dataset (e.g. "AAPL")
+	 * @param quandlKey the Quandl API key, or an empty string for anonymous
+	 *                  access
 	 */
 	public void setQuandlUrl(final String dataset, final String name, final String quandlKey) {
 		this.quandlDataset = dataset;
@@ -148,56 +188,74 @@ public class URLS {
 	}
 
 	/**
-	 * 
-	 * @param Column
+	 * setQuandlColumn sets the one-based column index that contains the price
+	 * value in the Quandl CSV response.
+	 *
+	 * @param Column the one-based column index to read (e.g. 2 for the second
+	 *               column)
 	 */
 	public void setQuandlColumn(final int Column) {
 		this.quandlColumn = Column;
 	}
 
 	/**
-	 * 
+	 * setYahooIndex sets whether the selection is a Yahoo Finance index symbol
+	 * (e.g. "^GSPC"). Index symbols require the "%5E" URL encoding prefix.
+	 *
+	 * @param isYahooIndex {@code true} if the selection is a Yahoo index symbol
 	 */
 	public void setYahooIndex(final boolean isYahooIndex) {
 		this.isYahooIndex = isYahooIndex;
 	}
 
 	/**
-	 * 
-	 * @param dataType
+	 * setDataType sets the category name, which is used to build the local
+	 * file system path where the data will be stored.
+	 *
+	 * @param dataType the category name (e.g. "Currencies")
 	 */
 	public void setDataType(final String dataType) {
 		this.dataType = dataType;
 	}
 
 	/**
-	 * 
-	 * @param source
+	 * setSource sets the data source identifier. Supported values are
+	 * {@code "YAHOO"}, {@code "QUANDL"}, and {@code "FED"} (case-insensitive).
+	 *
+	 * @param source the data source identifier string
 	 */
 	public void setSource(final String source) {
 		this.source = source;
 	}
 
 	/**
-	 * 
-	 * @return
+	 * getSource returns the data source identifier string.
+	 *
+	 * @return the data source identifier (e.g. "YAHOO", "QUANDL", or "FED")
 	 */
 	public String getSource() {
 		return this.source;
 	}
 
 	/**
-	 * 
-	 * @param overwrite
+	 * setOverwrite controls whether an existing local daily-data file should be
+	 * replaced entirely. When {@code false} only new records that post-date the
+	 * last entry in the existing file are appended.
+	 *
+	 * @param overwrite {@code true} to delete and recreate the local file
 	 */
 	public void setOverwrite(final Boolean overwrite) {
 		this.overwrite = overwrite;
 	}
 
 	/**
-	 * 
-	 * @param outputstream
-	 * @throws IOException
+	 * readURL_file downloads the raw data from the configured URL and writes it
+	 * to the provided output stream. For Yahoo Finance requests, the cached
+	 * session cookie is included in the HTTP request header.
+	 *
+	 * @param outputstream the stream that will receive the raw downloaded bytes
+	 * @throws IOException if the HTTP connection fails or an I/O error occurs
+	 *                     while reading or writing the data
 	 */
 	public void readURL_file(final ByteArrayOutputStream outputstream) throws IOException {
 		if (runContext.isGUI()) {
@@ -236,12 +294,15 @@ public class URLS {
 	}
 
 	/**
-	 * Source:
+	 * fastChannelCopy efficiently copies all bytes from a readable NIO channel
+	 * to a writable NIO channel using a direct 16 KB buffer.
+	 * <p>
+	 * Based on:
 	 * https://thomaswabner.wordpress.com/2007/10/09/fast-stream-copy-using-javanio-channels/
-	 * 
-	 * @param src
-	 * @param dest
-	 * @throws IOException
+	 *
+	 * @param src  the source channel to read from
+	 * @param dest the destination channel to write to
+	 * @throws IOException if an I/O error occurs during the transfer
 	 */
 	public static void fastChannelCopy(final ReadableByteChannel src, final WritableByteChannel dest)
 			throws IOException {
@@ -264,10 +325,26 @@ public class URLS {
 	}
 
 	/**
-	 * 
-	 * @param outputstream
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * parseAndCleanDataStream parses the raw byte stream downloaded from the
+	 * data source, de-duplicates records by date, and populates two parallel
+	 * lists with the cleaned date and price strings sorted in chronological
+	 * order.
+	 * <p>
+	 * The column index used to read the price value depends on the configured
+	 * data source:
+	 * <ul>
+	 *   <li>Yahoo: adjusted-close column (index 5)</li>
+	 *   <li>Quandl: the column specified by {@link #setQuandlColumn(int)}</li>
+	 *   <li>FED: column index 1</li>
+	 * </ul>
+	 *
+	 * @param outputstream the raw downloaded data as a byte stream
+	 * @param dateData     output list that will be populated with date strings
+	 *                     in "yyyy-MM-dd" format
+	 * @param priceData    output list that will be populated with price value
+	 *                     strings corresponding to each date
+	 * @throws IOException if the byte stream cannot be read or if it contains
+	 *                     unrecoverable parse errors
 	 */
 	public void parseAndCleanDataStream(final ByteArrayOutputStream outputstream, final List<String> dateData,
 			final List<String> priceData) throws IOException {
@@ -360,10 +437,17 @@ public class URLS {
 	}
 
 	/**
-	 * 
-	 * @param dateData
-	 * @param priceData
-	 * @throws IOException
+	 * updateData merges the freshly downloaded date and price records into the
+	 * existing local daily-data file. If no local file exists a new one is
+	 * created. If {@code overwrite} is set to {@code true} any existing file is
+	 * deleted first and replaced with the new data. Otherwise only records that
+	 * post-date the last entry in the existing file are appended.
+	 *
+	 * @param dateData  the cleaned list of date strings in chronological order
+	 * @param priceData the cleaned list of price value strings corresponding to
+	 *                  each date
+	 * @throws IOException if the local data file cannot be read, created, or
+	 *                     written
 	 */
 	public void updateData(final List<String> dateData, final List<String> priceData) throws IOException {
 

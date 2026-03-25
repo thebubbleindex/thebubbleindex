@@ -14,6 +14,10 @@ import org.junit.Test;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.inputs.InputCategory;
 
+/**
+ * Tests that verify {@link Indices} correctly reads category and component
+ * configuration files and exposes them as arrays and maps.
+ */
 public class IndicesTest {
 
 	@Test
