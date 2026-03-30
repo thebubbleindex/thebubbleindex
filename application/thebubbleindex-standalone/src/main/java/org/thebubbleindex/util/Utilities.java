@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -217,7 +218,7 @@ public class Utilities {
 	public static void WriteCSV(final String savePath, final List<Double> Results, final int PERIODS,
 			final String FileName, final List<String> dailyPriceDate, final boolean UPDATE) throws IOException {
 
-		try (final FileWriter writer = new FileWriter(savePath + File.separator + FileName, UPDATE)) {
+		try (final FileWriter writer = new FileWriter(savePath + File.separator + FileName, StandardCharsets.UTF_8, UPDATE)) {
 
 			if (!UPDATE) {
 				addHeader(writer);

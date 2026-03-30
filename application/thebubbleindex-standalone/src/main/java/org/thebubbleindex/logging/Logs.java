@@ -14,15 +14,15 @@ import org.apache.logging.log4j.LogManager;
 public class Logs {
 
 	/** The application-wide Log4j2 logger instance. */
-	public static Logger myLogger;
+	public static final Logger myLogger = initLogger();
 
-	static {
+	private static Logger initLogger() {
 		final String osName = System.getProperty("os.name").toLowerCase();
 		System.out.println("OS Name: " + osName);
 		if (osName != null && osName.indexOf("win") >= 0) {
-			myLogger = LogManager.getLogger("mylogger-windows");
+			return LogManager.getLogger("mylogger-windows");
 		} else {
-			myLogger = LogManager.getLogger("mylogger-linux");
+			return LogManager.getLogger("mylogger-linux");
 		}
 	}
 }

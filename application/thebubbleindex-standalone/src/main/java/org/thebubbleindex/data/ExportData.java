@@ -3,6 +3,7 @@ package org.thebubbleindex.data;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.thebubbleindex.logging.Logs;
@@ -29,7 +30,7 @@ public class ExportData {
 	public static void WriteCSV(final String savePath, final List<Double> Results, final int PERIODS,
 			final String FileName, final List<String> dailyPriceDate, final boolean UPDATE) throws IOException {
 
-		try (final FileWriter writer = new FileWriter(savePath + File.separator + FileName, UPDATE)) {
+		try (final FileWriter writer = new FileWriter(savePath + File.separator + FileName, StandardCharsets.UTF_8, UPDATE)) {
 
 			if (!UPDATE) {
 				addHeader(writer);
