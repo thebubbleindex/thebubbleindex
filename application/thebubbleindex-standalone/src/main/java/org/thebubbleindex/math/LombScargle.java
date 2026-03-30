@@ -113,7 +113,7 @@ public class LombScargle {
 		cTwo = new double[this.qSize];
 		powTempVar = new double[this.qSize][this.hSize];
 
-		double StartingPoint = omegaDouble / (2.0 * 3.14159) - 0.2;
+		double StartingPoint = omegaDouble / (2.0 * Math.PI) - 0.2;
 		double Increments = 0.01;
 
 		for (int i = 0; i < freqSize; i++) {
@@ -274,7 +274,7 @@ public class LombScargle {
 
 		for (int i = 0; i < freqSize; i++) {
 
-			final double Omega = 2.0 * 3.14159 * testFrequencies[i];
+			final double Omega = 2.0 * Math.PI * testFrequencies[i];
 			SinSum = 0.0;
 			CosSum = 0.0;
 

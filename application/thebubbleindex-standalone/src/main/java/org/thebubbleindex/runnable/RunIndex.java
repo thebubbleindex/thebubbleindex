@@ -18,12 +18,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import org.thebubbleindex.callable.MyCPUCallable;
@@ -375,10 +375,8 @@ public class RunIndex {
 				index++;
 			}
 
-			final Random random = new Random(System.currentTimeMillis());
-
 			for (int j = START; j < SIZE; j++) {
-				final double randomValue = random.nextDouble();
+				final double randomValue = ThreadLocalRandom.current().nextDouble();
 
 				for (final Map.Entry<CLContext, Double> entry : contextComputeMapping.entrySet()) {
 

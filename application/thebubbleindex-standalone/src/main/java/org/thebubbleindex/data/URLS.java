@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -362,7 +363,7 @@ public class URLS {
 			final byte[] content = outputstream.toByteArray();
 			is = new ByteArrayInputStream(content);
 
-			try (final BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+			try (final BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
 
 				// ignore the lines with the date repeats (common in yahoo data)
 				final TreeMap<LocalDate, Double> dateValueMap = new TreeMap<LocalDate, Double>();
@@ -497,7 +498,7 @@ public class URLS {
 
 			dailydata.createNewFile();
 
-			try (final FileWriter writer = new FileWriter(dailydata)) {
+			try (final FileWriter writer = new FileWriter(dailydata, StandardCharsets.UTF_8)) {
 				for (int i = 0; i < olddateData.size(); i++) {
 					writer.write(String.format("%s\t%s%n", olddateData.get(i), oldpriceData.get(i)));
 				}
@@ -522,7 +523,7 @@ public class URLS {
 
 				dailydata.createNewFile();
 
-				try (final FileWriter writer = new FileWriter(dailydata)) {
+				try (final FileWriter writer = new FileWriter(dailydata, StandardCharsets.UTF_8)) {
 					for (int i = 0; i < dateData.size(); i++) {
 						writer.write(String.format("%s\t%s%n", dateData.get(i), priceData.get(i)));
 					}
