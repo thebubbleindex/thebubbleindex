@@ -70,7 +70,7 @@
 				<version>4.8.6.4</version>
 				<configuration>
 					<effort>Max</effort>
-					<threshold>High</threshold>
+					<threshold>Medium</threshold>
 					<failOnError>true</failOnError>
 				</configuration>
 				<executions>
