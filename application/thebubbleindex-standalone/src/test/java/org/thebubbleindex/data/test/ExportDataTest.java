@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Rule;
@@ -68,5 +69,22 @@ public class ExportDataTest {
 		// Appended rows should not have a second header
 		assertEquals("99,3.0,2023-01-03", lines.get(3));
 		assertEquals("100,4.0,2023-01-04", lines.get(4));
+	}
+
+	@Test
+	public void writeCSVShouldCreateFileWithJustHeaderWhenResultsAreEmpty() throws IOException {
+		final File dir = tempFolder.newFolder("output-empty");
+		final List<Double> results = Collections.emptyList();
+		final List<String> dates = Collections.emptyList();
+
+		ExportData.WriteCSV(dir.getAbsolutePath(), results, 52, "empty.csv", dates, false);
+
+		final File out = new File(dir, "empty.csv");
+		assertTrue("Output file should be created even for empty results", out.exists());
+
+		final List<String> lines = Files.readAllLines(out.toPath(), Charset.defaultCharset());
+		// Only the header row should be present
+		assertEquals(1, lines.size());
+		assertEquals("Period Number,Value,Date", lines.get(0));
 	}
 }
