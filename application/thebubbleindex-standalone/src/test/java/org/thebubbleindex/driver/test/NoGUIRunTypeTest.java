@@ -10,7 +10,7 @@ import org.thebubbleindex.driver.noGUI;
  * Tests that verify the {@link noGUI.RunType} enumeration values are
  * well-formed and can be looked up by name.
  */
-public class noGUIRunTypeTest {
+public class NoGUIRunTypeTest {
 
 	@Test
 	public void runTypeSingleShouldBeResolvable() {

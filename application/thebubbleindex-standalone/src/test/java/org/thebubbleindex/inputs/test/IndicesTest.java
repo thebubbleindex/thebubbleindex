@@ -127,11 +127,13 @@ public class IndicesTest {
 	public void initializeWithEmptyCategoryListShouldAddNullEntry() throws IOException {
 		final Indices indices = new Indices();
 
-		// Write an empty CategoryList.csv so initialize() finds it but reads no lines
+		// initialize() always calls getFilePath() to set userDir internally, so we
+		// must write our fixture files to the real path rather than a temp folder.
 		final File programDataDir = new File(indices.getFilePath() + indices.getProgramDataFolder());
 		programDataDir.mkdirs();
 		final File categoryListFile = new File(
 				programDataDir + indices.getFilePathSymbol() + indices.getCategoryList());
+		// Truncate to empty so that initialize() takes the "Null" placeholder path
 		Files.write(categoryListFile.toPath(), new byte[0]);
 
 		indices.initialize();
@@ -154,7 +156,8 @@ public class IndicesTest {
 	public void initializeWithMissingProgramDataFolderShouldCreateIt() throws IOException {
 		final Indices indices = new Indices();
 
-		// Ensure ProgramData folder is present (initialize handles missing folder)
+		// initialize() always calls getFilePath() to set userDir internally, so we
+		// must use the real path rather than a temp folder.
 		final File programDataDir = new File(indices.getFilePath() + indices.getProgramDataFolder());
 		programDataDir.mkdirs();
 		final File categoryListFile = new File(
