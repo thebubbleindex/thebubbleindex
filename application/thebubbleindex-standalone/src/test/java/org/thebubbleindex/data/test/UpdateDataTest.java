@@ -17,6 +17,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.thebubbleindex.data.URLS;
 import org.thebubbleindex.data.UpdateData;
@@ -31,6 +32,7 @@ import org.thebubbleindex.runnable.RunContext;
  */
 public class UpdateDataTest {
 
+	@Ignore("Requires live Yahoo Finance network access")
 	@Test
 	public void yahooDataShouldBeDownloadedCorrectly() throws IOException {
 		final RunContext runContext = new RunContext();
@@ -78,6 +80,7 @@ public class UpdateDataTest {
 		assertEquals(String.format("2010-06-29\t23.889999"), lines.get(0));
 	}
 
+	@Ignore("Requires live Yahoo Finance network access")
 	@Test
 	public void yahooIndexDataShouldBeDownloadedCorrectly() throws IOException {
 		final RunContext runContext = new RunContext();
@@ -154,7 +157,7 @@ public class UpdateDataTest {
 						+ indices.getFilePathSymbol() + entry + indices.getFilePathSymbol() + dailyDataFile);
 		final Path previousDailyDataPath = previousDailyData.toPath();
 		Files.write(previousDailyDataPath, previousFileLines, Charset.defaultCharset(),
-				StandardOpenOption.TRUNCATE_EXISTING);
+				StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
 
 		final URLS selection = new URLS(indices, runContext);
 		selection.setUpdateWorker(null);
@@ -303,6 +306,7 @@ public class UpdateDataTest {
 
 	}
 
+	@Ignore("Requires live Federal Reserve network access")
 	@Test
 	public void fedDataShouldBeDownloadedCorrectly() throws IOException {
 		final RunContext runContext = new RunContext();
@@ -350,6 +354,7 @@ public class UpdateDataTest {
 		assertEquals(lines.get(0), String.format("1973-01-02\t108.2242"));
 	}
 
+	@Ignore("Requires live Quandl network access")
 	@Test
 	public void quandlDataShouldBeDownloadedCorrectly() throws IOException {
 		final RunContext runContext = new RunContext();

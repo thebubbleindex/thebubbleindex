@@ -6,8 +6,6 @@ import org.thebubbleindex.runnable.RunContext;
 import org.thebubbleindex.runnable.RunIndex;
 import org.thebubbleindex.testutil.TestUtil;
 
-import com.nativelibs4java.util.IOUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -167,7 +165,7 @@ public class MyCPUCallableTest {
 			dailyPriceValues[i] = priceValues.get(i);
 		}
 
-		final String openCLSrc = IOUtils.readText(RunIndex.class.getClassLoader().getResource("/GPUKernel.cl"));
+		final String openCLSrc = null; // CPU execution does not use OpenCL source
 		runContext.setThreadNumber(4);
 		runContext.setGUI(false);
 		runContext.setForceCPU(false);

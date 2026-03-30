@@ -7,6 +7,14 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<repositories>
+		<!-- Local file-based repository for the Yeppp! library that is not
+		     available in Maven central. The jar is stored under local-repo/. -->
+		<repository>
+			<id>local-yeppp</id>
+			<url>file://${project.basedir}/local-repo</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
@@ -133,8 +141,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.13.0</version>
 					<configuration>
-						<source>21</source>
-						<target>21</target>
+						<source>17</source>
+						<target>17</target>
 						<showDeprecation>true</showDeprecation>
 						<proc>none</proc>
 					</configuration>
