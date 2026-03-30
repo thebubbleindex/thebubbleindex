@@ -121,4 +121,56 @@ public class LombScargleMaxOneDimTest {
 		final double result = ls.hqDerivative(timeValues, coef, size);
 		assertTrue("hqDerivative should return a non-negative value", result >= 0.0);
 	}
+
+	// -------------------------------------------------------------------------
+	// Constructor field-initialisation tests
+	// -------------------------------------------------------------------------
+
+	@Test
+	public void constructorShouldInitialiseFreqSizeQSizeHSizeFields() {
+		final LombScargle ls = buildSmallLombScargle();
+		assertEquals(5, ls.freqSize);
+		assertEquals(4, ls.qSize);
+		assertEquals(4, ls.hSize);
+	}
+
+	@Test
+	public void constructorShouldSetOmegaAndMCoeffFields() {
+		final LombScargle ls = buildSmallLombScargle();
+		assertEquals(6.28, ls.omegaDouble, epsilon);
+		assertEquals(0.38, ls.mCoeffDouble, epsilon);
+		assertEquals((float) 6.28, ls.omegaFloat, 1e-4f);
+		assertEquals((float) 0.38, ls.mCoeffFloat, 1e-4f);
+	}
+
+	@Test
+	public void constructorShouldAllocateArraysWithCorrectLengths() {
+		final LombScargle ls = buildSmallLombScargle();
+		assertEquals(5, ls.testFrequencies.length);
+		assertEquals(4, ls.Q.length);
+		assertEquals(4, ls.H.length);
+		assertEquals(4, ls.logQi.length);
+		assertEquals(4, ls.QiM.length);
+		assertEquals(4, ls.cOne.length);
+		assertEquals(4, ls.cTwo.length);
+		assertEquals(4, ls.powTempVar.length);
+		assertEquals(4, ls.powTempVar[0].length);
+	}
+
+	@Test
+	public void constructorShouldPopulateTestFrequenciesWithIncreasingValues() {
+		final LombScargle ls = buildSmallLombScargle();
+		for (int i = 1; i < ls.freqSize; i++) {
+			assertTrue("testFrequencies should be strictly increasing",
+					ls.testFrequencies[i] > ls.testFrequencies[i - 1]);
+		}
+	}
+
+	@Test
+	public void constructorShouldPopulateQArrayWithPositiveValues() {
+		final LombScargle ls = buildSmallLombScargle();
+		for (int i = 0; i < ls.qSize; i++) {
+			assertTrue("Q[" + i + "] should be positive", ls.Q[i] > 0.0);
+		}
+	}
 }

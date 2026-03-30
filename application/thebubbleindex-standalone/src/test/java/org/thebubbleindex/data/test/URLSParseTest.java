@@ -1,11 +1,16 @@
 package org.thebubbleindex.data.test;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -268,5 +273,62 @@ public class URLSParseTest {
 		assertTrue(str.contains("TEST"));
 		assertTrue(str.contains("Stocks"));
 		assertTrue(str.contains("FED"));
+	}
+
+	@Test
+	public void getSourceShouldReturnTheSourceSetBySetSource() {
+		final URLS urls = buildURLs("FED");
+		assertEquals("FED", urls.getSource());
+	}
+
+	@Test
+	public void setUpdateWorkerShouldAcceptNull() {
+		// Exercises the setUpdateWorker path; no exception expected
+		final URLS urls = buildURLs("FED");
+		urls.setUpdateWorker(null);
+	}
+
+	// ------------------------------------------------------------------
+	// fastChannelCopy tests
+	// ------------------------------------------------------------------
+
+	@Test
+	public void fastChannelCopyShouldCopyAllBytes() throws IOException {
+		final byte[] data = "hello world test".getBytes(StandardCharsets.UTF_8);
+		final ReadableByteChannel src = Channels.newChannel(new ByteArrayInputStream(data));
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final WritableByteChannel dest = Channels.newChannel(baos);
+
+		URLS.fastChannelCopy(src, dest);
+
+		assertArrayEquals(data, baos.toByteArray());
+	}
+
+	@Test
+	public void fastChannelCopyShouldHandleEmptyInput() throws IOException {
+		final byte[] data = new byte[0];
+		final ReadableByteChannel src = Channels.newChannel(new ByteArrayInputStream(data));
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final WritableByteChannel dest = Channels.newChannel(baos);
+
+		URLS.fastChannelCopy(src, dest);
+
+		assertEquals(0, baos.size());
+	}
+
+	@Test
+	public void fastChannelCopyShouldCopyLargePayload() throws IOException {
+		// 32 KB - exercises the internal 16 KB buffer more than once
+		final byte[] data = new byte[32 * 1024];
+		for (int i = 0; i < data.length; i++) {
+			data[i] = (byte) (i % 127);
+		}
+		final ReadableByteChannel src = Channels.newChannel(new ByteArrayInputStream(data));
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final WritableByteChannel dest = Channels.newChannel(baos);
+
+		URLS.fastChannelCopy(src, dest);
+
+		assertArrayEquals(data, baos.toByteArray());
 	}
 }

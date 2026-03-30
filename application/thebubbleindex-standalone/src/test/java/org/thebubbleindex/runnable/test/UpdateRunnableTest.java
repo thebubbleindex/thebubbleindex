@@ -43,4 +43,32 @@ public class UpdateRunnableTest {
 		// Stop flag is set: should exit early with 0
 		assertEquals(Integer.valueOf(0), result);
 	}
+
+	@Test
+	public void callShouldReturnZeroWhenStopFlagIsSetWithFEDSource() throws Exception {
+		final Indices indices = buildIndices();
+		final RunContext runContext = new RunContext();
+		runContext.setStop(true);
+		runContext.setGUI(false);
+
+		final UpdateRunnable runnable = new UpdateRunnable(
+				null, "Currencies", "DTWEXM", "FED", "", "", 0,
+				false, "", false, indices, runContext);
+
+		assertEquals(Integer.valueOf(0), runnable.call());
+	}
+
+	@Test
+	public void callShouldReturnZeroWhenStopFlagIsSetWithQUANDLSource() throws Exception {
+		final Indices indices = buildIndices();
+		final RunContext runContext = new RunContext();
+		runContext.setStop(true);
+		runContext.setGUI(false);
+
+		final UpdateRunnable runnable = new UpdateRunnable(
+				null, "Indices", "DJIA", "QUANDL", "WIKI", "DJIA", 2,
+				false, "", false, indices, runContext);
+
+		assertEquals(Integer.valueOf(0), runnable.call());
+	}
 }
