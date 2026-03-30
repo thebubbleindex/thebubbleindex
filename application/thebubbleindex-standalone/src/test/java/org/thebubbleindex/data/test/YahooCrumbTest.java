@@ -13,6 +13,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -28,6 +29,7 @@ public class YahooCrumbTest {
 	 * 
 	 */
 
+	@Ignore("Requires live Yahoo Finance network access")
 	@Test
 	public void testApacheHeaderRequest() throws URISyntaxException, ParseException, IOException {
 

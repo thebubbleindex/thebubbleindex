@@ -1,5 +1,6 @@
 package org.thebubbleindex.callable.test;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.thebubbleindex.inputs.Indices;
 import org.thebubbleindex.runnable.RunContext;
@@ -31,6 +32,7 @@ public class MyGPUCallableTest {
 	final double epsilon = 0.01;
 	final String fileSep = File.separator;
 
+	@Ignore("Requires GPU hardware and OpenCL support")
 	@Test
 	public void resultsShouldMatchBITSTAMPUSD() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
@@ -79,6 +81,7 @@ public class MyGPUCallableTest {
 
 	}
 
+	@Ignore("Requires GPU hardware and OpenCL support")
 	@Test
 	public void resultsShouldMatchTSLA() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
@@ -126,6 +129,7 @@ public class MyGPUCallableTest {
 		}
 	}
 
+	@Ignore("Requires GPU hardware and OpenCL support")
 	@Test
 	public void resultsShouldMatchDTWEXM() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
@@ -173,6 +177,7 @@ public class MyGPUCallableTest {
 		}
 	}
 
+	@Ignore("Requires GPU hardware and OpenCL support")
 	@Test
 	public void shouldUpdateExistingDataCorrectly() throws IOException, URISyntaxException {
 		final Indices indices = new Indices();
